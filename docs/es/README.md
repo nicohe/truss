@@ -35,6 +35,7 @@ Respuestas paso a paso a una tarea.
 - [Usar TRUSS con un coding agent](guides/agents.md): el bucle, dónde lee cada agente su guía y aprobar la verificación una vez.
 - [Usar TRUSS en CI](guides/ci.md): una instalación fijada, la configuración, la aprobación y un workflow de ejemplo.
 - [Actualizar o desinstalar TRUSS](guides/update-and-remove.md): fijar una release y qué no borrar.
+- [Solución de problemas](guides/troubleshooting.md): qué imprime TRUSS cuando algo va mal, qué significa y qué hacer.
 
 ## Comandos
 

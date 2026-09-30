@@ -71,4 +71,4 @@ Graphify is optional by default: when it is unavailable or its index is stale, `
 | `1` | One or more required setup checks failed. |
 | `2` | The TRUSS configuration is invalid or cannot be loaded. |
 
-`doctor` is intentionally diagnostic. Use the relevant explicit command to repair a condition: `truss init`, `truss graphify bootstrap`, or install what is missing (see [getting started](../getting-started.md#if-something-goes-wrong)).
+`doctor` is intentionally diagnostic. Use the relevant explicit command to repair a condition: `truss init`, `truss graphify bootstrap`, or install what is missing (see [getting started](../getting-started.md#if-something-goes-wrong), and [troubleshooting](../guides/troubleshooting.md) for the messages of the other commands).
