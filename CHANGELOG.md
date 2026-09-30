@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-09-30
+
+Patch release with no change to the CLI. The `grill-with-docs` skill gets an output contract, and the documentation gains a page on discovery (Grill) and says that Grill comes as two skills.
+
+### Upgrade notes
+- Nothing to do for an existing project: `lib/` and `bin/` are unchanged since 0.2.5. The one change outside the documentation is the text of the `grill-with-docs` skill, which lives in the TRUSS installation, so a project gets it when it moves to this release (see the [update guide](docs/en/guides/update-and-remove.md)). An agent that used the skill before will simply return a result with more fields.
+
 ### Changed
 - **The `grill-with-docs` skill now has an output contract**, like `grill-me`, `prototype` and `code-review`. It was the only discovery skill without one ("produce input suitable for the active spec"), so two agents could return differently shaped results. It now asks for the same fields as `grill-me` (goal, scope, observable acceptance behavior, constraints, decisions, assumptions, unresolved questions, risks, suggested next step) plus three that come from working with documents: the sources of important statements, the contradictions found and how they were resolved, and what was taken as a proposal or example rather than a requirement. It also says to ask which documents to use when the request names none. Skills live in the TRUSS installation, so a project gets this when it moves to the release that includes it.
 
