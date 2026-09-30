@@ -1,11 +1,21 @@
-import test from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
-import { workspace, fakeOpenSpec, fakeGraphify, fakeBin, executable, run, validConfig, posix, plain } from './helpers.mjs';
+import test from 'node:test';
+import {
+  executable,
+  fakeBin,
+  fakeGraphify,
+  fakeOpenSpec,
+  plain,
+  posix,
+  run,
+  validConfig,
+  workspace,
+} from './helpers.mjs';
 
-const out = r => plain(r.stdout);
+const out = (r) => plain(r.stdout);
 
 test('help: no arguments prints usage and exits 0', () => {
   const r = run(workspace({ config: validConfig }), []);
@@ -26,7 +36,9 @@ test('skills: lists installed skills and reports when none are installed', () =>
 });
 
 test('components: resolves configured components and rejects unknown ones', () => {
-  const root = workspace({ config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api') });
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
   fs.mkdirSync(path.join(root, 'apps', 'api', 'src'), { recursive: true });
   const all = run(root, ['components']);
   assert.equal(all.status, 0, all.stdout);
@@ -90,7 +102,11 @@ test('graphify update: failure is non-blocking when optional and blocking when r
 test('graphify bootstrap: builds the index, records the git head and then reports ready', posix, () => {
   const root = workspace({ config: validConfig });
   const bin = fakeBin(root);
-  executable(bin, 'graphify', 'if [ "${1:-}" = "--version" ]; then echo "graphify 0.1.0"; exit 0; fi\nmkdir -p graphify-out; echo {} > graphify-out/graph.json');
+  executable(
+    bin,
+    'graphify',
+    'if [ "${1:-}" = "--version" ]; then echo "graphify 0.1.0"; exit 0; fi\nmkdir -p graphify-out; echo {} > graphify-out/graph.json',
+  );
   const boot = run(root, ['graphify', 'bootstrap'], { binDirs: [bin] });
   assert.equal(boot.status, 0, boot.stdout);
   assert.match(out(boot), /graph updated/);
@@ -135,7 +151,11 @@ test('new: a title with no usable characters is rejected', posix, () => {
 test('new: surfaces OpenSpec failures', posix, () => {
   const root = workspace({ config: validConfig });
   const bin = fakeBin(root);
-  executable(bin, 'openspec', 'if [ "${1:-}" = "--version" ]; then echo 1.13.2; exit 0; fi\nif [ "${1:-}" = "new" ]; then echo "already exists" >&2; exit 1; fi\nexit 0');
+  executable(
+    bin,
+    'openspec',
+    'if [ "${1:-}" = "--version" ]; then echo 1.13.2; exit 0; fi\nif [ "${1:-}" = "new" ]; then echo "already exists" >&2; exit 1; fi\nexit 0',
+  );
   fs.mkdirSync(path.join(root, 'openspec', 'changes'), { recursive: true });
   fs.writeFileSync(path.join(root, 'openspec', 'config.yaml'), 'schema: spec-driven\n');
   const r = run(root, ['new', 'Add retry'], { binDirs: [bin] });
@@ -164,7 +184,10 @@ test('status: a corrupt state file is reported with exit 2', () => {
 test('handoff: with no active change says so; with one writes a file', () => {
   const root = workspace({ config: validConfig });
   assert.match(out(run(root, ['handoff'])), /No active change/);
-  fs.writeFileSync(path.join(root, '.truss', 'state.json'), JSON.stringify({ change: 'add-retry', component: 'api', phase: 'spec', path: 'openspec/changes/add-retry' }));
+  fs.writeFileSync(
+    path.join(root, '.truss', 'state.json'),
+    JSON.stringify({ change: 'add-retry', component: 'api', phase: 'spec', path: 'openspec/changes/add-retry' }),
+  );
   const r = run(root, ['handoff']);
   assert.equal(r.status, 0);
   const file = path.join(root, '.truss', 'handoffs', 'add-retry.md');
@@ -229,7 +252,9 @@ test('verify: invalid config exits 2 without running anything', () => {
 });
 
 test('verify: an empty command list exits 1 and writes not_configured evidence', () => {
-  const root = workspace({ config: validConfig.replace('  commands:\n    - node -e "process.exit(0)"\n', '  commands: []\n') });
+  const root = workspace({
+    config: validConfig.replace('  commands:\n    - node -e "process.exit(0)"\n', '  commands: []\n'),
+  });
   const r = run(root, ['verify', '--trust']);
   assert.equal(r.status, 1);
   assert.match(out(r), /no verification commands configured/);

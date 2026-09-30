@@ -12,8 +12,14 @@ if (selected !== 'all' && !suites.includes(selected)) {
   process.exit(2);
 }
 
-const files = (selected === 'all' ? suites : [selected]).flatMap(suite =>
-  readdirSync(join('test', suite)).filter(name => name.endsWith('.test.mjs')).sort().map(name => join('test', suite, name)));
+const files = (selected === 'all' ? suites : [selected]).flatMap((suite) =>
+  readdirSync(join('test', suite))
+    .filter((name) => name.endsWith('.test.mjs'))
+    .sort()
+    .map((name) => join('test', suite, name)),
+);
 
-const result = spawnSync(process.execPath, ['--test', '--test-concurrency=1', ...flags, ...files], { stdio: 'inherit' });
+const result = spawnSync(process.execPath, ['--test', '--test-concurrency=1', ...flags, ...files], {
+  stdio: 'inherit',
+});
 process.exit(result.status ?? 1);
