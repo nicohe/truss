@@ -6,7 +6,7 @@
 
 - Loads and validates `.truss/config.yaml` before executing project commands.
 - Runs the command list only after it has been approved for this project (see [Trust](#trust)).
-- When `verification.tests_required` is not `off`, runs the [tests-required gate](#tests-required-gate) after the trust check and before any command.
+- When `verification.tests_required` or `verification.tasks_complete` is not `off`, runs the [tests-required](#tests-required-gate) and [tasks-complete](#tasks-complete-gate) gates after the trust check and before any command.
 - Executes `verification.commands` exactly in configured order.
 - Runs commands sequentially from the project root.
 - Stops on the first failing command (fail-fast).
@@ -19,7 +19,7 @@
 | Code | Meaning |
 |---|---|
 | `0` | Every configured verification command passed. |
-| `1` | A verification command failed, could not be started, no commands are configured, the command list is not trusted and was not approved, or `tests_required: block` found source changes without tests. |
+| `1` | A verification command failed, could not be started, no commands are configured, the command list is not trusted and was not approved, or a `block` gate (`tests_required` / `tasks_complete`) found a problem. |
 | `2` | TRUSS configuration is invalid. No project verification command is executed. |
 
 ## Trust
@@ -55,6 +55,27 @@ Verification failed: tests are required. No command was executed.
 - It does **not** prove tests were written first, that they cover the change, or that they pass; `verification.commands` do the latter.
 
 The result is stored under `testsRequired` in the evidence file. See [configuration reference](../configuration/reference.md#verificationtests_required) for how files are classified.
+
+## Tasks-complete gate
+
+Opt-in with `verification.tasks_complete: warn | block` (default `off`). It answers: **are all the tasks of the active OpenSpec change checked off?**
+
+```text
+Tasks complete  block
+  × open tasks 2 of 3 task(s) still open in "add-retry"
+      1.2 Add tests
+      1.3 Update the docs
+  Finish or check off these tasks, or lower verification.tasks_complete to warn/off.
+
+Verification failed: the active change still has open tasks. No command was executed.
+```
+
+- The active change comes from `.truss/state.json`; progress comes from `openspec instructions apply` (the checkboxes of `tasks.md`).
+- `warn` reports and continues; `block` exits `1` before running any command.
+- With no active change, an unavailable or incompatible OpenSpec, or a `tasks.md` without tasks, it says so and never blocks.
+- When both gates are enabled, both are reported and both are recorded; the first blocking one (tests, then tasks) names the reason.
+
+The result is stored under `tasksComplete` in the evidence file.
 
 ## Evidence
 

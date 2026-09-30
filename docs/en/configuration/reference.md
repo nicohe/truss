@@ -40,6 +40,16 @@ If it cannot decide (not a Git work tree, no commits, no base branch, a shallow 
 
 Limits: it proves that test files changed, not that tests were written first (TDD), that they exercise the change, or that they pass. Passing tests remain the job of `verification.commands`. Enforcement: **TRUSS** for the presence check; **AGENT** for BDD/TDD discipline itself.
 
+## `verification.tasks_complete`
+Type: enum. Default: `off`. Values: `off`, `warn`, `block`. Controls the **tasks-complete gate** of `truss verify`: are all the tasks of the active OpenSpec change checked off?
+- `off`: the gate does not run.
+- `warn`: `truss verify` lists the open tasks and continues.
+- `block`: the same report, but `truss verify` stops with exit `1` **before running any command** and records the result in `.truss/verification/latest.json`.
+
+The active change is the one in `.truss/state.json` (created by `truss new`). Progress is what OpenSpec reports through `openspec instructions apply` (the checkboxes of `tasks.md`). If there is no active change, OpenSpec is unavailable or incompatible, or `tasks.md` has no tasks, the gate says so and does **not** block.
+
+Use `warn` while working (verification often runs mid-implementation) and `block` where a finished change is required. It checks that tasks are *checked off*, not that they were really done. Enforcement: **TRUSS** for the check; **AGENT** for actually doing and checking off the work.
+
 ## `verification.base_ref`
 Type: string. Default: unset (auto-detect). Git ref the change is compared with. When unset TRUSS tries `origin/HEAD`, `origin/main`, `origin/master`, `main`, then `master`. Set it for other branching models (for example `develop` or `release/1.x`). An unknown ref makes the gate report "cannot evaluate" without blocking. Only used when `tests_required` is not `off`. Enforcement: **TRUSS**.
 

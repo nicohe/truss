@@ -93,6 +93,15 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "tasks_complete": {
+          "type": "string",
+          "enum": [
+            "off",
+            "warn",
+            "block"
+          ],
+          "default": "off"
         }
       }
     },

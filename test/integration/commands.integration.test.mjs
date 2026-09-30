@@ -3,7 +3,17 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
-import { fakeBin, fakeCli, fakeGraphify, fakeOpenSpec, plain, run, validConfig, workspace } from './helpers.mjs';
+import {
+  fakeBin,
+  fakeCli,
+  fakeGraphify,
+  fakeOpenSpec,
+  fakeStatefulOpenSpec,
+  plain,
+  run,
+  validConfig,
+  workspace,
+} from './helpers.mjs';
 
 const out = (r) => plain(r.stdout);
 
@@ -362,4 +372,127 @@ test('doctor reports the tests_required mode', () => {
   assert.match(out(run(root, ['doctor'])), /Tests required\s+warn/);
   const off = workspace({ config: validConfig });
   assert.match(out(run(off, ['doctor'])), /Tests required\s+off \(not enforced\)/);
+});
+
+// --- verification.tasks_complete -------------------------------------------------------------------------------
+
+const tasksConfig = (mode) => validConfig.replace('  commands:\n', `  tasks_complete: ${mode}\n  commands:\n`);
+// A project with an active change whose planning is done and whose tasks.md has the given content.
+function tasksWorkspace(mode, tasks) {
+  const root = workspace({ config: tasksConfig(mode) });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  assert.equal(run(root, ['new', 'Add retry'], { binDirs: [bin] }).status, 0);
+  const change = path.join(root, 'openspec', 'changes', 'add-retry');
+  fs.writeFileSync(path.join(change, 'proposal.md'), '# Proposal\n');
+  fs.mkdirSync(path.join(change, 'specs'), { recursive: true });
+  fs.writeFileSync(path.join(change, 'specs', 'retry.md'), 'spec\n');
+  fs.writeFileSync(path.join(change, 'design.md'), '# Design\n');
+  fs.writeFileSync(path.join(change, 'tasks.md'), tasks);
+  return { root, bin };
+}
+
+test('tasks_complete block: open tasks fail verify, list what is left and run no command', () => {
+  const { root, bin } = tasksWorkspace('block', '- [x] one\n- [ ] add the tests\n- [ ] update the docs\n');
+  const marker = 'command-ran';
+  fs.writeFileSync(
+    path.join(root, '.truss', 'config.yaml'),
+    tasksConfig('block').replace(
+      '    - node -e "process.exit(0)"',
+      `    - node -e "require('fs').writeFileSync('${marker}','x')"`,
+    ),
+  );
+  const r = run(root, ['verify', '--trust'], { binDirs: [bin] });
+  assert.equal(r.status, 1, r.stdout);
+  assert.match(out(r), /Tasks complete\s+block/);
+  assert.match(out(r), /2 of 3 task\(s\) still open in "add-retry"/);
+  assert.match(out(r), /add the tests/);
+  assert.match(out(r), /update the docs/);
+  assert.match(out(r), /the active change still has open tasks\. No command was executed/);
+  assert.equal(fs.existsSync(path.join(root, marker)), false);
+  const evidence = evidenceOf(root);
+  assert.equal(evidence.status, 'failed');
+  assert.equal(evidence.reason, 'tasks_incomplete');
+  assert.deepEqual(evidence.commands, []);
+  assert.equal(evidence.tasksComplete.status, 'violation');
+  assert.equal(evidence.tasksComplete.remaining.length, 2);
+});
+
+test('tasks_complete block: with every task checked off verify runs and records the pass', () => {
+  const { root, bin } = tasksWorkspace('block', '- [x] one\n- [x] two\n');
+  const r = run(root, ['verify', '--trust'], { binDirs: [bin] });
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(out(r), /● passed\s+all 2 task\(s\) of "add-retry" are complete/);
+  assert.equal(evidenceOf(root).tasksComplete.status, 'passed');
+});
+
+test('tasks_complete warn: reports open tasks but still verifies and exits 0', () => {
+  const { root, bin } = tasksWorkspace('warn', '- [ ] one\n');
+  const r = run(root, ['verify', '--trust'], { binDirs: [bin] });
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(out(r), /Warning only \(verification\.tasks_complete: warn\)/);
+  assert.match(out(r), /Verification passed/);
+});
+
+test('tasks_complete: no active change, or OpenSpec unavailable, is reported but never blocks', () => {
+  const noChange = workspace({ config: tasksConfig('block') });
+  const a = run(noChange, ['verify', '--trust'], { binDirs: [fakeStatefulOpenSpec(noChange, { initialized: true })] });
+  assert.equal(a.status, 0, a.stdout);
+  assert.match(out(a), /no active change; nothing to check/);
+
+  const { root } = tasksWorkspace('block', '- [ ] one\n');
+  // A broken OpenSpec (its path does not exist); PATH is left alone so the verification command can still run.
+  const b = run(root, ['verify', '--trust'], { env: { TRUSS_OPENSPEC_PATH: path.join(root, 'no-such-openspec') } });
+  assert.equal(b.status, 0, b.stdout);
+  assert.match(out(b), /could not evaluate: .*not compatible.*Not blocking/);
+});
+
+test('tasks_complete off (the default) prints nothing and adds no evidence field', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  const r = run(root, ['verify', '--trust'], { binDirs: [bin] });
+  assert.equal(r.status, 0);
+  assert.doesNotMatch(out(r), /Tasks complete/);
+  assert.equal('tasksComplete' in evidenceOf(root), false);
+});
+
+test('both gates: each report is printed, the first blocking one names the reason, and both are recorded', () => {
+  const { root, bin } = tasksWorkspace('block', '- [ ] one\n');
+  fs.writeFileSync(
+    path.join(root, '.truss', 'config.yaml'),
+    validConfig.replace('  commands:\n', '  tests_required: block\n  tasks_complete: block\n  commands:\n'),
+  );
+  for (const file of ['src/app.js', 'test/app.test.js']) {
+    fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    fs.writeFileSync(path.join(root, file), 'x\n');
+  }
+  gateGit(root, 'add', 'src', 'test', 'openspec');
+  gateGit(root, 'commit', '-qm', 'base');
+  gateGit(root, 'checkout', '-qb', 'feature');
+  fs.writeFileSync(path.join(root, 'src', 'app.js'), 'changed\n');
+  const r = run(root, ['verify', '--trust'], { binDirs: [bin] });
+  assert.equal(r.status, 1, r.stdout);
+  assert.match(out(r), /Tests required\s+block/);
+  assert.match(out(r), /Tasks complete\s+block/);
+  const evidence = evidenceOf(root);
+  assert.equal(evidence.reason, 'tests_required');
+  assert.equal(evidence.testsRequired.status, 'violation');
+  assert.equal(evidence.tasksComplete.status, 'violation');
+});
+
+test('tasks_complete: invalid values are rejected and doctor reports the mode', () => {
+  const bad = workspace({ config: tasksConfig('sometimes') });
+  const r = run(bad, ['config']);
+  assert.equal(r.status, 2);
+  assert.match(out(r), /tasks_complete.*one of/);
+  const ok = workspace({ config: tasksConfig('warn') });
+  assert.match(out(run(ok, ['doctor'])), /Tasks complete\s+warn/);
+});
+
+test('status and continue report task progress and only call a change complete when every task is done', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n- [ ] two\n');
+  const partial = run(root, ['status'], { binDirs: [bin] });
+  assert.match(out(partial), /Phase\s+implementation/);
+  assert.match(out(partial), /Tasks\s+1\/2 complete/);
+  assert.match(out(run(root, ['continue'], { binDirs: [bin] })), /first incomplete task \("two"\)/);
+  fs.writeFileSync(path.join(root, 'openspec', 'changes', 'add-retry', 'tasks.md'), '- [x] one\n- [x] two\n');
+  assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Phase\s+complete/);
 });
