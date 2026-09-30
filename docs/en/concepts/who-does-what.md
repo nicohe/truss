@@ -56,7 +56,7 @@ TRUSS does not care which model does the work. The state lives in files, so each
 | Implementation | agent B | *Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists.* |
 | Review | agent C, a fresh session | *Review the active TRUSS change with the `code-review` skill: read the spec first, then the diff and `.truss/verification/latest.json`.* |
 
-- **Analysis starts from an idea or from documents.** Use `grill-me` for an idea, and `grill-with-docs` when there is a proposal, ticket or ADR to start from: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.*
+- **Analysis starts from an idea or from documents.** Use `grill-me` for an idea, and `grill-with-docs` when there is a proposal, ticket or ADR to start from: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.* See [Discovery](../workflows/discovery.md).
 - **`truss continue` tells each session where the change is.** When every task is checked off, it says to run `truss verify`, then code review and archive.
 - **Skills live in the TRUSS installation.** `truss skills` lists them; in the quick start layout they are in `.truss/.truss/skills/`.
 - **Use a [handoff](../reference/handoff.md) only if something is not in the files**, such as a discovery that is not yet in the spec.

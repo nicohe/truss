@@ -16,7 +16,7 @@ Terms are listed alphabetically.
 - **Gate:** an opt-in check of `truss verify` that can report or refuse before any command runs: `tests_required` and `tasks_complete`.
 - **Gherkin:** the Given / When / Then format for describing behavior as scenarios. `spec.gherkin` says whether acceptance behavior is expected in it.
 - **Graphify:** an optional tool that maps code relationships. When missing, TRUSS falls back to native search.
-- **Grill:** a guided round of questions that turns an unclear idea into explicit decisions, done with the `grill-me` or `grill-with-docs` skill. It is the main tool of *Discovery*.
+- **Grill:** a guided round of questions that turns an unclear idea into explicit decisions, done with the `grill-me` or `grill-with-docs` skill. It is the main tool of *Discovery*; see [Discovery (Grill)](../workflows/discovery.md).
 - **Handoff:** the minimal live state passed across a real boundary of context, agent, runtime or session.
 - **Installation:** the copy of TRUSS itself (its code, schema, skills, policies and workflows), as opposed to the *project* it runs on. See [project structure](project-structure.md).
 - **Integration:** an external capability TRUSS works with, such as OpenSpec or Graphify.

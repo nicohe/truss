@@ -38,7 +38,7 @@ This is the canonical end-to-end order for a TRUSS change. Not every skill is a 
 |---:|---|---|---|---|
 | 0 | Check prerequisites | `truss doctor` | environment readiness | OpenSpec required; Graphify status |
 | 1 | Start a change | `truss new "..."` | create active change scaffold | OpenSpec |
-| 2 | Resolve ambiguity | no dedicated CLI in v0.2 | `grill` | `grill-me` or `grill-with-docs` |
+| 2 | Resolve ambiguity | no dedicated CLI in v0.2 | [`grill`](discovery.md) | `grill-me` or `grill-with-docs` |
 | 3 | Test an uncertain idea | no dedicated CLI | discovery | `prototype` (optional) |
 | 4 | Finalize expected behavior | OpenSpec commands/tools | spec phase | OpenSpec |
 | 5 | Implement next slice/task | `truss continue` | `execute-change` | coding agent; Graphify when useful |

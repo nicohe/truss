@@ -58,7 +58,7 @@ A TRUSS no le importa qué modelo hace el trabajo. El estado vive en archivos, a
 | Implementación | agente B | *Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists.* |
 | Review | agente C, en una sesión limpia | *Review the active TRUSS change with the `code-review` skill: read the spec first, then the diff and `.truss/verification/latest.json`.* |
 
-- **El análisis parte de una idea o de documentos.** Usa `grill-me` para una idea, y `grill-with-docs` cuando hay una propuesta, un ticket o un ADR de partida: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.*
+- **El análisis parte de una idea o de documentos.** Usa `grill-me` para una idea, y `grill-with-docs` cuando hay una propuesta, un ticket o un ADR de partida: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.* Consulta [Descubrimiento](../workflows/discovery.md).
 - **`truss continue` le dice a cada sesión en qué punto está el cambio.** Cuando todas las tareas están marcadas, indica ejecutar `truss verify`, luego el code review y archivar.
 - **Las skills viven en la instalación de TRUSS.** `truss skills` las lista; con la disposición del inicio rápido están en `.truss/.truss/skills/`.
 - **Usa un [handoff](../reference/handoff.md) solo si algo no está en los archivos**, como un descubrimiento que aún no está en la spec.
