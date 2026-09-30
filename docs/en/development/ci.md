@@ -12,6 +12,8 @@ CI runs on:
 - every pull request;
 - manual `workflow_dispatch` runs.
 
+A new push to a pull request cancels the older run of that pull request, which no longer matters. A run on `main` is never cancelled: each commit has its own concurrency group, so every commit that lands gets its full result.
+
 ## Runtime matrix
 
 TRUSS declares Node.js `>=20`, so CI verifies the minimum supported major and the newer lines (6 jobs):

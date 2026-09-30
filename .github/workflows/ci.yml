@@ -10,9 +10,12 @@ on:
 permissions:
   contents: read
 
+# A newer push to a pull request makes its older run pointless, so those are cancelled. A run on `main` is never
+# cancelled: each has its own group (the commit), so every commit that lands gets its full result. With one group per
+# ref, a second run on `main` cancelled the run in progress for the commit before it.
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:

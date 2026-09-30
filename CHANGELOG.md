@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- CI no longer cancels runs on `main`. The workflow cancelled any run in progress on the same ref when a new one started, which is right for a pull request but left a commit on `main` without its Windows result when another run started on `main` two minutes later. Runs on `main` now have one concurrency group per commit; pull requests still cancel their own older runs.
+
 ## [0.2.6] - 2026-09-30
 
 Patch release with no change to the CLI. The `grill-with-docs` skill gets an output contract, and the documentation gains a page on discovery (Grill) and says that Grill comes as two skills.
