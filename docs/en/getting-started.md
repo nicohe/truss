@@ -92,6 +92,7 @@ Agents read a project guidance file, usually `AGENTS.md`, at the repository root
 
 - Before implementing, run `node .truss/bin/truss.mjs continue` and follow the instructions and the files it lists.
 - Load skills and documentation only when the task needs them; `node .truss/bin/truss.mjs skills` lists the skills.
+- To write an OpenSpec artifact, run `openspec instructions <artifact> --change <id>`; it prints the format and the path.
 - Keep specs, code and tests aligned; do not let them diverge silently.
 - When you finish, run `node .truss/bin/truss.mjs verify` and do not call the change done until it passes.
 - Write a handoff (`node .truss/bin/truss.mjs handoff`) only when work moves to another agent, runtime or session.
@@ -164,6 +165,18 @@ Context to load
 
 The paths shown are the real ones for your layout. `truss status` shows the same progress, and a change is `complete` only when every task in `tasks.md` is checked off. Phases and commands are in the [lifecycle](workflows/lifecycle-commands.md).
 
+### What your agent does
+
+`continue` says *what* to do; your agent needs to know *how*. TRUSS does not install OpenSpec's commands in your agent (`init` runs OpenSpec with `--tools none`), so the agent asks OpenSpec directly:
+
+```bash
+openspec instructions proposal --change add-retry-policy
+```
+
+That prints the purpose, the format and the exact path of the artifact, and the same works for `specs`, `design` and `tasks`. The agent writes each one, runs `truss continue` again and repeats until the four exist. If the idea is unclear, it should first ask you questions with the `grill-me` skill (see [Grill](reference/glossary.md)). This is why the guidance snippet above has a line about `openspec instructions`.
+
+Once the phase is `implementation`, the agent works through `tasks.md` and changes `- [ ]` to `- [x]` as it finishes each task. That is what `truss status` counts.
+
 ## 6. Verify
 
 ```bash
@@ -194,6 +207,16 @@ verification:
 ```
 
 See [`truss verify`](reference/verify.md) for what each check does and does not prove.
+
+### After verify passes
+
+A passing `verify` does not close the change: `truss continue` then asks for a code review and for OpenSpec's own checks. TRUSS does none of these; you or your agent do:
+
+1. **Review.** The agent uses the `code-review` skill against the spec, the project's standards and risk, ideally in a fresh session (see [who does what](concepts/who-does-what.md)).
+2. **Validate.** `openspec validate add-retry-policy` checks that the change's specs are well formed.
+3. **Archive.** `openspec archive add-retry-policy` moves the change to `openspec/changes/archive/`, dated, and merges its spec deltas into `openspec/specs/`. It asks for confirmation (`-y` skips it); add `--skip-specs` for a change that alters no behavior, such as tooling or documentation.
+
+Commit `openspec/` with the code: specs and archived changes are durable (see [durable vs ephemeral](concepts/durable-vs-ephemeral.md)). TRUSS still names the archived change as the active one, so `truss status` and `truss continue` report that OpenSpec cannot find it until you start the next change with `truss new`.
 
 ## 7. Monorepos
 

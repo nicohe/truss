@@ -32,6 +32,18 @@ OpenSpec defines **what** must change. `execute-change` coordinates **how the ch
 12. Create a Handoff only when context, responsibility, session or runtime changes.
 13. Continue with the next ready task or finish the change.
 
+## Commands along the way
+
+| Step | Command |
+|---|---|
+| Read the active change and the next action | `truss continue` |
+| Write a planning artifact | `openspec instructions <artifact> --change <id>` |
+| See progress (checked-off tasks in `tasks.md`) | `truss status` |
+| Run deterministic verification | `truss verify` |
+| Close the change | `openspec validate <id>`, then `openspec archive <id>` |
+
+`openspec` is the OpenSpec CLI, not TRUSS; `openspec --help` lists its commands. The [getting started guide](../getting-started.md#what-your-agent-does) shows them at work.
+
 ## v0.2 enforcement
 
 In v0.2, `execute-change` is an **instruction contract** followed by the coding agent. TRUSS directly executes deterministic verification, while BDD/TDD/spec behavior is primarily agent-enforced. Runtime orchestration is planned for v0.3.
