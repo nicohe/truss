@@ -163,6 +163,7 @@ Implement add-retry-policy using .truss/.truss/workflows/execute-change.md. Read
 Context to load
 - AGENTS.md (effective component/workspace guidance)
 - openspec/changes/add-retry-policy
+- .truss/config.yaml (this project's settings: gates, verification commands, policies)
 - .truss/.truss/workflows/execute-change.md
 - .truss/.truss/policies/ (configured BDD/TDD/spec policies)
 ```
