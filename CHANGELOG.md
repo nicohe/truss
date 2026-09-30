@@ -4,8 +4,17 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-30
+
+Patch release: the documented quick start now works. Until now, cloning TRUSS into a project and running `truss init` failed on the first command.
+
+### Upgrade notes
+- TRUSS reads its config schema, skills, policies and workflows from its own installation. A `.truss/schema/` copied into a project as a workaround is no longer used, and can be deleted.
+- Nothing else changes for a project that already works.
+
 ### Fixed
 - **The documented quick start did not work.** Cloning TRUSS into a project's `.truss/` (as the README says) and running `truss init` failed with `TRUSS config schema not found`, because TRUSS looked for its schema, skills, policies and workflows inside the *project* instead of in its own installation. Every path the docs and `AGENTS.md` point agents to was missing there, and the same happened with TRUSS installed anywhere else. The tests hid it by copying the schema into each test project. TRUSS now reads that content from its own installation (`lib/paths.mjs`); the project keeps only `config.yaml` and its local state. `truss continue` prints the real path of the workflow and policies to read, `truss skills` lists the installed skills, and a project's own `.truss/schema` is no longer used.
+- The README quick start passed `--component worker` to `truss new` on a project with no components, which fails with `Unknown component`. The example no longer uses it, and the README says to declare `components` first.
 - `truss init` no longer leaves a half-created `.truss/config.yaml` behind when it cannot validate it (for example, an incomplete installation), and the error now says the installation is incomplete.
 
 ## [0.2.0] - 2026-09-29
