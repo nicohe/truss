@@ -4,8 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-09-30
+
+Patch release with no change to the CLI. The quick start now installs a release instead of `main`, the guide to update TRUSS is rewritten for that, and Getting started explains Grill and the doubled `.truss/.truss/` where the reader first meets them. CI and the release checklist also change.
+
+### Upgrade notes
+- Nothing to do for an existing project: `lib/`, `bin/` and the skills, policies and workflows are unchanged since 0.2.4.
+- A clone made with the new quick start is pinned to a release (a "detached HEAD"), so `git pull` does not update it. Use `git fetch --tags` and `git checkout vX.Y.Z`, as the [update guide](docs/en/guides/update-and-remove.md) says. A clone of `main` made earlier keeps working as before.
+
 ### Changed
-- The quick start (README and Getting started) now clones a release, `git clone --depth 1 --branch v0.2.4 ...`, instead of `main`, so what a newcomer installs is what was published and tested, and `truss --version` identifies it. The guide to update or remove TRUSS is rewritten for a pinned clone (`git fetch --tags` and `git checkout`), with a short section on following `main`. `npm run check:docs` now also keeps that version in step with `package.json`. An existing clone of `main` is not affected.
+- The quick start (README and Getting started) now clones a release, `git clone --depth 1 --branch v0.2.5 ...`, instead of `main`, so what a newcomer installs is what was published and tested, and `truss --version` identifies it. The guide to update or remove TRUSS is rewritten for a pinned clone (`git fetch --tags` and `git checkout`), with a short section on following `main`. `npm run check:docs` now also keeps that version in step with `package.json`. An existing clone of `main` is not affected.
 - CI runs 6 jobs instead of 9: Ubuntu on Node 20, 22 and 24, macOS on 20 and 24, and Windows on 24. macOS and Windows exist to catch what depends on the operating system, and the range of Node versions is covered on Ubuntu, the cheapest runner. A problem specific to an older Node on Windows, or to Node 22 on macOS or Windows, is no longer caught by CI.
 - [Releasing](docs/en/development/releasing.md) says how to extract the changelog section as the release notes, with an `awk` command that works on macOS and Linux and a check that the file is not empty.
 
