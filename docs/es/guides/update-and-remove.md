@@ -26,7 +26,7 @@ node .truss/bin/truss.mjs doctor
 ```bash
 cd .truss
 git fetch --tags
-git checkout v0.2.2      # un HEAD desacoplado, a propósito: nada se mueve hasta que tú lo digas
+git checkout v0.2.3      # un HEAD desacoplado, a propósito: nada se mueve hasta que tú lo digas
 cd ..
 ```
 

@@ -4,6 +4,14 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-09-30
+
+Patch release: `truss handoff` no longer loses a note, and the documentation gains three guides, a "who does what" page and checks that keep the Spanish translation and the guide's examples in step with the English pages and the code. Nothing else about the CLI changes.
+
+### Upgrade notes
+- `truss handoff` now leaves an existing note untouched (exit `0`, with a message) instead of replacing it with the empty template. A script that ran it twice expecting a fresh template will keep the old note; delete the file to start a new one.
+- Nothing else changes for an existing project.
+
 ### Changed
 - **The verification policy and the `execute-change` workflow now name `truss verify`.** They said "run the configured commands", which an agent can do by hand and leave no evidence. `policies/verification.md` also mentions the approval of a new command list and the two opt-in checks.
 
