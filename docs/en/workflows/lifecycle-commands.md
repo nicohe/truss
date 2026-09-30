@@ -1,36 +1,125 @@
-# TRUSS v0.2 lifecycle commands
+# Lifecycle commands
 
-TRUSS v0.2 remains **agent-driven**. These commands make OpenSpec the operational source for change state without introducing the runtime orchestration planned for v0.3.
+Three commands follow a change from an idea to a finished implementation: `new` starts it, `status` shows where it stands and `continue` tells your agent what to do next. TRUSS v0.2 is **agent-driven**: none of them runs a model. They read and write the state of the change, and your agent does the work.
+
+The [getting started guide](../getting-started.md#5-take-one-change-through-the-workflow) walks through them once. This page is the reference for what each one prints and when to use it.
+
+## The phases
+
+A change is always in one phase, and `status` and `continue` show it:
+
+| Phase | What it means | What moves it on |
+|---|---|---|
+| `spec` | planning artifacts are missing (by default proposal, specs, design and tasks) | the agent writes them, one at a time |
+| `implementation` | every artifact exists and at least one task is open | the agent implements the tasks and checks each one off in `tasks.md` |
+| `complete` | there are tasks and every one is checked off | verification, code review and archiving |
+
+The phase is recomputed from OpenSpec each time you ask, so it cannot go stale. `complete` means *every task is checked off*, nothing more: it says nothing about whether the tasks were done well. That is what [`truss verify`](../reference/verify.md) and the review are for.
 
 ## `truss new "Change name" [--component name]`
 
-- validates TRUSS configuration and the component;
-- requires a compatible, initialized OpenSpec project;
-- normalizes the title to a kebab-case change id;
-- delegates scaffold creation to `openspec new change <id> --goal <title> --json`;
-- never invents its own OpenSpec artifact layout;
-- records only the active-change pointer in `.truss/state.json`.
+Use it to start a change. It turns the title into an id (`Add retry policy` becomes `add-retry-policy`), asks OpenSpec to create the change, and remembers it as the **active change**. Only one change is active at a time.
+
+```text
+△ TRUSS · new
+
+● OpenSpec change created
+Change          add-retry-policy
+Component       workspace
+OpenSpec        openspec/changes/add-retry-policy
+Planning        0/4 artifacts complete
+
+Next: truss continue
+```
+
+With `--component api`, the change is created inside a component declared under `components` (see [components](../reference/components.md)).
+
+It needs an initialized project. Without `.truss/config.yaml` it stops with `× TRUSS config not found: .truss/config.yaml` and exit code `1`: run [`truss init`](../reference/init.md) first.
 
 ## `truss status`
 
-- reads the active change pointer from `.truss/state.json`;
-- queries `openspec status --change <id> --json` every time;
-- reports artifact readiness and planning progress from OpenSpec rather than stale TRUSS phase data;
-- reports task progress (`Tasks 1/3 complete`) read from `openspec instructions apply`, i.e. the checkboxes of `tasks.md`;
-- refreshes the local phase pointer:
-  - `spec`: planning artifacts are still missing;
-  - `implementation`: every artifact exists but at least one task is open (or task progress is unavailable);
-  - `complete`: there are tasks and every one is checked off.
+Use it whenever you want to know where the change stands, before you hand it to an agent or when you come back to it. It changes nothing except refreshing the phase it remembers.
 
-`openspec status` alone cannot tell `implementation` from `complete`: its `isComplete` means *all artifacts exist*, not *all tasks are done*. TRUSS therefore never reports `complete` unless task progress says so.
+```text
+△ TRUSS · status
+
+Change          add-retry-policy
+Component       workspace
+Phase           implementation
+OpenSpec        openspec/changes/add-retry-policy
+Planning        4/4 artifacts complete
+Tasks           1/2 complete
+  ● proposal           done
+  ● specs              done
+  ● design             done
+  ● tasks              done
+Tasks required   tasks
+
+Next: truss continue
+```
+
+The markers next to each artifact are `●` done, `◐` ready to be written and `○` blocked until another artifact exists. `Tasks required` names the artifact OpenSpec needs before a task can be worked on. While planning is unfinished the `Tasks` line is absent, because there are no tasks yet.
+
+With no active change it says so and points at the next step:
+
+```text
+△ TRUSS · status
+
+No active change.
+Next: truss new "Change name"
+```
 
 ## `truss continue`
 
-`continue` does not invoke a coding model in v0.2. It computes and prints the next agent action:
+Use it to get the next instruction for your agent. It computes the step from the state of the change and prints it, together with the files the agent should read. It never starts an agent: you give its output to one.
 
-- no active change → create one;
-- planning incomplete → create/refine the next ready OpenSpec artifact, using Grill when ambiguity remains;
-- planning complete, tasks open → follow the `execute-change` workflow (`workflows/execute-change.md` in the TRUSS installation; `continue` prints the real path), BDD/TDD and verification policies, starting with the first incomplete task;
-- all tasks complete → run deterministic verification, code review, then OpenSpec verification/archive.
+| The change is | The next action |
+|---|---|
+| none | create one with `truss new` |
+| still planning | write or refine the next artifact that is ready, using Grill when something is still ambiguous |
+| planned, tasks open | follow the [`execute-change`](execute-change.md) workflow, starting with the first task that is not checked off |
+| every task checked off | run `truss verify`, then code review and OpenSpec verification and archiving |
 
-This keeps the boundary explicit: OpenSpec owns change/artifact state; TRUSS owns engineering workflow policy; the coding agent performs non-deterministic implementation in v0.2.
+For a change that is still planning:
+
+```text
+△ TRUSS · continue
+
+Change          add-retry-policy
+Phase           spec
+OpenSpec        openspec/changes/add-retry-policy
+Mode            agent-driven (TRUSS v0.2)
+
+Next action
+Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
+```
+
+For a change whose tasks are all checked off:
+
+```text
+△ TRUSS · continue
+
+Change          add-retry-policy
+Phase           complete
+OpenSpec        openspec/changes/add-retry-policy
+Tasks           2/2 complete
+Mode            agent-driven (TRUSS v0.2)
+
+Next action
+Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review and OpenSpec verification/archive.
+```
+
+While the tasks are open, the output also lists a **Context to load** section with the real paths of the workflow, the policies and the change, as the getting started guide shows. A prompt that works with any agent is: "Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists."
+
+## Which one, when
+
+- **Starting something new:** `new`.
+- **Coming back after a break, or before a handoff:** `status`, and `truss handoff` if the work is changing hands (see [handoff](../reference/handoff.md)).
+- **Handing work to an agent:** `continue`, every time. Its output changes as the change moves.
+- **You think you are done:** `status` to see that every task is checked off, then `verify`.
+
+## How it works
+
+TRUSS keeps only the pointer to the active change, in `.truss/state.json`. Everything else comes from OpenSpec every time: `new` runs `openspec new change`, `status` runs `openspec status` and reads task progress from `openspec instructions apply` (the checkboxes of `tasks.md`), and TRUSS never invents its own layout of OpenSpec artifacts.
+
+`openspec status` alone cannot tell `implementation` from `complete`: its `isComplete` means *all artifacts exist*, not *all tasks are done*. TRUSS therefore reports `complete` only when task progress says so. This keeps the boundary explicit: OpenSpec owns the state of the change and its artifacts, TRUSS owns the engineering workflow policy, and the coding agent does the non-deterministic implementation. Who does what is spelled out in [Who does what](../concepts/who-does-what.md).
