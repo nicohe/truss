@@ -390,16 +390,18 @@ export function checkDrift(root, { commands = [] } = {}) {
   return errors;
 }
 
-// Places that spell out the current release: a pinned install in the guides, the example output of `--version`, the
+// Places that spell out the current release: the pinned install in the README, getting started and the guides, the example output of `--version`, the
 // placeholder of the bug report. Each must match `package.json`, or a release leaves them pointing at the last one.
 export const VERSION_REFERENCES = [
   ...[
     ['guides/ci.md', /--branch v(\d+\.\d+\.\d+)/],
     ['guides/update-and-remove.md', /git checkout v(\d+\.\d+\.\d+)/],
+    ['getting-started.md', /--branch v(\d+\.\d+\.\d+)/],
     ['reference/cli.md', /--version\s+# truss (\d+\.\d+\.\d+)/],
   ].flatMap(([page, pattern]) =>
     ['docs/en', ...TRANSLATION_DIRS].map((directory) => ({ file: `${directory}/${page}`, pattern })),
   ),
+  { file: 'README.md', pattern: /--branch v(\d+\.\d+\.\d+)/ },
   { file: '.github/ISSUE_TEMPLATE/bug_report.yml', pattern: /truss (\d+\.\d+\.\d+)/ },
 ];
 
