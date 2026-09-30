@@ -4,6 +4,12 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss new` warns when it leaves another change behind.** Starting a change while another was still open in OpenSpec replaced the active change without a word, and there is no command to go back to it, so the first change looked lost. `new` still creates the new change and makes it the active one, exit code `0`, and now adds `○ "x" is still open in OpenSpec (path) and is no longer the active change: TRUSS follows one change at a time.` There is no warning when the previous change was archived or is gone from OpenSpec, or when the state file cannot be read.
+
+### Documentation
+- **The lifecycle commands page says what the warning means and how to make the first change active again** (edit `.truss/state.json`; a change in a component needs its `component` too), and Troubleshooting lists the line.
+
 ## [0.2.10] - 2026-09-30
 
 Patch release: three rough edges found by trying TRUSS end to end on a small todo-list project. `truss new` now shows what OpenSpec said instead of its JSON, two errors say how to get out of them, and the documentation explains the warning Git prints when you clone a release.

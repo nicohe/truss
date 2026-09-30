@@ -36,6 +36,14 @@ Next: truss continue
 
 With `--component api`, the change is created inside a component declared under `components` (see [components](../reference/components.md)).
 
+If another change is still open in OpenSpec, `new` creates the new one and makes it the active change, and warns you that the other was left behind:
+
+```text
+○ "add-retry-policy" is still open in OpenSpec (openspec/changes/add-retry-policy) and is no longer the active change: TRUSS follows one change at a time.
+```
+
+Nothing is lost: the first change stays in OpenSpec exactly as it was, and `openspec list` still shows it. There is no command to make it the active change again. To do it, edit `.truss/state.json` so that it holds `{"change": "add-retry-policy"}`, plus `"component": "api"` when the change lives in a component; `truss status` fills in the rest. There is no warning when the previous change was archived or is gone from OpenSpec, since nothing is left behind.
+
 It needs an initialized project. Without `.truss/config.yaml` it stops with `× invalid config` and `TRUSS config not found: .truss/config.yaml. Run truss init to create it.`, and exit code `2`: run [`truss init`](../reference/init.md) first.
 
 ## `truss status`
