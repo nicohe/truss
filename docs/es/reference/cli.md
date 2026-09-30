@@ -2,7 +2,7 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/reference/cli.md).
 
-TRUSS es un CLI de Node. Desde un proyecto, ejecútalo como `node .truss/bin/truss.mjs <comando>` (o mediante un alias; consulta [primeros pasos](../getting-started.md)). Los comandos actúan sobre el **directorio actual**, que debe ser la raíz del proyecto. No hay opciones globales: solo el nombre del comando, sus argumentos y las opciones que se listan abajo.
+TRUSS es un CLI de Node. Desde un proyecto, ejecútalo como `node .truss/bin/truss.mjs <comando>` (o mediante un alias; consulta [primeros pasos](../getting-started.md)). Los comandos actúan sobre el **directorio actual**, que debe ser la raíz del proyecto. Las únicas opciones que valen con cualquier comando son `--help` y `--version`, descritas en [Obtener ayuda](#obtener-ayuda); el resto son las opciones que se listan abajo.
 
 TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra qué comandos ejecutan comprobaciones determinísticas y cuáles solo preparan o muestran estado; ninguno ejecuta un coding agent.
 
@@ -20,7 +20,24 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 | `truss verify [--trust]` | Ejecuta `verification.commands` en orden y se detiene en el primer fallo; ejecuta antes las comprobaciones opcionales; pregunta antes de ejecutar una lista de comandos nueva o modificada | [`verify`](verify.md) |
 | `truss handoff` | Escribe una nota de handoff breve para el cambio activo | [gestión de contexto](../concepts/context-management.md) |
 | `truss skills` | Lista las skills portables que trae la instalación | [skills](../skills/overview.md) |
-| `truss help` | Imprime el uso. Ejecutar `truss` sin comando, o con uno desconocido, hace lo mismo | |
+| `truss version` | Imprime la versión de TRUSS instalada (`truss --version` y `truss -v` hacen lo mismo) | |
+| `truss help [command]` | Lista los comandos, o explica uno. Ejecutar `truss` sin comando hace lo mismo que `truss help` | [obtener ayuda](#obtener-ayuda) |
+
+## Obtener ayuda
+
+```bash
+node .truss/bin/truss.mjs help             # la lista de comandos (igual que ejecutar truss sin comando)
+node .truss/bin/truss.mjs verify --help    # uso, opciones y códigos de salida de un comando; no se ejecuta
+node .truss/bin/truss.mjs help verify      # lo mismo
+node .truss/bin/truss.mjs --version        # truss 0.2.1
+```
+
+`--help` nunca ejecuta el comando que la acompaña, así que `truss verify --help` siempre es seguro. Un comando mal escrito falla con código de salida `2`, para que un script no siga como si hubiera funcionado, y sugiere el nombre más parecido. Los mensajes están en inglés:
+
+```text
+× Unknown command "verfy".
+Did you mean "verify"? Run "truss help" to list the commands.
+```
 
 ## Opciones
 
@@ -28,6 +45,8 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 |---|---|---|
 | `--component <name>` | `new` | Crea el cambio en un componente declarado bajo `components`. Un nombre no declarado falla con `Unknown component`. |
 | `--trust` | `verify` | Aprueba sin preguntar la lista actual de `verification.commands`. Úsala después de leer la lista. |
+| `--help`, `-h` | cualquier comando | Muestra la ayuda de ese comando en lugar de ejecutarlo. |
+| `--version`, `-v` | en lugar del comando | Imprime la versión instalada. |
 
 ## Códigos de salida
 
@@ -37,7 +56,7 @@ Se usan los mismos tres valores en todos los comandos:
 |---|---|
 | `0` | El comando hizo lo que se le pidió. |
 | `1` | Falló una comprobación o una precondición: falló la verificación, no se aprobó una lista de comandos, OpenSpec falta o es incompatible, o una capacidad requerida no está disponible. |
-| `2` | La configuración es inválida o el comando se usó mal (por ejemplo, `new` sin título, o un componente o una acción desconocidos). |
+| `2` | La configuración es inválida o el comando se usó mal (por ejemplo, `new` sin título, o un comando, un componente o una acción desconocidos). |
 
 Por comando:
 

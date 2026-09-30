@@ -5,9 +5,12 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Added
+- **`truss --version`** (also `-v` and `truss version`) prints the installed version. Until now there was no way to tell which TRUSS was installed, and a bug report needs it.
+- **`truss <command> --help`** (also `-h`, and `truss help <command>`) shows the usage, options and exit codes of one command, and never runs it. `truss help` lists the commands as before, and now also says how to get more.
 - **`npm run check:docs`**, run by `npm run ci` and by a CI step. It fails on broken links, broken anchors and orphan pages under `docs/en/`, and on drift between the docs and the code: an undocumented CLI command, configuration option, `truss doctor` check or environment variable. Tested with real trees and by mutating a copy of the repository with the problems found during the documentation analysis.
 
 ### Changed
+- **An unknown command now fails with exit code `2`** and says so, with a suggestion when one is close (`Unknown command "verfy". Did you mean "verify"?`). Before, it printed the whole command list and exited `0`, so `truss verfy && deploy` carried on as if verification had passed. Running `truss` with no command still lists the commands and exits `0`.
 - **`npm run check:docs` now covers the Spanish docs.** Orphan pages under `docs/es/` fail the check, like those under `docs/en/`, and the Spanish CLI, configuration, `doctor` and environment references are held to the same drift checks as the English ones (a page that is not translated yet is not an error, an out-of-date one is). It also warns, without failing, about an English page that has no counterpart under `docs/es/`.
 
 ### Documentation

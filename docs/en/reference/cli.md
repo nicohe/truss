@@ -1,6 +1,6 @@
 # CLI reference
 
-TRUSS is a Node CLI. From a project, run it as `node .truss/bin/truss.mjs <command>` (or through an alias; see [getting started](../getting-started.md)). Commands act on the **current directory**, which must be the project root. There are no global flags: a command name, its arguments, and the options listed below.
+TRUSS is a Node CLI. From a project, run it as `node .truss/bin/truss.mjs <command>` (or through an alias; see [getting started](../getting-started.md)). Commands act on the **current directory**, which must be the project root. The only flags that work with any command are `--help` and `--version`, described in [Getting help](#getting-help); the rest are the options listed below.
 
 TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands run deterministic checks and which only prepare or show state; none of them runs a coding agent.
 
@@ -18,7 +18,24 @@ TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands 
 | `truss verify [--trust]` | Runs `verification.commands` in order, stopping at the first failure; runs the opt-in checks first; asks before running a new or changed command list | [`verify`](verify.md) |
 | `truss handoff` | Writes a short handoff note for the active change | [context management](../concepts/context-management.md) |
 | `truss skills` | Lists the portable skills shipped with the installation | [skills](../skills/overview.md) |
-| `truss help` | Prints usage. Running `truss` with no command, or with an unknown one, does the same | |
+| `truss version` | Prints the installed TRUSS version (`truss --version` and `truss -v` do the same) | |
+| `truss help [command]` | Lists the commands, or explains one. Running `truss` with no command does the same as `truss help` | [getting help](#getting-help) |
+
+## Getting help
+
+```bash
+node .truss/bin/truss.mjs help             # the command list (same as running truss with no command)
+node .truss/bin/truss.mjs verify --help    # usage, options and exit codes of one command; it is not run
+node .truss/bin/truss.mjs help verify      # the same
+node .truss/bin/truss.mjs --version        # truss 0.2.1
+```
+
+`--help` never runs the command it is next to, so `truss verify --help` is always safe. A mistyped command fails with exit code `2`, so a script does not carry on as if it had worked, and suggests the closest name:
+
+```text
+× Unknown command "verfy".
+Did you mean "verify"? Run "truss help" to list the commands.
+```
 
 ## Options
 
@@ -26,6 +43,8 @@ TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands 
 |---|---|---|
 | `--component <name>` | `new` | Creates the change in a component declared under `components`. An undeclared name fails with `Unknown component`. |
 | `--trust` | `verify` | Approves the current `verification.commands` list without asking. Use it after reading the list. |
+| `--help`, `-h` | any command | Shows the help of that command instead of running it. |
+| `--version`, `-v` | in place of the command | Prints the installed version. |
 
 ## Exit codes
 
@@ -35,7 +54,7 @@ The same three values are used everywhere:
 |---|---|
 | `0` | The command did what it was asked. |
 | `1` | A check or precondition failed: verification failed, a command list was not approved, OpenSpec is missing or incompatible, or a required capability is unavailable. |
-| `2` | The configuration is invalid, or the command was used wrongly (for example, `new` without a title, or an unknown component or action). |
+| `2` | The configuration is invalid, or the command was used wrongly (for example, `new` without a title, or an unknown command, component or action). |
 
 Per command:
 
