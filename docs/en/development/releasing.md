@@ -18,17 +18,26 @@ A release is a pull request that raises the version, followed by a tag and a Git
    - the example output of `--version` in the [CLI reference](../reference/cli.md);
    - the placeholder in `.github/ISSUE_TEMPLATE/bug_report.yml`;
    - the same lines in the Spanish pages under `docs/es/`.
-5. Run `npm run ci` and open the pull request. It needs the nine matrix jobs green, like any other.
+5. Run `npm run ci` and open the pull request. It needs the required matrix jobs green, like any other.
 
 ## After the merge
 
-Update `main`, then tag the merge commit and publish the release, using the changelog section as its notes:
+Update `main`. Extract the changelog section as the release notes first and check that the file is not empty, so a release is never published without them:
+
+```bash
+awk -v v="X.Y.Z" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ {f=0} f && (NF || p) {p=1; print}' CHANGELOG.md > release-notes.md
+test -s release-notes.md && wc -l release-notes.md
+```
+
+Then tag and publish:
 
 ```bash
 git tag -a vX.Y.Z -m "TRUSS vX.Y.Z" <merge-commit>
 git push origin vX.Y.Z
-gh release create vX.Y.Z --verify-tag --latest --title "TRUSS vX.Y.Z" --notes-file <file with the changelog section>
+gh release create vX.Y.Z --verify-tag --latest --title "TRUSS vX.Y.Z" --notes-file release-notes.md
 ```
+
+That `awk` runs the same on macOS and Linux; a `sed` one-liner that works on one fails on the other. Delete `release-notes.md` afterwards, it is not part of the repository.
 
 Tags are annotated. The guides pin a tag, so a tag is never moved or deleted once published: a mistake is fixed by the next release.
 

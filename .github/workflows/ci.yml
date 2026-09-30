@@ -29,6 +29,16 @@ jobs:
           - 20
           - 22
           - 24
+        # The Node versions are covered on Ubuntu, the cheapest runner. macOS and Windows exist to catch what depends
+        # on the operating system (paths, shims, process spawning), so they run the range's two ends or, for
+        # Windows, the newest line only.
+        exclude:
+          - os: macos-latest
+            node-version: 22
+          - os: windows-latest
+            node-version: 20
+          - os: windows-latest
+            node-version: 22
 
     steps:
       - name: Checkout
