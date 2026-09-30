@@ -4,6 +4,10 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **`truss graphify bootstrap` and `update` no longer hide why `graphify extract` failed, and no longer run a second command that can call a language model.** When `graphify extract . --code-only` failed, TRUSS ran `graphify . --no-viz` and showed only that second failure. With a corrupt `graphify-out/graph.json`, Graphify said exactly what to do (`Delete the file and run a full rebuild`) and TRUSS showed `no LLM API key found` instead. Worse, that second command has no `--code-only`, so with an API key in the environment it could have sent the project's documents to a language model. TRUSS now runs the older path-first command only when Graphify does not know `extract` (`unknown command`), and any other failure is shown as it is.
+- **A failed Graphify command is now printed with the command and its last 12 lines of output.** The success message already named the command; it also named `extract` when the path-first fallback was the one that ran. Graphify fails with a Python traceback, whose last line holds the message, so the long ones are cut and the omitted lines are counted.
+
 ## [0.2.12] - 2026-09-30
 
 Patch release: `truss use <change>` goes back to a change that is already open in OpenSpec. Until now, `truss new` could leave a change behind and the only way back was to edit `.truss/state.json` by hand. The warning `truss new` prints now ends with the command that goes back.
