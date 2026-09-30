@@ -57,7 +57,8 @@ y, frente al código que describen, que la documentación mencione:
 - cada comando del CLI (`docs/en/reference/cli.md`);
 - cada opción de configuración del schema (`docs/en/configuration/reference.md`);
 - cada check de `truss doctor` (`docs/en/reference/doctor.md`);
-- cada variable de entorno que lee el CLI o define un workflow de CI (`docs/en/reference/environment.md`).
+- cada variable de entorno que lee el CLI o define un workflow de CI (`docs/en/reference/environment.md`);
+- la versión actual allí donde una página o plantilla la escribe (instalaciones fijadas en las guías, el ejemplo de `--version`, el placeholder del reporte de errores), coincidiendo con `package.json`. Consulta [Publicar una release](releasing.md).
 
 Las traducciones al español de esas cuatro páginas (`docs/es/...`) se comprueban igual cuando existen. La comprobación también lista, como una advertencia que no hace fallar el build, cada página en inglés que no tiene su equivalente bajo `docs/es/`.
 

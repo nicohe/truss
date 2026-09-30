@@ -19,6 +19,8 @@ Thanks for contributing to TRUSS.
 5. Do not include confidential, proprietary, employer, customer, or otherwise unauthorized material.
 6. Do not copy third-party code, prompts, skills, documentation, or assets unless their license permits it and all required notices are preserved. See `THIRD_PARTY.md`.
 
+Releases follow the checklist in [Releasing](docs/en/development/releasing.md).
+
 ## Formatting
 
 The code is formatted and linted with [Biome](https://biomejs.dev) (`biome.jsonc`). To keep `git blame` useful after the one-time reformat, run:

@@ -385,6 +385,36 @@ export function checkDrift(root, { commands = [] } = {}) {
     environmentVariables(root).map((name) => ({ name, needle: `\`${name}\``, what: 'the environment variable' })),
     'every environment variable',
   );
+
+  errors.push(...checkVersionReferences(root));
+  return errors;
+}
+
+// Places that spell out the current release: a pinned install in the guides, the example output of `--version`, the
+// placeholder of the bug report. Each must match `package.json`, or a release leaves them pointing at the last one.
+export const VERSION_REFERENCES = [
+  ...[
+    ['guides/ci.md', /--branch v(\d+\.\d+\.\d+)/],
+    ['guides/update-and-remove.md', /git checkout v(\d+\.\d+\.\d+)/],
+    ['reference/cli.md', /--version\s+# truss (\d+\.\d+\.\d+)/],
+  ].flatMap(([page, pattern]) =>
+    ['docs/en', ...TRANSLATION_DIRS].map((directory) => ({ file: `${directory}/${page}`, pattern })),
+  ),
+  { file: '.github/ISSUE_TEMPLATE/bug_report.yml', pattern: /truss (\d+\.\d+\.\d+)/ },
+];
+
+export function checkVersionReferences(root) {
+  const manifest = read(root, 'package.json');
+  if (manifest === null) return [];
+  const { version } = JSON.parse(manifest);
+  const errors = [];
+  for (const { file, pattern } of VERSION_REFERENCES) {
+    const text = read(root, file);
+    if (text === null) continue;
+    const found = pattern.exec(text)?.[1];
+    if (found === undefined) errors.push({ file, message: `does not name the current version ${version}` });
+    else if (found !== version) errors.push({ file, message: `names ${found}, but package.json says ${version}` });
+  }
   return errors;
 }
 
