@@ -2,6 +2,8 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/reference/release-v0.1.md).
 
+> Documento histórico. Describe v0.1.0 de TRUSS y se conserva como registro. Para lo que vale hoy, consulta el [contrato de la versión v0.2](release-v0.2.md) y el [modelo de enforcement](enforcement.md).
+
 TRUSS v0.1.0 es la primera base estable del harness dirigido por el agente.
 
 ## Alcance estable
@@ -41,4 +43,4 @@ Un release v0.1.0 está listo solo cuando:
 
 ## Releases posteriores
 
-Este documento es el contrato histórico de v0.1.0. Preveía la orquestación de runtime para v0.2; eso se ha movido. v0.2.0 mantuvo el modelo dirigido por el agente y añadió gates opcionales del lado de TRUSS (consulta el [contrato de v0.2.0](release-v0.2.md)), y el TRUSS dirigido por orquestación (runtime adapters, resolución de contexto, ejecución y enrutado automáticos de tareas, review aislado, automatización del handoff, ejecución consciente de capacidades) está previsto ahora para v0.3. Nada de eso fue una garantía de v0.1.
+Este documento es el contrato histórico de v0.1.0. Preveía la orquestación de runtime para v0.2; eso se ha movido. v0.2.0 mantuvo el modelo dirigido por el agente y añadió gates opcionales del lado de TRUSS (consulta el [contrato de v0.2](release-v0.2.md)), y el TRUSS dirigido por orquestación (runtime adapters, resolución de contexto, ejecución y enrutado automáticos de tareas, review aislado, automatización del handoff, ejecución consciente de capacidades) está previsto ahora para v0.3. Nada de eso fue una garantía de v0.1.

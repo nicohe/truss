@@ -67,9 +67,14 @@ Cada opción, su valor por defecto y qué cambia al cambiarla.
 ## Qué está garantizado
 
 - [Modelo de enforcement](reference/enforcement.md): qué comprueba TRUSS por sí mismo, qué le pide al agente y qué necesita un runtime adapter.
-- [Contrato de la versión v0.2.0](reference/release-v0.2.md)
-- [Contrato de la versión v0.1.0](reference/release-v0.1.md) (histórico)
-- [Auditoría de la documentación](reference/documentation-audit.md) (histórica)
+- [Contrato de la versión v0.2](reference/release-v0.2.md): el alcance, la compatibilidad y la puerta de release de la línea v0.2.
+
+## Archivo
+
+Se conservan como registro. Describen una release anterior, no cómo se comporta TRUSS hoy.
+
+- [Contrato de la versión v0.1.0](reference/release-v0.1.md)
+- [Auditoría de la documentación de v0.1](reference/documentation-audit.md)
 
 ## Contribuir y mantener
 

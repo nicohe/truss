@@ -1,5 +1,7 @@
 # TRUSS v0.1 documentation audit
 
+> Historical document. It describes TRUSS the documentation of v0.1.0 and is kept for the record. For what holds today, see the [v0.2 release contract](release-v0.2.md) and the [enforcement model](enforcement.md).
+
 Version audited: **0.1.0 stable**.
 
 Purpose: prevent documentation from presenting agent policy or future runtime orchestration as an executable v0.1 guarantee.
