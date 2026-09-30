@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- The lifecycle commands page is rewritten for people who use TRUSS: the three phases, real output of `new`, `status` and `continue`, and when to use each. The internals stay in a short closing section.
+
 ## [0.2.3] - 2026-09-30
 
 Patch release: `truss handoff` no longer loses a note, and the documentation gains three guides, a "who does what" page and checks that keep the Spanish translation and the guide's examples in step with the English pages and the code. Nothing else about the CLI changes.
