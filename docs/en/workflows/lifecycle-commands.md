@@ -16,7 +16,7 @@ A change is always in one phase, and `status` and `continue` show it:
 
 The phase is recomputed from OpenSpec each time you ask, so it cannot go stale. `complete` means *every task is checked off*, nothing more: it says nothing about whether the tasks were done well. That is what [`truss verify`](../reference/verify.md) and the review are for.
 
-Archiving a change with `openspec archive` does not tell TRUSS: it keeps naming that change as the active one, and `status` and `continue` report an error until you start the next change with `truss new`.
+Archiving a change with `openspec archive` does not tell TRUSS, which finds out the next time you ask: `status` and `continue` say the active change was archived, and exit `0`. Start the next one with `truss new`.
 
 ## `truss new "Change name" [--component name]`
 
@@ -70,6 +70,17 @@ With no active change it says so and points at the next step:
 No active change.
 Next: truss new "Change name"
 ```
+
+After the change was archived, it says so instead:
+
+```text
+△ TRUSS · status
+
+The active change "add-retry-policy" was archived (openspec/changes/archive/2026-09-30-add-retry-policy).
+Next: truss new "Change name"
+```
+
+If OpenSpec has lost the active change without archiving it (its folder was deleted, say), `status` fails with exit code `1` and names the missing folder.
 
 ## `truss continue`
 

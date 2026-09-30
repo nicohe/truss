@@ -527,3 +527,35 @@ test('status and continue report task progress and only call a change complete w
   fs.writeFileSync(path.join(root, 'openspec', 'changes', 'add-retry', 'tasks.md'), '- [x] one\n- [x] two\n');
   assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Phase\s+complete/);
 });
+
+test('status and continue: a change archived with openspec archive is reported, not an error', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  // What `openspec archive` does to the tree: the change moves under changes/archive with a date prefix.
+  const changes = path.join(root, 'openspec', 'changes');
+  fs.mkdirSync(path.join(changes, 'archive'), { recursive: true });
+  fs.renameSync(path.join(changes, 'add-retry'), path.join(changes, 'archive', '2026-09-30-add-retry'));
+  const status = run(root, ['status'], { binDirs: [bin] });
+  assert.equal(status.status, 0);
+  assert.match(
+    out(status),
+    /The active change "add-retry" was archived \(openspec[\\/]changes[\\/]archive[\\/]2026-09-30-add-retry\)\./,
+  );
+  assert.match(out(status), /Next: truss new "Change name"/);
+  const next = run(root, ['continue'], { binDirs: [bin] });
+  assert.equal(next.status, 0);
+  assert.match(out(next), /The change "add-retry" was archived\. Create the next one with: truss new "Change name"/);
+  assert.equal(run(root, ['new', 'Second change'], { binDirs: [bin] }).status, 0);
+  assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Change\s+second-change/);
+});
+
+test('status: an active change that OpenSpec lost without archiving it fails with a clear message', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
+  const result = run(root, ['status'], { binDirs: [bin] });
+  assert.equal(result.status, 1);
+  assert.match(
+    out(result),
+    /The active change "add-retry" is not in OpenSpec \(openspec[\\/]changes[\\/]add-retry is missing\)\. Start a new one with: truss new/,
+  );
+  assert.doesNotMatch(out(result), /Could not read OpenSpec status/);
+});

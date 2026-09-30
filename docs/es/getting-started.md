@@ -218,7 +218,7 @@ Que `verify` pase no cierra el cambio: `truss continue` pide entonces un code re
 2. **Validar.** `openspec validate add-retry-policy` comprueba que las specs del cambio están bien formadas.
 3. **Archivar.** `openspec archive add-retry-policy` mueve el cambio a `openspec/changes/archive/`, con fecha, y fusiona sus deltas de spec en `openspec/specs/`. Pide confirmación (`-y` la omite); añade `--skip-specs` para un cambio que no altera comportamiento, como herramientas o documentación.
 
-Haz commit de `openspec/` junto con el código: las specs y los cambios archivados son durables (consulta [durable frente a efímero](concepts/durable-vs-ephemeral.md)). TRUSS sigue nombrando el cambio archivado como el activo, así que `truss status` y `truss continue` informan de que OpenSpec no lo encuentra hasta que empieces el siguiente cambio con `truss new`.
+Haz commit de `openspec/` junto con el código: las specs y los cambios archivados son durables (consulta [durable frente a efímero](concepts/durable-vs-ephemeral.md)). TRUSS se da cuenta del archivado: `truss status` y `truss continue` dicen que el cambio activo fue archivado y señalan `truss new` para el siguiente.
 
 ## 7. Monorepos
 

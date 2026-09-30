@@ -18,7 +18,7 @@ Un cambio está siempre en una fase, y `status` y `continue` la muestran:
 
 La fase se recalcula desde OpenSpec cada vez que preguntas, así que no puede quedar obsoleta. `complete` significa *todas las tareas están marcadas*, nada más: no dice nada sobre si las tareas se hicieron bien. Para eso están [`truss verify`](../reference/verify.md) y la revisión.
 
-Archivar un cambio con `openspec archive` no se lo comunica a TRUSS: sigue nombrando ese cambio como el activo, y `status` y `continue` informan de un error hasta que empieces el siguiente cambio con `truss new`.
+Archivar un cambio con `openspec archive` no se lo comunica a TRUSS, que se entera la próxima vez que preguntas: `status` y `continue` dicen que el cambio activo fue archivado, y terminan con código `0`. Empieza el siguiente con `truss new`.
 
 ## `truss new "Nombre del cambio" [--component name]`
 
@@ -72,6 +72,17 @@ Sin cambio activo lo dice y señala el siguiente paso:
 No active change.
 Next: truss new "Change name"
 ```
+
+Cuando el cambio se archivó, lo dice en su lugar:
+
+```text
+△ TRUSS · status
+
+The active change "add-retry-policy" was archived (openspec/changes/archive/2026-09-30-add-retry-policy).
+Next: truss new "Change name"
+```
+
+Si OpenSpec ha perdido el cambio activo sin archivarlo (por ejemplo, se borró su carpeta), `status` falla con código de salida `1` y nombra la carpeta que falta.
 
 ## `truss continue`
 
