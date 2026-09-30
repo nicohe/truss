@@ -8,6 +8,7 @@
 
 Por qué funciona como funciona.
 
+- [Quién hace qué](concepts/who-does-what.md): tú, tu agente, TRUSS y OpenSpec; un modelo o varios; subagentes y worktrees.
 - [Arquitectura](concepts/architecture.md): el core, las policies, los workflows, las integrations y los runtime adapters.
 - [Desarrollo guiado por especificación](concepts/spec-driven-development.md): OpenSpec como ancla y los dos modos de especificación.
 - [BDD y TDD](concepts/bdd-tdd.md): los dos bucles y qué puede y qué no puede comprobar TRUSS sobre ellos.

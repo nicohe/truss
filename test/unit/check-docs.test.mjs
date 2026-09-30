@@ -336,6 +336,28 @@ test('checkTranslations ignores directories that are not translations, and check
   });
 });
 
+test('the translation note is not a link to the original: an English page only its translation points at is an orphan', () => {
+  withTree(
+    {
+      'docs/en/README.md': '# index\n[linked](linked.md)',
+      'docs/en/linked.md': '# linked',
+      'docs/en/lonely.md': '# lonely',
+      'docs/es/README.md': '# indice\n[enlazada](linked.md)\n[sola](lonely.md)',
+      'docs/es/linked.md': '> Traducción al español. [original](../en/linked.md)\n\n# enlazada',
+      'docs/es/lonely.md': '> Traducción al español. [original](../en/lonely.md)\n\n# sola',
+    },
+    (root) => {
+      const files = listMarkdown(root);
+      const { errors, inbound } = checkLinks(root, files);
+      assert.deepEqual(errors, [], 'the note still has to point at a page that exists');
+      assert.deepEqual(
+        findOrphans(files, inbound).errors.map((e) => e.file),
+        ['docs/en/lonely.md'],
+      );
+    },
+  );
+});
+
 test('a page that only links to itself is still an orphan', () => {
   withTree({ 'docs/en/self.md': '# Self\n[me](self.md)' }, (root) => {
     const files = listMarkdown(root);

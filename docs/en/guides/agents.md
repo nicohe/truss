@@ -15,6 +15,8 @@ truss continue   →   implement the next task   →   truss verify
 3. **Verification.** When the agent finishes, it runs `truss verify`. The change is done when that passes.
 4. **Handoff.** Only if the work moves to another agent, runtime or session: [`truss handoff`](../reference/handoff.md).
 
+Each phase can be a different agent or model; see [who does what](../concepts/who-does-what.md#one-model-or-several).
+
 ## Where each agent reads its guidance
 
 | Agent | What it reads |
