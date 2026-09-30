@@ -25,6 +25,7 @@ Cómo avanza un cambio por TRUSS.
 - [`execute-change`](workflows/execute-change.md): el workflow central de implementación.
 - [Modos de especificación](workflows/spec-modes.md): Spec-Anchored y Spec-as-Source en detalle.
 - [Comandos del ciclo de vida](workflows/lifecycle-commands.md): `new`, `status`, `continue` y las fases.
+- [Descubrimiento (Grill)](workflows/discovery.md): convertir una idea poco clara en decisiones antes de la spec; `grill-me`, `grill-with-docs` y `prototype`.
 - [Skills](skills/overview.md): las skills portables para agentes.
 
 ## Guías

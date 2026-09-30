@@ -40,7 +40,7 @@ Este es el orden canónico de punta a punta para un cambio en TRUSS. No todas la
 |---:|---|---|---|---|
 | 0 | Comprobar requisitos | `truss doctor` | readiness del entorno | OpenSpec requerido; estado Graphify |
 | 1 | Iniciar cambio | `truss new "..."` | crear scaffold del cambio activo | OpenSpec |
-| 2 | Resolver ambigüedad | sin CLI dedicado en v0.2 | `grill` | `grill-me` o `grill-with-docs` |
+| 2 | Resolver ambigüedad | sin CLI dedicado en v0.2 | [`grill`](discovery.md) | `grill-me` o `grill-with-docs` |
 | 3 | Probar una idea incierta | sin CLI dedicado | discovery | `prototype` (opcional) |
 | 4 | Cerrar comportamiento esperado | comandos/herramientas OpenSpec | fase spec | OpenSpec |
 | 5 | Implementar siguiente slice/task | `truss continue` | `execute-change` | coding agent; Graphify si aporta valor |

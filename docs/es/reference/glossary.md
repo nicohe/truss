@@ -17,7 +17,7 @@ Los términos están en orden alfabético.
 - **Gate:** una comprobación opcional de `truss verify` que puede informar o negarse antes de ejecutar ningún comando: `tests_required` y `tasks_complete`.
 - **Gherkin:** el formato Given / When / Then para describir el comportamiento como escenarios. `spec.gherkin` indica si se espera el comportamiento de aceptación en ese formato.
 - **Graphify:** una herramienta opcional que mapea las relaciones del código. Cuando falta, TRUSS recurre a la búsqueda nativa.
-- **Grill:** una ronda guiada de preguntas que convierte una idea poco clara en decisiones explícitas, hecha con la skill `grill-me` o `grill-with-docs`. Es la herramienta principal del *descubrimiento*.
+- **Grill:** una ronda guiada de preguntas que convierte una idea poco clara en decisiones explícitas, hecha con la skill `grill-me` o `grill-with-docs`. Es la herramienta principal del *descubrimiento*; consulta [Descubrimiento (Grill)](../workflows/discovery.md).
 - **Handoff:** el estado vivo mínimo que se transfiere ante un cambio real de contexto, agente, runtime o sesión.
 - **Instalación (installation):** la copia de TRUSS en sí (su código, schema, skills, policies y workflows), frente al *proyecto* sobre el que se ejecuta. Consulta la [estructura del proyecto](project-structure.md).
 - **Integración (integration):** una capacidad externa con la que trabaja TRUSS, como OpenSpec o Graphify.

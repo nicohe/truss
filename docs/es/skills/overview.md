@@ -14,7 +14,7 @@ TRUSS v0.2 incluye siete skills portables para agentes. Son contratos de instruc
 | writing-for-agents | Mantener pequeño y fiable el contexto del repositorio pensado para agentes. | `AGENTS.md`, specs, ADRs, workflows y documentación. |
 | caveman | Comprimir la comunicación efímera del agente sin cambiar su significado. | Actualizaciones de estado, handoffs y mensajes operativos. |
 
-No hace falta usar todas las skills en cada cambio: carga una skill cuando surja su situación y ninguna en caso contrario (consulta la [gestión de contexto](../concepts/context-management.md)).
+No hace falta usar todas las skills en cada cambio: carga una skill cuando surja su situación y ninguna en caso contrario (consulta la [gestión de contexto](../concepts/context-management.md)). Para las dos skills de Grill y `prototype`, consulta [Descubrimiento](../workflows/discovery.md).
 
 Las skills viven en `.truss/skills/*.SKILL.md` para que cualquier runtime lea la misma fuente. Los runtime adapters podrán exponer más adelante comandos nativos conservando estos contratos.
 
