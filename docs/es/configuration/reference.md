@@ -47,7 +47,7 @@ Tipo: enum. Por defecto: `off`. Valores: `off`, `warn`, `block`. Controla el **g
 - `warn`: `truss verify` lista las tareas abiertas y continúa.
 - `block`: el mismo informe, pero `truss verify` termina con código `1` **antes de ejecutar ningún comando** y registra el resultado en `.truss/verification/latest.json`.
 
-El cambio activo es el de `.truss/state.json` (lo crea `truss new`). El progreso es el que informa OpenSpec con `openspec instructions apply` (las casillas de `tasks.md`). Si no hay cambio activo, OpenSpec no está disponible o es incompatible, o `tasks.md` no tiene tareas, el gate lo dice y **no** bloquea.
+El cambio activo es el de `.truss/state.json` (lo crea `truss new`). El progreso es el que informa OpenSpec con `openspec instructions apply` (las casillas de `tasks.md`). Si no hay cambio activo, OpenSpec no está disponible o es incompatible, el cambio activo se archivó, o `tasks.md` no tiene tareas, el gate lo dice y **no** bloquea.
 
 Usa `warn` mientras trabajas (la verificación suele ejecutarse a mitad de la implementación) y `block` donde se exija un cambio terminado. Comprueba que las tareas están *marcadas*, no que se hicieran de verdad. Enforcement: **TRUSS** para la comprobación; **AGENT** para hacer el trabajo y marcarlo.
 

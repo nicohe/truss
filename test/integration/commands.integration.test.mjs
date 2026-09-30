@@ -622,3 +622,45 @@ test('new: an undeclared component exits 2, as documented, and names the ones th
   assert.equal(listed.status, 2);
   assert.match(out(listed), /Unknown component "nope"\. Available: api/);
 });
+
+// What `openspec archive` does to the tree: the change moves under changes/archive with a date prefix.
+function archiveChange(root, name = 'add-retry') {
+  const changes = path.join(root, 'openspec', 'changes');
+  fs.mkdirSync(path.join(changes, 'archive'), { recursive: true });
+  fs.renameSync(path.join(changes, name), path.join(changes, 'archive', `2026-09-30-${name}`));
+}
+
+test('handoff: a change that was archived has nothing to hand off, and no note is written', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  const open = run(root, ['handoff'], { binDirs: [bin] });
+  assert.equal(open.status, 0);
+  const note = path.join(root, '.truss', 'handoffs', 'add-retry.md');
+  assert.ok(fs.existsSync(note), 'an open change still gets its note');
+  fs.rmSync(note);
+
+  archiveChange(root);
+  const r = run(root, ['handoff'], { binDirs: [bin] });
+  assert.equal(r.status, 0);
+  assert.match(
+    out(r),
+    /The active change "add-retry" was archived \(openspec[\\/]changes[\\/]archive[\\/]2026-09-30-add-retry\)/,
+  );
+  assert.match(out(r), /there is nothing to hand off/);
+  assert.match(out(r), /Next: truss new "Change name"/);
+  assert.equal(fs.existsSync(note), false, 'no note for a finished change');
+});
+
+test('tasks_complete block: an archived change is reported and does not stop verify', () => {
+  const { root, bin } = tasksWorkspace('block', '- [ ] left open\n');
+  archiveChange(root);
+  const r = run(root, ['verify', '--trust'], { binDirs: [bin] });
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(
+    out(r),
+    /the active change "add-retry" was archived \(openspec[\\/]changes[\\/]archive[\\/]2026-09-30-add-retry\); nothing to check/,
+  );
+  assert.doesNotMatch(out(r), /could not evaluate/);
+  const evidence = evidenceOf(root);
+  assert.equal(evidence.status, 'passed');
+  assert.equal(evidence.tasksComplete.status, 'archived');
+});

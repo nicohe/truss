@@ -10,7 +10,7 @@
 
 ## What it does
 
-- It needs an active change (see [`truss new`](../workflows/lifecycle-commands.md)). Without one it prints `No active change.`, writes nothing and exits `0`.
+- It needs an active change (see [`truss new`](../workflows/lifecycle-commands.md)). Without one it prints `No active change.`, writes nothing and exits `0`. The same holds when the active change was archived with `openspec archive`: it says so, points to `truss new`, and writes nothing, because a finished change has nothing to hand off.
 - It writes `.truss/handoffs/<change>.md` and prints the path.
 - It fills in what TRUSS knows (the change, the component, the phase, the OpenSpec path and the current Git branch, or `unknown`) and leaves the rest empty:
 
@@ -56,5 +56,5 @@ In `.truss/handoffs/`, which is local state that Git ignores. A handoff is ephem
 
 | Code | Meaning |
 |---|---|
-| `0` | The note was written, an existing note was kept as it is, or there is no active change. |
+| `0` | The note was written, an existing note was kept as it is, or there is no active change (or it was archived). |
 | `2` | `.truss/state.json` is unreadable. |

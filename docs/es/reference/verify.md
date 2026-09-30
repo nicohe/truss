@@ -78,7 +78,7 @@ Verification failed: the active change still has open tasks. No command was exec
 
 - El cambio activo sale de `.truss/state.json`; el progreso sale de `openspec instructions apply` (las casillas de `tasks.md`).
 - `warn` informa y continúa; `block` sale con `1` antes de ejecutar ningún comando.
-- Si no hay cambio activo, OpenSpec no está disponible o es incompatible, o `tasks.md` no tiene tareas, lo dice y nunca bloquea.
+- Si no hay cambio activo, OpenSpec no está disponible o es incompatible, o `tasks.md` no tiene tareas, lo dice y nunca bloquea. Un cambio activo que se archivó con `openspec archive` se informa como tal (`archived`, con adónde fue) y tampoco bloquea nunca: un cambio terminado no tiene progreso de tareas que leer.
 - Cuando ambos gates están activados, se informan y se registran los dos; el primero que bloquea (tests y luego tasks) da nombre al motivo.
 
 El resultado se guarda en `tasksComplete` dentro del archivo de evidencia.

@@ -16,7 +16,7 @@ A change is always in one phase, and `status` and `continue` show it:
 
 The phase is recomputed from OpenSpec each time you ask, so it cannot go stale. `complete` means *every task is checked off*, nothing more: it says nothing about whether the tasks were done well. That is what [`truss verify`](../reference/verify.md) and the review are for.
 
-Archiving a change with `openspec archive` does not tell TRUSS, which finds out the next time you ask: `status` and `continue` say the active change was archived, and exit `0`. Start the next one with `truss new`.
+Archiving a change with `openspec archive` does not tell TRUSS, which finds out the next time you ask: `status` and `continue` say the active change was archived, and exit `0`; `handoff` writes no note for it, and the [`tasks_complete`](../reference/verify.md) gate reports it as archived instead of failing to read its tasks. Start the next one with `truss new`.
 
 ## `truss new "Change name" [--component name]`
 

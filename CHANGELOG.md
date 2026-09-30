@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **`truss handoff` and the `tasks_complete` gate now recognize a change that was closed with `openspec archive`**, as `status` and `continue` already did. `handoff` used to write a note for it, with a phase that was no longer true; it now says the change was archived (and where), points to `truss new`, and writes nothing. The gate used to say `could not evaluate: OpenSpec did not report task progress`; it now reports `the active change "x" was archived (...); nothing to check`, records `archived` in the evidence, and never blocks. Exit codes do not change.
+
 ### Documentation
 - **The historical documents are separated from the current ones.** The index has a new "Archive" section for the v0.1.0 release contract and the v0.1 documentation audit, and each of them opens with a note that it describes an earlier release and points to what holds today. The v0.2 release contract is now titled for the whole v0.2 line, not for 0.2.0, and its release gate asks for the version metadata to match the release instead of being `0.2.0`.
 
