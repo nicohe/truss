@@ -4,18 +4,25 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.15] - 2026-09-30
+
+Patch release, from testing TRUSS in `spec.mode: anchored` with the real Graphify and OpenSpec. `truss status` and `truss continue` list the changes that are open when no change is active, and `truss continue` tells the agent when a development loop is off and lists `AGENTS.md` only when the project has one.
+
+### Upgrade notes
+- No exit code changes.
+- `truss status` and `truss continue` print more when no change is active and OpenSpec has open changes (a fresh clone or a CI checkout, for example): an `Open changes` line and `truss use` ahead of `truss new`. With nothing open the output is what it was.
+- `truss continue` prints one more line while the agent implements for each of `development.bdd` and `development.tdd` that is `false`, and no longer lists `AGENTS.md` under "Context to load" when the project has none. With the default settings and an `AGENTS.md`, nothing changes.
+- TRUSS still does not check the BDD or TDD loops: they remain agent policy, and `continue` now says so to the agent.
+- Nothing else changes for an existing project.
+
 ### Changed
+- **`truss status` and `truss continue` list the changes that are open in OpenSpec when no change is active.** `.truss/state.json` is local to each checkout, so a fresh clone or a CI machine has no active change even when OpenSpec has changes in flight, and both commands answered `No active change` and pointed only to `truss new`: the one step that starts a duplicate and never mentions `truss use`. `status` now adds an `Open changes` line and puts `truss use <change>` first, with `truss new "Change name"` as the alternative; `continue` says the same in its one instruction. When a single change is open the command names it, and a change in a component's own `openspec/` is listed as `add-retry (component api)` with `--component api` in the command. The same list follows the message that the active change was archived. It reads the `openspec/changes` folders, as `truss use` does, so it does not need the OpenSpec CLI, and a component that does not resolve or a folder that cannot be read is left out instead of failing. With nothing open the output is exactly what it was, and no exit code changes.
 - **`truss continue` tells the agent when `development.bdd` or `development.tdd` is off.** Both settings were agent policy that never reached the agent: `continue` said "follow configured BDD/TDD policies" and listed no configuration file, and the `execute-change` workflow only says "if BDD is enabled", so the output was identical with both loops on or off. While the agent implements, the next action now adds `BDD is off (development.bdd: false): ...` and `TDD is off (development.tdd: false): ...`, after the spec policy lines. Both on, the default, adds nothing. TRUSS still does not check either loop.
 - **`truss continue` lists `AGENTS.md` under "Context to load" only when the project has one.** It was always listed, although `init` does not create it, so a project without one was told to load a file that is not there. A component's own `AGENTS.md` is listed with its path, else the workspace's.
 
 ### Documentation
-- **The configuration reference, the effects table, the BDD/TDD concept page and the lifecycle commands page (EN/ES) say that `continue` states a loop that is off, and when it lists `AGENTS.md`.**
-
-### Changed
-- **`truss status` and `truss continue` list the changes that are open in OpenSpec when no change is active.** `.truss/state.json` is local to each checkout, so a fresh clone or a CI machine has no active change even when OpenSpec has changes in flight, and both commands answered `No active change` and pointed only to `truss new`: the one step that starts a duplicate and never mentions `truss use`. `status` now adds an `Open changes` line and puts `truss use <change>` first, with `truss new "Change name"` as the alternative; `continue` says the same in its one instruction. When a single change is open the command names it, and a change in a component's own `openspec/` is listed as `add-retry (component api)` with `--component api` in the command. The same list follows the message that the active change was archived. It reads the `openspec/changes` folders, as `truss use` does, so it does not need the OpenSpec CLI, and a component that does not resolve or a folder that cannot be read is left out instead of failing. With nothing open the output is exactly what it was, and no exit code changes.
-
-### Documentation
 - **The lifecycle commands page, the troubleshooting guide, the quick start and the CLI reference say what a fresh clone shows,** and that `truss use` is how it picks up a change that is already in flight.
+- **The configuration reference, the effects table, the BDD/TDD concept page and the lifecycle commands page (EN/ES) say that `continue` states a loop that is off, and when it lists `AGENTS.md`.**
 
 ## [0.2.14] - 2026-09-30
 
