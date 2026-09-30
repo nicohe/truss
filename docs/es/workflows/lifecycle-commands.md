@@ -18,6 +18,8 @@ Un cambio está siempre en una fase, y `status` y `continue` la muestran:
 
 La fase se recalcula desde OpenSpec cada vez que preguntas, así que no puede quedar obsoleta. `complete` significa *todas las tareas están marcadas*, nada más: no dice nada sobre si las tareas se hicieron bien. Para eso están [`truss verify`](../reference/verify.md) y la revisión.
 
+Archivar un cambio con `openspec archive` no se lo comunica a TRUSS: sigue nombrando ese cambio como el activo, y `status` y `continue` informan de un error hasta que empieces el siguiente cambio con `truss new`.
+
 ## `truss new "Nombre del cambio" [--component name]`
 
 Úsalo para empezar un cambio. Convierte el título en un id (`Add retry policy` pasa a `add-retry-policy`), pide a OpenSpec que cree el cambio y lo recuerda como **cambio activo**. Solo hay un cambio activo a la vez.

@@ -94,6 +94,7 @@ Los agentes leen un archivo de guía del proyecto, normalmente `AGENTS.md`, en l
 
 - Before implementing, run `node .truss/bin/truss.mjs continue` and follow the instructions and the files it lists.
 - Load skills and documentation only when the task needs them; `node .truss/bin/truss.mjs skills` lists the skills.
+- To write an OpenSpec artifact, run `openspec instructions <artifact> --change <id>`; it prints the format and the path.
 - Keep specs, code and tests aligned; do not let them diverge silently.
 - When you finish, run `node .truss/bin/truss.mjs verify` and do not call the change done until it passes.
 - Write a handoff (`node .truss/bin/truss.mjs handoff`) only when work moves to another agent, runtime or session.
@@ -166,6 +167,18 @@ Context to load
 
 Las rutas que ves son las reales para tu disposición de archivos. `truss status` muestra el mismo progreso, y un cambio está `complete` solo cuando todas las tareas de `tasks.md` están marcadas. Las fases y los comandos están en los [comandos del ciclo de vida](workflows/lifecycle-commands.md).
 
+### Qué hace tu agente
+
+`continue` dice *qué* hacer; tu agente necesita saber *cómo*. TRUSS no instala los comandos de OpenSpec en tu agente (`init` ejecuta OpenSpec con `--tools none`), así que el agente se lo pregunta directamente a OpenSpec:
+
+```bash
+openspec instructions proposal --change add-retry-policy
+```
+
+Eso imprime el propósito, el formato y la ruta exacta del artefacto, y lo mismo sirve para `specs`, `design` y `tasks`. El agente escribe cada uno, vuelve a ejecutar `truss continue` y repite hasta que existen los cuatro. Si la idea no está clara, primero debería hacerte preguntas con la skill `grill-me` (consulta [Grill](reference/glossary.md)). Por eso el fragmento de guía de arriba tiene una línea sobre `openspec instructions`.
+
+Cuando la fase pasa a `implementation`, el agente recorre `tasks.md` y cambia `- [ ]` por `- [x]` al terminar cada tarea. Eso es lo que cuenta `truss status`.
+
 ## 6. Verifica
 
 ```bash
@@ -196,6 +209,16 @@ verification:
 ```
 
 Consulta [`truss verify`](reference/verify.md) para ver qué hace cada comprobación y qué no demuestra.
+
+### Cuando verify pasa
+
+Que `verify` pase no cierra el cambio: `truss continue` pide entonces un code review y las comprobaciones propias de OpenSpec. TRUSS no hace ninguna de ellas; las haces tú o tu agente:
+
+1. **Revisar.** El agente usa la skill `code-review` frente a la spec, los estándares del proyecto y el riesgo, idealmente en una sesión nueva (consulta [quién hace qué](concepts/who-does-what.md)).
+2. **Validar.** `openspec validate add-retry-policy` comprueba que las specs del cambio están bien formadas.
+3. **Archivar.** `openspec archive add-retry-policy` mueve el cambio a `openspec/changes/archive/`, con fecha, y fusiona sus deltas de spec en `openspec/specs/`. Pide confirmación (`-y` la omite); añade `--skip-specs` para un cambio que no altera comportamiento, como herramientas o documentación.
+
+Haz commit de `openspec/` junto con el código: las specs y los cambios archivados son durables (consulta [durable frente a efímero](concepts/durable-vs-ephemeral.md)). TRUSS sigue nombrando el cambio archivado como el activo, así que `truss status` y `truss continue` informan de que OpenSpec no lo encuentra hasta que empieces el siguiente cambio con `truss new`.
 
 ## 7. Monorepos
 

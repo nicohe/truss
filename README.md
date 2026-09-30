@@ -29,7 +29,7 @@ node .truss/bin/truss.mjs new "Add retry policy"
 node .truss/bin/truss.mjs status
 ```
 
-In a monorepo, declare `components` in `.truss/config.yaml` first and then pass `--component <name>` to `truss new`. A shell alias/wrapper may expose `truss`; a global install is not required. TRUSS keeps its schema, skills, policies and workflows in its own installation; your project only gets `.truss/config.yaml` and local state (see [project structure](docs/en/reference/project-structure.md)). Then configure `.truss/config.yaml` and follow the active OpenSpec. See [Getting started](docs/en/getting-started.md).
+In a monorepo, declare `components` in `.truss/config.yaml` first and then pass `--component <name>` to `truss new`. A shell alias/wrapper may expose `truss`; a global install is not required. TRUSS keeps its schema, skills, policies and workflows in its own installation; your project only gets `.truss/config.yaml` and local state (see [project structure](docs/en/reference/project-structure.md)). Then hand the work to your coding agent. Add a few lines to your project's `AGENTS.md` (the snippet is in [Getting started](docs/en/getting-started.md#4-give-your-agent-some-guidance)) so the agent runs `truss continue` before implementing and `truss verify` when it finishes. The agent writes the OpenSpec artifacts and the code; TRUSS tells it what is next and checks the result. When a change is verified, review it and archive it with `openspec archive`. [Getting started](docs/en/getting-started.md) walks through the whole loop.
 
 ## Commands
 

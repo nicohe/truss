@@ -9,6 +9,8 @@ All notable changes to TRUSS are documented here.
 - [Releasing](docs/en/development/releasing.md): the checklist for a version, a tag and a GitHub release (with a Spanish translation).
 
 ### Changed
+- Getting started now says what the agent does: it writes each planning artifact with `openspec instructions <artifact> --change <id>`, checks off tasks in `tasks.md`, and after `verify` reviews, validates and archives the change with `openspec validate` and `openspec archive`. The guidance snippet gains a line about `openspec instructions`, `execute-change` lists the commands used along the way, and the README quick start ends with the agent step instead of "follow the active OpenSpec".
+- Documented that TRUSS keeps naming an archived change as active until `truss new`.
 - The lifecycle commands page is rewritten for people who use TRUSS: the three phases, real output of `new`, `status` and `continue`, and when to use each. The internals stay in a short closing section.
 
 ## [0.2.3] - 2026-09-30

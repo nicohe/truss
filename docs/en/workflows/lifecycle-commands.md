@@ -16,6 +16,8 @@ A change is always in one phase, and `status` and `continue` show it:
 
 The phase is recomputed from OpenSpec each time you ask, so it cannot go stale. `complete` means *every task is checked off*, nothing more: it says nothing about whether the tasks were done well. That is what [`truss verify`](../reference/verify.md) and the review are for.
 
+Archiving a change with `openspec archive` does not tell TRUSS: it keeps naming that change as the active one, and `status` and `continue` report an error until you start the next change with `truss new`.
+
 ## `truss new "Change name" [--component name]`
 
 Use it to start a change. It turns the title into an id (`Add retry policy` becomes `add-retry-policy`), asks OpenSpec to create the change, and remembers it as the **active change**. Only one change is active at a time.
