@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **The `grill-with-docs` skill now has an output contract**, like `grill-me`, `prototype` and `code-review`. It was the only discovery skill without one ("produce input suitable for the active spec"), so two agents could return differently shaped results. It now asks for the same fields as `grill-me` (goal, scope, observable acceptance behavior, constraints, decisions, assumptions, unresolved questions, risks, suggested next step) plus three that come from working with documents: the sources of important statements, the contradictions found and how they were resolved, and what was taken as a proposal or example rather than a requirement. It also says to ask which documents to use when the request names none. Skills live in the TRUSS installation, so a project gets this when it moves to the release that includes it.
+
 ### Documentation
 - Getting started and "Who does what" now say that Grill comes as two skills: `grill-me` for an idea, and `grill-with-docs` when there are requirements, a proposal, a ticket or an ADR to start from, with an example prompt. They only named `grill-me` before.
 
