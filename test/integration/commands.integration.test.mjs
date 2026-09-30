@@ -3,12 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { workspace, fakeOpenSpec, fakeGraphify, fakeBin, executable, run, validConfig } from './helpers.mjs';
+import { workspace, fakeOpenSpec, fakeGraphify, fakeBin, executable, run, validConfig, posix } from './helpers.mjs';
 
 const plain = s => s.replace(/\x1b\[[0-9;]*m/g, '');
 const out = r => plain(r.stdout);
-// Fake OpenSpec/Graphify CLIs are POSIX shell scripts.
-const posix = { skip: process.platform === 'win32' && 'needs a POSIX shell' };
 
 test('help: no arguments prints usage and exits 0', () => {
   const r = run(workspace({ config: validConfig }), []);

@@ -3,10 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { diagnoseProject } from '../../lib/doctor.mjs';
-import { workspace, fakeOpenSpec, validConfig } from '../integration/helpers.mjs';
+import { workspace, fakeOpenSpec, validConfig, posix } from '../integration/helpers.mjs';
 import { cleanup } from './helpers.mjs';
 
-const posix = { skip: process.platform === 'win32' && 'needs a POSIX shell' };
 
 function withEnv(vars, fn) {
   const saved = Object.fromEntries(Object.keys(vars).map(k => [k, process.env[k]]));
