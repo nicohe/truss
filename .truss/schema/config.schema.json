@@ -5,7 +5,9 @@
   "description": "Schema for .truss/config.yaml. Schema version is selected by the top-level version field.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version"],
+  "required": [
+    "version"
+  ],
   "properties": {
     "version": {
       "type": "integer",
@@ -16,17 +18,36 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "mode": { "type": "string", "enum": ["anchored", "source"], "default": "anchored" },
-        "gherkin": { "type": "boolean", "default": true },
-        "zone_guard": { "type": "boolean", "default": false }
+        "mode": {
+          "type": "string",
+          "enum": [
+            "anchored",
+            "source"
+          ],
+          "default": "anchored"
+        },
+        "gherkin": {
+          "type": "boolean",
+          "default": true
+        },
+        "zone_guard": {
+          "type": "boolean",
+          "default": false
+        }
       }
     },
     "development": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "bdd": { "type": "boolean", "default": true },
-        "tdd": { "type": "boolean", "default": true }
+        "bdd": {
+          "type": "boolean",
+          "default": true
+        },
+        "tdd": {
+          "type": "boolean",
+          "default": true
+        }
       }
     },
     "verification": {
@@ -35,13 +56,43 @@
       "properties": {
         "commands": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "default": [
             "npm test --if-present",
             "npm run lint --if-present",
             "npm run typecheck --if-present",
             "npm run build --if-present"
           ]
+        },
+        "tests_required": {
+          "type": "string",
+          "enum": [
+            "off",
+            "warn",
+            "block"
+          ],
+          "default": "off"
+        },
+        "base_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "test_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -53,18 +104,36 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "enabled": { "type": "boolean", "default": true },
-            "required": { "type": "boolean", "default": false }
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "required": {
+              "type": "boolean",
+              "default": false
+            }
           },
           "allOf": [
             {
               "if": {
-                "properties": { "required": { "const": true } },
-                "required": ["required"]
+                "properties": {
+                  "required": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "required"
+                ]
               },
               "then": {
-                "properties": { "enabled": { "const": true } },
-                "required": ["enabled"]
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "enabled"
+                ]
               }
             }
           ]
@@ -77,9 +146,14 @@
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["path"],
+        "required": [
+          "path"
+        ],
         "properties": {
-          "path": { "type": "string", "minLength": 1 }
+          "path": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     }

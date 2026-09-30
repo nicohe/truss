@@ -34,6 +34,17 @@ development:
   tdd: true
 ```
 
+## Require tests with every code change
+```yaml
+verification:
+  tests_required: block   # or warn to only report
+  base_ref: develop       # optional; auto-detects main/master otherwise
+  # source_paths: [server]  # optional overrides of the detected layout
+  # test_paths: [checks]
+  commands:
+    - npm test
+```
+
 ## Graphify disabled
 ```yaml
 integrations:

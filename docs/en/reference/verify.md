@@ -6,6 +6,7 @@
 
 - Loads and validates `.truss/config.yaml` before executing project commands.
 - Runs the command list only after it has been approved for this project (see [Trust](#trust)).
+- When `verification.tests_required` is not `off`, runs the [tests-required gate](#tests-required-gate) after the trust check and before any command.
 - Executes `verification.commands` exactly in configured order.
 - Runs commands sequentially from the project root.
 - Stops on the first failing command (fail-fast).
@@ -18,7 +19,7 @@
 | Code | Meaning |
 |---|---|
 | `0` | Every configured verification command passed. |
-| `1` | A verification command failed, could not be started, no commands are configured, or the command list is not trusted and was not approved. |
+| `1` | A verification command failed, could not be started, no commands are configured, the command list is not trusted and was not approved, or `tests_required: block` found source changes without tests. |
 | `2` | TRUSS configuration is invalid. No project verification command is executed. |
 
 ## Trust
@@ -32,6 +33,28 @@
 - `truss doctor` reports the current trust state.
 
 See the trust model in [`SECURITY.md`](../../../SECURITY.md).
+
+## Tests-required gate
+
+Opt-in with `verification.tests_required: warn | block` (default `off`). It answers one deterministic question from Git: **did the change touch source code without touching any test?**
+
+```text
+Tests required  block
+  × missing tests source changed without any test change (base main @ 3f2a1bc)
+    workspace:
+      lib/retry.mjs
+  Add or update tests, or lower verification.tests_required to warn/off.
+
+Verification failed: tests are required. No command was executed.
+```
+
+- `warn` reports and continues. `block` exits `1` before running any command.
+- The comparison is the working tree against the merge-base of `HEAD` and the base branch (`verification.base_ref`, auto-detected when unset). Committed, staged, unstaged and untracked files count; pure deletions do not require tests.
+- It is evaluated per component, so a monorepo needs tests in each component it changed.
+- If it cannot decide (no Git work tree, no commits, no base branch, shallow clone), it says so and never blocks.
+- It does **not** prove tests were written first, that they cover the change, or that they pass; `verification.commands` do the latter.
+
+The result is stored under `testsRequired` in the evidence file. See [configuration reference](../configuration/reference.md#verificationtests_required) for how files are classified.
 
 ## Evidence
 

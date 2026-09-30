@@ -14,6 +14,9 @@
 | `development.tdd: true` | `execute-change` applies RED → minimal GREEN → refactor | AGENT |
 | `development.tdd: false` | TDD micro-loop is not mandatory | AGENT |
 | change `verification.commands` | `truss verify` executes the new command list in order | TRUSS |
+| `verification.tests_required: warn` | `truss verify` reports source changes that have no test change, then continues | TRUSS (presence check) |
+| `verification.tests_required: block` | `truss verify` exits `1` before running commands when source changed without tests | TRUSS (presence check) |
+| `verification.base_ref` / `source_paths` / `test_paths` | Change what the tests-required gate compares against and how it classifies files | TRUSS |
 | `graphify.enabled: false` | Graphify commands treat the capability as disabled; agent uses native discovery | TRUSS + AGENT |
 | `graphify.enabled: true, required: false` | TRUSS reports Graphify readiness; missing/unready is non-blocking; agent may use native fallback | TRUSS + AGENT |
 | `graphify.enabled: true, required: true` | `truss graphify` / `doctor` are blocking when unavailable/unready; agent must respect the requirement in implementation | TRUSS + AGENT |

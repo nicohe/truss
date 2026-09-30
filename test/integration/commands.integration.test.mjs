@@ -253,3 +253,113 @@ test('config: missing config file exits 2', () => {
   assert.equal(r.status, 2);
   assert.match(out(r), /config not found/);
 });
+
+// --- verification.tests_required -------------------------------------------------------------------------------
+
+const gateConfig = (mode) => validConfig.replace('  commands:\n', `  tests_required: ${mode}\n  commands:\n`);
+const gateGit = (root, ...args) => spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+// A repo with code and tests on the base branch and HEAD on a feature branch.
+function gateWorkspace(mode) {
+  const root = workspace({ config: gateConfig(mode) });
+  for (const file of ['src/app.js', 'test/app.test.js']) {
+    fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    fs.writeFileSync(path.join(root, file), 'x\n');
+  }
+  gateGit(root, 'add', 'src', 'test');
+  gateGit(root, 'commit', '-qm', 'base');
+  gateGit(root, 'checkout', '-qb', 'feature');
+  return root;
+}
+const evidenceOf = (root) =>
+  JSON.parse(fs.readFileSync(path.join(root, '.truss', 'verification', 'latest.json'), 'utf8'));
+
+test('tests_required block: source without tests fails verify, runs no command and records evidence', () => {
+  const root = gateWorkspace('block');
+  const marker = 'command-ran';
+  fs.writeFileSync(
+    path.join(root, '.truss', 'config.yaml'),
+    gateConfig('block').replace(
+      '    - node -e "process.exit(0)"',
+      `    - node -e "require('fs').writeFileSync('${marker}','x')"`,
+    ),
+  );
+  fs.writeFileSync(path.join(root, 'src', 'app.js'), 'changed\n');
+  const r = run(root, ['verify', '--trust']);
+  assert.equal(r.status, 1, r.stdout);
+  assert.match(out(r), /Tests required\s+block/);
+  assert.match(out(r), /missing tests/);
+  assert.match(out(r), /src\/app\.js/);
+  assert.match(out(r), /tests are required\. No command was executed/);
+  assert.equal(fs.existsSync(path.join(root, marker)), false);
+  const evidence = evidenceOf(root);
+  assert.equal(evidence.status, 'failed');
+  assert.equal(evidence.reason, 'tests_required');
+  assert.deepEqual(evidence.commands, []);
+  assert.equal(evidence.testsRequired.status, 'violation');
+});
+
+test('tests_required block: adding a test lets verify pass and is recorded in the evidence', () => {
+  const root = gateWorkspace('block');
+  fs.writeFileSync(path.join(root, 'src', 'app.js'), 'changed\n');
+  fs.writeFileSync(path.join(root, 'test', 'app.test.js'), 'changed\n');
+  const r = run(root, ['verify', '--trust']);
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(out(r), /● passed\s+1 source and 1 test file\(s\) changed/);
+  assert.match(out(r), /Verification passed/);
+  assert.equal(evidenceOf(root).testsRequired.status, 'passed');
+});
+
+test('tests_required warn: reports the problem but still runs the commands and exits 0', () => {
+  const root = gateWorkspace('warn');
+  fs.writeFileSync(path.join(root, 'src', 'app.js'), 'changed\n');
+  const r = run(root, ['verify', '--trust']);
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(out(r), /Warning only/);
+  assert.match(out(r), /Verification passed/);
+  assert.equal(evidenceOf(root).status, 'passed');
+  assert.equal(evidenceOf(root).testsRequired.blocking, false);
+});
+
+test('tests_required: an unevaluable gate is reported but never blocks', () => {
+  const root = workspace({ config: gateConfig('block'), git: false });
+  const r = run(root, ['verify', '--trust']);
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(out(r), /could not evaluate: not a Git work tree\. Not blocking/);
+});
+
+test('tests_required off (the default) prints nothing and adds no evidence field', () => {
+  const root = workspace({ config: validConfig });
+  const r = run(root, ['verify', '--trust']);
+  assert.equal(r.status, 0);
+  assert.doesNotMatch(out(r), /Tests required/);
+  assert.equal('testsRequired' in evidenceOf(root), false);
+});
+
+test('tests_required: the trust check still comes first', () => {
+  const root = gateWorkspace('block');
+  fs.writeFileSync(path.join(root, 'src', 'app.js'), 'changed\n');
+  const r = run(root, ['verify']);
+  assert.equal(r.status, 1);
+  assert.match(out(r), /not trusted/i);
+  assert.doesNotMatch(out(r), /Tests required/);
+});
+
+test('tests_required: invalid values and malformed options are rejected by config validation', () => {
+  for (const [line, pattern] of [
+    ['  tests_required: sometimes\n', /tests_required.*one of/],
+    ['  base_ref: ""\n', /base_ref.*empty/],
+    ['  source_paths: src\n', /source_paths.*expected array/],
+  ]) {
+    const root = workspace({ config: validConfig.replace('  commands:\n', `${line}  commands:\n`) });
+    const r = run(root, ['config']);
+    assert.equal(r.status, 2, line);
+    assert.match(out(r), pattern);
+  }
+});
+
+test('doctor reports the tests_required mode', () => {
+  const root = workspace({ config: gateConfig('warn') });
+  assert.match(out(run(root, ['doctor'])), /Tests required\s+warn/);
+  const off = workspace({ config: validConfig });
+  assert.match(out(run(off, ['doctor'])), /Tests required\s+off \(not enforced\)/);
+});
