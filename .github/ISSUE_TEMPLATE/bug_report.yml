@@ -27,6 +27,6 @@ body:
     attributes:
       label: Versions
       description: Output of `truss --version` (or the commit), Node.js, OpenSpec CLI, OS.
-      placeholder: "truss 0.2.3, node 22.x, openspec 1.x, macOS"
+      placeholder: "truss 0.2.4, node 22.x, openspec 1.x, macOS"
     validations:
       required: true

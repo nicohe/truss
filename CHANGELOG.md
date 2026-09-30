@@ -4,16 +4,23 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
-### Added
-- `npm run check:docs` compares the version spelled out in the guides (pinned installs), the `--version` example and the bug report placeholder with `package.json`, so a release cannot leave them behind.
-- [Releasing](docs/en/development/releasing.md): the checklist for a version, a tag and a GitHub release (with a Spanish translation).
+## [0.2.4] - 2026-09-30
+
+Patch release: `truss status` and `truss continue` now cope with a change closed by `openspec archive`, and the documentation says what the agent does at each step and how a change is finished. Nothing else about the CLI changes.
+
+### Upgrade notes
+- After `openspec archive`, `truss status` and `truss continue` used to fail with OpenSpec's raw JSON error. They now report that the active change was archived and exit `0`. A script that treated that failure as a signal that the change was closed should look for the message `was archived` instead.
+- Nothing else changes for an existing project.
 
 ### Fixed
-- After `openspec archive`, `truss status` and `truss continue` no longer fail with OpenSpec's raw JSON error. They say that the active change was archived (and where) and point to `truss new`, with exit `0`. If the change is missing from OpenSpec without having been archived, the error names the missing folder instead of quoting OpenSpec's output.
+- **`truss status` and `truss continue` no longer fail after a change is archived.** `openspec archive` moves the change to `openspec/changes/archive/<date>-<name>` but TRUSS kept pointing at it, so both commands failed with the raw `Change '...' not found` JSON. They now find the archived change and say so (with its new location), then point to `truss new`; the exit code is `0` and nothing is written. If the change is missing from OpenSpec without having been archived (its folder was deleted), the error names the missing folder and exits `1`. Any other failure to read the status is reported as before.
 
-### Changed
-- Getting started now says what the agent does: it writes each planning artifact with `openspec instructions <artifact> --change <id>`, checks off tasks in `tasks.md`, and after `verify` reviews, validates and archives the change with `openspec validate` and `openspec archive`. The guidance snippet gains a line about `openspec instructions`, `execute-change` lists the commands used along the way, and the README quick start ends with the agent step instead of "follow the active OpenSpec".
-- The lifecycle commands page is rewritten for people who use TRUSS: the three phases, real output of `new`, `status` and `continue`, and when to use each. The internals stay in a short closing section.
+### Documentation
+- **Getting started says what the agent does.** A new "What your agent does" section explains how the agent writes each planning artifact (`openspec instructions <artifact> --change <id>`, which works even though `init` installs no OpenSpec commands in the agent), when to use Grill and how tasks are checked off. A new "After verify passes" section covers review, `openspec validate` and `openspec archive`. The `AGENTS.md` snippet gains a line about `openspec instructions`.
+- **The README quick start ends with the agent step** instead of "follow the active OpenSpec", and `execute-change` lists the commands used along the way.
+- **The lifecycle commands page is rewritten for people who use TRUSS:** the three phases, real output of `new`, `status` and `continue`, and when to use each. The internals stay in a short closing section.
+- **`npm run check:docs` compares the version written in the docs with `package.json`:** the pinned installs in the guides, the `--version` example and the bug report placeholder, so a release cannot leave them behind.
+- **New page: [Releasing](docs/en/development/releasing.md)**, in English and Spanish: the checklist for a version, a tag and a GitHub release.
 
 ## [0.2.3] - 2026-09-30
 

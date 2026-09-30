@@ -24,7 +24,7 @@ node .truss/bin/truss.mjs doctor
 ```bash
 cd .truss
 git fetch --tags
-git checkout v0.2.3      # a detached HEAD, on purpose: nothing moves until you say so
+git checkout v0.2.4      # a detached HEAD, on purpose: nothing moves until you say so
 cd ..
 ```
 
