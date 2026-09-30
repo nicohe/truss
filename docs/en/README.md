@@ -1,55 +1,66 @@
-# TRUSS Documentation
+# TRUSS documentation
 
-> Canonical documentation.
+> Canonical documentation. Spanish translations are in [`docs/es/`](../es/README.md).
 
-Start with [Getting Started](getting-started.md). Documentation is organized by intent:
+**New here?** Read [Getting started](getting-started.md): it takes you from nothing to a verified change in about ten minutes.
 
-- **Concepts** — why TRUSS works this way.
-- **Workflows** — how work moves through TRUSS.
-- **Skills** — reusable agent capabilities.
-- **Configuration** — exact options and their behavioral effects.
-- **Integrations** — OpenSpec and Graphify.
-- **Reference** — CLI, project structure, glossary.
+## Understand TRUSS
 
-## Configuration contract
+Why it works the way it does.
 
-- [Configuration reference](configuration/reference.md)
-- [Configuration effects](configuration/effects.md)
-- [Configuration examples](configuration/examples.md)
-- [execute-change workflow](workflows/execute-change.md)
-- [OpenSpec foundation](integrations/openspec.md)
-## Workflow references
+- [Architecture](concepts/architecture.md): the core, policies, workflows, integrations and runtime adapters.
+- [Spec-driven development](concepts/spec-driven-development.md): OpenSpec as the anchor, and the two specification modes.
+- [BDD and TDD](concepts/bdd-tdd.md): the two loops, and what TRUSS can and cannot check about them.
+- [Context management](concepts/context-management.md): giving an agent only what the task needs.
+- [Durable vs ephemeral state](concepts/durable-vs-ephemeral.md): what to commit and what to keep local.
+- [Glossary](reference/glossary.md)
 
-- [Change lifecycle](workflows/lifecycle.md)
-- [Specification modes](workflows/spec-modes.md)
-- [CLI reference](reference/cli.md)
+## Do the work
 
+How a change moves through TRUSS.
 
-## Enforcement
+- [Workflow overview](workflows/overview.md)
+- [Change lifecycle](workflows/lifecycle.md): the order of commands, workflows and skills.
+- [`execute-change`](workflows/execute-change.md): the central implementation workflow.
+- [Specification modes](workflows/spec-modes.md): Spec-Anchored and Spec-as-Source in detail.
+- [Lifecycle commands](workflows/lifecycle-commands.md): `new`, `status`, `continue` and the phases.
+- [Skills](skills/overview.md): the portable agent skills.
 
-- [v0.2 enforcement model](reference/enforcement.md)
+## Commands
 
-## Command details
-
+- [CLI reference](reference/cli.md): every command, and exit codes.
 - [`truss init`](reference/init.md)
-- [`truss verify`](reference/verify.md)
 - [`truss doctor`](reference/doctor.md)
-- [Component resolution](reference/components.md)
-- [Lifecycle commands](workflows/lifecycle-commands.md)
-- [Configuration validation](configuration/validation.md)
+- [`truss verify`](reference/verify.md): commands, approval, and the two opt-in gates.
+- [Component resolution](reference/components.md): monorepos and `--component`.
+
+## Configuration
+
+Every option, its default, and what changes when you change it.
+
+- [Reference](configuration/reference.md): types, defaults, values and who enforces each option.
+- [Effects](configuration/effects.md): what changes when a value changes.
+- [Examples](configuration/examples.md): complete profiles.
+- [Validation](configuration/validation.md): how `.truss/config.yaml` is checked.
+- [Project structure](reference/project-structure.md): the TRUSS installation vs the project.
 
 ## Integrations
 
-- [OpenSpec detection](integrations/openspec-detection.md)
-- [OpenSpec compatibility](integrations/openspec-compatibility.md)
-- [Graphify](integrations/graphify.md) and [Graphify lifecycle](integrations/graphify-lifecycle.md)
+- [OpenSpec](integrations/openspec.md): the required foundation.
+  - [Detection](integrations/openspec-detection.md) and [compatibility](integrations/openspec-compatibility.md)
+- [Graphify](integrations/graphify.md): optional code intelligence.
+  - [Lifecycle](integrations/graphify-lifecycle.md)
 
-## Development and release
+## What is guaranteed
 
-- [Testing](development/testing.md)
-- [End-to-end tests](development/e2e.md)
-- [Continuous integration](development/ci.md)
+- [Enforcement model](reference/enforcement.md): what TRUSS checks itself, what it asks the agent to do, and what needs a runtime adapter.
 - [v0.2.0 release contract](reference/release-v0.2.md)
 - [v0.1.0 release contract](reference/release-v0.1.md) (historical)
-- [Documentation audit](reference/documentation-audit.md)
+- [Documentation audit](reference/documentation-audit.md) (historical)
+
+## Contribute and maintain
+
+- [Testing](development/testing.md), [end-to-end tests](development/e2e.md) and [continuous integration](development/ci.md)
+- [Design decisions](development/decisions/0001-local-project-configuration.md): ADR 0001, where the project configuration lives.
 - [Brand and logo usage](reference/brand.md)
+- See also [CONTRIBUTING](../../CONTRIBUTING.md), [SECURITY](../../SECURITY.md) and the [changelog](../../CHANGELOG.md).

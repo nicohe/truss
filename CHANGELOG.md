@@ -4,6 +4,12 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Documentation
+- **Getting started rewritten.** It now lists prerequisites (including how to install OpenSpec), shows the real output of each step, walks one change from `new` to `verify` including the approval prompt, covers monorepos, and has a table of the errors a new user is most likely to hit. The agent prompt no longer hard-codes paths.
+- **The documentation index is organized by what you want to do** (understand, do the work, commands, configuration, integrations, guarantees, contribute) and links every page; previously the four concept pages, the glossary and the project structure were not linked from anywhere.
+- **ADR 0001** records that the project configuration is local to each checkout (the quick start ignores all of `.truss/`), what a team can do about it today, and the versionable-configuration-file option to revisit later. It resolves the old contradiction with "commit shared TRUSS configuration".
+- The four concept pages were 3 to 5 lines each and are now real pages (spec-driven development, BDD and TDD, context management, durable vs ephemeral state); the glossary defines the terms used across the docs.
+
 ## [0.2.1] - 2026-09-30
 
 Patch release: the documented quick start now works. Until now, cloning TRUSS into a project and running `truss init` failed on the first command.
