@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Documentation
+- `SECURITY.md` points to GitHub's private vulnerability reporting, which is now enabled for the repository.
+
 ### Added
 - **Tests-required gate** (`verification.tests_required: off | warn | block`, default `off`). `truss verify` can now report, or refuse to run, a change that touches source code without touching any test. It compares the working tree with the merge-base of `HEAD` and the base branch (`verification.base_ref`, auto-detected), per component, and records the result in the evidence file. It never blocks when it cannot decide (no Git work tree, no base branch, shallow clone). `verification.source_paths` and `verification.test_paths` override the detected layout. `truss doctor` shows the mode. It proves test files changed, not that they were written first or are meaningful. This is the first step of TRUSS-side enforcement for BDD/TDD.
 
