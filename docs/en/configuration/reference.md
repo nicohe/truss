@@ -66,7 +66,7 @@ Enforcement v0.2: **TRUSS** for configured lifecycle/status commands; **AGENT** 
 Type: boolean. Default: `false`. Valid only when `enabled: true`.
 - `false`: if Graphify is unavailable, use native search/grep/LSP/runtime exploration.
 - `true`: Graphify is a project requirement. `truss graphify` and `truss doctor` report it as blocking when unavailable/unready.
-Enforcement v0.2: **TRUSS** for those executable checks; **AGENT** must respect the requirement during agent-driven implementation. Full centralized workflow gating belongs to later orchestration.
+Enforcement v0.2: **TRUSS** for those executable checks; **AGENT** must respect the requirement during agent-driven implementation. `truss continue` tells the agent the state of the graph while it implements, but never stops it. Full centralized workflow gating belongs to later orchestration.
 
 `enabled: false` + `required: true` is invalid configuration.
 

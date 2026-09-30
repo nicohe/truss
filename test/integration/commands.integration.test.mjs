@@ -189,6 +189,147 @@ test('graphify bootstrap: a long failure is cut to its last lines, which hold th
   assert.doesNotMatch(r, /traceback line 1\n/);
 });
 
+// A project in the implementation phase (planning done, one task open) with a fake Graphify that has a fresh graph.
+function graphWorkspace({ required = false } = {}) {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  if (required)
+    fs.writeFileSync(
+      path.join(root, '.truss', 'config.yaml'),
+      tasksConfig('off').replace('required: false', 'required: true'),
+    );
+  fakeGraphify(root, { withIndex: true });
+  return { root, bin };
+}
+const graphFile = (root) => path.join(root, 'graphify-out', 'graph.json');
+const commitSomething = (root) => {
+  fs.writeFileSync(path.join(root, 'another.txt'), 'x');
+  spawnSync('git', ['add', 'another.txt'], { cwd: root });
+  spawnSync('git', ['commit', '-qm', 'another'], { cwd: root });
+};
+const continueOut = (root, bin) => {
+  const r = run(root, ['continue'], { binDirs: [bin] });
+  assert.equal(r.status, 0, 'continue reports the state of the graph; it never stops the agent');
+  return out(r);
+};
+
+test('continue: a fresh code graph is pointed out to the agent as something to use', () => {
+  const { root, bin } = graphWorkspace();
+  assert.match(
+    continueOut(root, bin),
+    /\nCode graph\nThe Graphify code graph is fresh \(graphify-out\/graph\.json\): use it for impact and cross-module questions before searching the tree\.\n/,
+  );
+});
+
+test('continue: a graph that is stale, missing or damaged says what to do, and is firmer when Graphify is required', () => {
+  const states = {
+    stale: { make: commitSomething, say: /The Graphify code graph is stale: run truss graphify update to refresh it/ },
+    missing: {
+      make: (root) => fs.rmSync(path.join(root, 'graphify-out'), { recursive: true }),
+      say: /There is no Graphify code graph yet: truss graphify bootstrap builds one/,
+    },
+    damaged: {
+      make: (root) => fs.writeFileSync(graphFile(root), '{"nodes": [1, 2'),
+      say: /The Graphify code graph is damaged: delete graphify-out\/graph\.json and run truss graphify bootstrap/,
+    },
+  };
+  for (const [name, { make, say }] of Object.entries(states)) {
+    const optional = graphWorkspace();
+    make(optional.root);
+    const soft = continueOut(optional.root, optional.bin);
+    assert.match(soft, say, name);
+    assert.match(soft, /, or search the tree natively\./, `${name}: optional, so there is a way out`);
+
+    const required = graphWorkspace({ required: true });
+    make(required.root);
+    const firm = continueOut(required.root, required.bin);
+    assert.match(firm, say, name);
+    assert.match(firm, /before you implement \(Graphify is required\)\./, `${name}: required`);
+  }
+});
+
+test('continue: says nothing about the graph when Graphify is off (an optional one that is not installed is the same path)', () => {
+  const off = workspace({ config: tasksConfig('off').replace('enabled: true', 'enabled: false') });
+  const offBin = fakeStatefulOpenSpec(off, { initialized: true });
+  assert.equal(run(off, ['new', 'Add retry'], { binDirs: [offBin] }).status, 0);
+  const change = path.join(off, 'openspec', 'changes', 'add-retry');
+  fs.writeFileSync(path.join(change, 'proposal.md'), '# Proposal\n');
+  fs.mkdirSync(path.join(change, 'specs'), { recursive: true });
+  fs.writeFileSync(path.join(change, 'specs', 'retry.md'), 'spec\n');
+  fs.writeFileSync(path.join(change, 'design.md'), '# Design\n');
+  fs.writeFileSync(path.join(change, 'tasks.md'), '- [ ] one\n');
+  fakeGraphify(off, { withIndex: true });
+  const disabled = continueOut(off, offBin);
+  assert.match(disabled, /Context to load/, 'the implementation phase is shown');
+  assert.doesNotMatch(disabled, /Code graph/);
+});
+
+test('continue: the code graph is only mentioned while the agent is implementing', () => {
+  const planning = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(planning, { initialized: true });
+  assert.equal(run(planning, ['new', 'Add retry'], { binDirs: [bin] }).status, 0);
+  fakeGraphify(planning, { withIndex: true });
+  assert.doesNotMatch(continueOut(planning, bin), /Code graph/);
+
+  const done = tasksWorkspace('off', '- [x] one\n');
+  fakeGraphify(done.root, { withIndex: true });
+  const complete = continueOut(done.root, done.bin);
+  assert.match(complete, /Phase\s+complete/);
+  assert.doesNotMatch(complete, /Code graph/);
+});
+
+test('graphify status and doctor: a graph.json that is cut short or empty is damaged, and a sound one is not', () => {
+  const damaged = ['', '   \n', '{ roto', '{"nodes": [1, 2', 'not json at all', '[1, 2', '{"a": 1}}x'];
+  const sound = ['{}\n', '[]', '  {"nodes": [], "links": []}\n\n', '﻿{"a": 1}'];
+  for (const content of [...damaged, ...sound]) {
+    const root = workspace({ config: validConfig });
+    const bin = fakeGraphify(root, { withIndex: true });
+    fs.writeFileSync(graphFile(root), content);
+    const status = out(run(root, ['graphify', 'status'], { binDirs: [bin] }));
+    if (damaged.includes(content)) {
+      assert.match(status, /Freshness\s+damaged/, JSON.stringify(content));
+      assert.match(
+        status,
+        /graph\.json damaged; delete it and run truss graphify bootstrap \(optional; native fallback\)/,
+      );
+    } else {
+      assert.match(status, /Freshness\s+fresh/, `${JSON.stringify(content)} is not flagged`);
+    }
+  }
+
+  const optional = workspace({ config: validConfig });
+  const optionalBin = fakeGraphify(optional, { withIndex: true });
+  fs.writeFileSync(graphFile(optional), '{ roto');
+  const soft = run(optional, ['doctor', '--trust'], { binDirs: [optionalBin, fakeOpenSpec(optional)] });
+  assert.match(out(soft), /○ Graphify\s+graph\.json damaged/);
+  assert.equal(soft.status, 0);
+
+  const required = workspace({ config: validConfig.replace('required: false', 'required: true') });
+  const requiredBin = fakeGraphify(required, { withIndex: true });
+  fs.writeFileSync(graphFile(required), '{ roto');
+  const blocked = run(required, ['graphify', 'status'], { binDirs: [requiredBin] });
+  assert.equal(blocked.status, 1);
+  assert.match(out(blocked), /× graph\.json damaged; delete it and run truss graphify bootstrap \(required; blocks\)/);
+});
+
+test('graphify update and bootstrap: a damaged graph is reported before Graphify is run on it', () => {
+  for (const action of ['update', 'bootstrap']) {
+    const root = workspace({ config: validConfig });
+    const bin = fakeGraphify(root, { withIndex: true, behavior: logged('process.exit(0);') });
+    fs.writeFileSync(graphFile(root), '{"nodes": [1, 2');
+    const r = run(root, ['graphify', action], { binDirs: [bin] });
+    assert.equal(r.status, 0, 'optional: not a blocking failure');
+    assert.match(out(r), /Graphify update failed/);
+    assert.match(out(r), /graphify-out\/graph\.json is damaged .*Delete it and run truss graphify bootstrap\./);
+    assert.doesNotMatch(out(r), /Command\s+graphify/, 'no command ran, so none is named');
+    assert.equal(fs.existsSync(path.join(root, 'graphify-calls.log')), false, `${action} did not call Graphify`);
+    assert.equal(fs.readFileSync(graphFile(root), 'utf8'), '{"nodes": [1, 2', 'the damaged file is left for the user');
+  }
+  const required = workspace({ config: validConfig.replace('required: false', 'required: true') });
+  const bin = fakeGraphify(required, { withIndex: true });
+  fs.writeFileSync(graphFile(required), '');
+  assert.equal(run(required, ['graphify', 'bootstrap'], { binDirs: [bin] }).status, 1);
+});
+
 test('graphify status: an index older than the current git head is reported as stale', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeGraphify(root, { withIndex: true });

@@ -4,6 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- **`truss continue` tells the agent about the Graphify code graph while it implements.** `continue` never mentioned the graph, although the `execute-change` workflow lists it as context. A new **Code graph** section says to use the graph when it is fresh, and what to run when it is stale (`truss graphify update`), missing or damaged (`truss graphify bootstrap`), with a way out when Graphify is optional and "before you implement" when it is required. It says nothing when Graphify is off, or optional and not installed, and only appears in the implementation phase. It is a report: `continue` keeps its exit code, and `doctor` and `graphify` are still what fail when a required Graphify is not ready.
+- **A damaged `graphify-out/graph.json` has its own state, `damaged`.** An empty file, or one that is cut short or overwritten, used to read as `ready` and `fresh`, because TRUSS only looked at its dates. It is now reported by `truss graphify`, `truss doctor` and `truss continue` (blocking when Graphify is required), with what to do: delete the file and run `truss graphify bootstrap`. TRUSS reads only the two ends of the file, so a sound graph is never flagged, however large.
+
+### Changed
+- **`truss graphify update` and `bootstrap` do not run Graphify over a damaged graph.** Graphify cannot update or rebuild over it and answers with a Python traceback; TRUSS now says so first, in one sentence, and leaves the file for you to delete.
+
+### Documentation
+- **The Graphify lifecycle page says two things it left out:** any commit makes the graph `stale`, because freshness follows Git HEAD (and `update` is incremental), and `graphify-out/` is generated output that TRUSS neither ignores nor checks, so committing it moves HEAD.
+
 ### Quality
 - **The docs check makes heading anchors the way GitHub does when a heading has `<…>` in code.** It removed `<change>` from ``## `truss use <change> [--component name]` `` as if it were HTML, even inside a code span, and computed `truss-use----component-name` where GitHub makes `truss-use-change---component-name`. A link to such a heading would have passed the check and been broken on GitHub, and a correct one would have been reported as broken. Code spans now keep their text, only real HTML tags are dropped (`a < b > c` has none), and a link with code as its label keeps it. The expected anchors in the tests were taken from GitHub's own renderer. No heading in the repository changes its anchor: all 657 were compared.
 
