@@ -1,0 +1,6 @@
+.truss/
+**/openspec/
+docs/
+assets/
+node_modules/
+.git/

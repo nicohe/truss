@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://truss.dev/schema/config-v1.json",
+  "title": "TRUSS Configuration",
+  "description": "Schema for .truss/config.yaml. Schema version is selected by the top-level version field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "TRUSS configuration schema version."
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["anchored", "source"], "default": "anchored" },
+        "gherkin": { "type": "boolean", "default": true },
+        "zone_guard": { "type": "boolean", "default": false }
+      }
+    },
+    "development": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bdd": { "type": "boolean", "default": true },
+        "tdd": { "type": "boolean", "default": true }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "commands": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "default": [
+            "npm test --if-present",
+            "npm run lint --if-present",
+            "npm run typecheck --if-present",
+            "npm run build --if-present"
+          ]
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "graphify": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "required": { "type": "boolean", "default": false }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "required": { "const": true } },
+                "required": ["required"]
+              },
+              "then": {
+                "properties": { "enabled": { "const": true } },
+                "required": ["enabled"]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "default": {},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

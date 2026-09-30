@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { evaluateOpenSpecCompatibility } from '../../lib/openspec.mjs';
+const cli=v=>({installed:true,version:v,versionReadable:true});
+test('OpenSpec missing is incompatible',()=>assert.equal(evaluateOpenSpecCompatibility({installed:false}).status,'missing'));
+test('OpenSpec 0.x is too old',()=>assert.equal(evaluateOpenSpecCompatibility(cli('0.99.0')).status,'too_old'));
+test('OpenSpec 1.x is compatible',()=>assert.equal(evaluateOpenSpecCompatibility(cli('1.13.2')).compatible,true));
+test('OpenSpec prerelease is not guaranteed compatible',()=>assert.equal(evaluateOpenSpecCompatibility(cli('1.14.0-beta.1')).status,'unknown'));
+test('OpenSpec 2.x is unsupported newer',()=>assert.equal(evaluateOpenSpecCompatibility(cli('2.0.0')).status,'unsupported_newer'));
+test('Unreadable OpenSpec version is unknown',()=>assert.equal(evaluateOpenSpecCompatibility({installed:true,version:null,versionReadable:false}).status,'unknown'));

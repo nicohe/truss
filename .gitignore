@@ -1,0 +1,8 @@
+node_modules/
+.truss/state.json
+.truss/sessions/
+.truss/cache/
+.truss/checkpoints/
+.truss/handoffs/
+.truss/logs/
+.DS_Store

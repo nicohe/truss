@@ -1,0 +1,38 @@
+# Contributing to TRUSS
+
+Thanks for contributing to TRUSS.
+
+## Principles
+
+- Keep the core portable across coding-agent runtimes.
+- Prefer deterministic tooling for deterministic checks.
+- Keep durable project intent in OpenSpec, not in agent conversations.
+- Avoid adding skills, policies, workflows, or abstractions unless they solve a demonstrated problem.
+- Preserve backward compatibility where practical and document intentional breaking changes.
+
+## Before opening a pull request
+
+1. Keep the change focused and explain the problem it solves.
+2. Update tests when behavior changes.
+3. Run the repository's available verification commands.
+4. Update documentation when configuration, CLI behavior, workflows, or compatibility changes.
+5. Do not include confidential, proprietary, employer, customer, or otherwise unauthorized material.
+6. Do not copy third-party code, prompts, skills, documentation, or assets unless their license permits it and all required notices are preserved. See `THIRD_PARTY.md`.
+
+## Contributions and license
+
+By submitting a contribution, you agree that your contribution may be distributed under the MIT License that covers TRUSS. You must have the right to submit the contribution.
+
+No Contributor License Agreement (CLA) or Developer Certificate of Origin (DCO) is required for TRUSS v0.1.
+
+## Pull request expectations
+
+A pull request should state:
+
+- what changed;
+- why it changed;
+- how it was verified;
+- whether it changes configuration, compatibility, or documented behavior;
+- any third-party material or licensing considerations.
+
+Do not claim a capability is guaranteed by TRUSS unless the implementation or deterministic verification actually enforces it. Agent-followed behavior should remain identified as policy rather than a core guarantee.

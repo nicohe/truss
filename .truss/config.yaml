@@ -1,0 +1,24 @@
+# TRUSS config schema: .truss/schema/config.schema.json
+version: 1
+spec:
+  mode: anchored
+  gherkin: true
+  zone_guard: false
+
+development:
+  bdd: true
+  tdd: true
+
+verification:
+  commands:
+    - npm test --if-present
+    - npm run lint --if-present
+    - npm run typecheck --if-present
+    - npm run build --if-present
+
+integrations:
+  graphify:
+    enabled: true
+    required: false
+
+components: {}
