@@ -55,6 +55,24 @@ test('pnpm-style shims with .. segments and .mjs targets are understood', () => 
   assert.deepEqual(parsed, ['..', '..', 'global', '5', 'node_modules', 'x', 'bin.mjs']);
 });
 
+test('on Windows an extensionless path resolves to its .cmd sibling, as `where` and TRUSS_OPENSPEC_PATH give it', () => {
+  const root = workspace({ config: null, git: false });
+  try {
+    const script = path.join(root, 'node_modules', 'pkg', 'bin', 'cli.js');
+    fs.mkdirSync(path.dirname(script), { recursive: true });
+    fs.writeFileSync(script, '');
+    fs.writeFileSync(path.join(root, 'cli'), '#!/bin/sh\n');
+    fs.writeFileSync(path.join(root, 'cli.cmd'), npmShim('node_modules\\pkg\\bin\\cli.js'));
+    const launch = resolveLaunch(path.join(root, 'cli'), ['--version'], { platform: 'win32' });
+    assert.equal(launch.command, process.execPath);
+    assert.deepEqual(launch.args, [script, '--version']);
+    // Nothing to resolve to: the path is used as given.
+    assert.equal(resolveLaunch(path.join(root, 'other'), [], { platform: 'win32' }).command, path.join(root, 'other'));
+  } finally {
+    cleanup(root);
+  }
+});
+
 test('a .cmd that is not an npm shim is not parsed', () => {
   assert.equal(parseNpmCmdShim('@echo off\r\nsome-tool.exe %*\r\n'), null);
   assert.equal(parseNpmCmdShim(''), null);
