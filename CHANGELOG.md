@@ -4,6 +4,15 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.11] - 2026-09-30
+
+Patch release: `truss new` now warns when it leaves another change behind. Starting a change while another was still open in OpenSpec used to replace the active change without a word, and there is no command to go back to it, so the first change looked lost.
+
+### Upgrade notes
+- No exit code changes: `truss new` still exits `0` when it creates the change.
+- `truss new` prints one more line, `○ "x" is still open in OpenSpec (path) and is no longer the active change: …`, when another change was still open. A script that reads the whole output of `truss new` would see it.
+- Nothing else changes for an existing project.
+
 ### Changed
 - **`truss new` warns when it leaves another change behind.** Starting a change while another was still open in OpenSpec replaced the active change without a word, and there is no command to go back to it, so the first change looked lost. `new` still creates the new change and makes it the active one, exit code `0`, and now adds `○ "x" is still open in OpenSpec (path) and is no longer the active change: TRUSS follows one change at a time.` There is no warning when the previous change was archived or is gone from OpenSpec, or when the state file cannot be read.
 

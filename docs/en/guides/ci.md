@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 22
       - run: npm ci
-      - run: git clone --depth 1 --branch v0.2.10 https://github.com/nicohe/truss.git .truss
+      - run: git clone --depth 1 --branch v0.2.11 https://github.com/nicohe/truss.git .truss
       - run: cp ci/truss-config.yaml .truss/config.yaml
       - run: node .truss/bin/truss.mjs verify
         env:
