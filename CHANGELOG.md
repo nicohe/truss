@@ -4,6 +4,14 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.9] - 2026-09-30
+
+Patch release: `truss handoff` and the `tasks_complete` gate now recognize a change that was closed with `openspec archive`, as `status` and `continue` already did. The documentation separates its historical documents from the current ones.
+
+### Upgrade notes
+- No exit code changes. `truss handoff` on an archived change now says so and writes no note (it used to write one), and the `tasks_complete` gate reports it as `archived` (in the output and in `.truss/verification/latest.json`) instead of `could not evaluate`. A script that read the gate's `unknown` status for this case should also accept `archived`.
+- Nothing else changes for an existing project.
+
 ### Fixed
 - **`truss handoff` and the `tasks_complete` gate now recognize a change that was closed with `openspec archive`**, as `status` and `continue` already did. `handoff` used to write a note for it, with a phase that was no longer true; it now says the change was archived (and where), points to `truss new`, and writes nothing. The gate used to say `could not evaluate: OpenSpec did not report task progress`; it now reports `the active change "x" was archived (...); nothing to check`, records `archived` in the evidence, and never blocks. Exit codes do not change.
 
