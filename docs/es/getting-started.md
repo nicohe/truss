@@ -32,7 +32,7 @@ git clone --depth 1 --branch v0.2.9 https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
 ```
 
-TRUSS vive en `.truss/` y queda fuera del historial de tu repositorio. El clon está fijado a una release, así que Git dice que está en estado «detached HEAD»: es lo esperado, estás en una release y no en una rama. Para pasar a una release más nueva más adelante, consulta [actualizar o desinstalar TRUSS](guides/update-and-remove.md). Si no quieres escribir el comando largo, define un alias:
+TRUSS vive en `.truss/` y queda fuera del historial de tu repositorio. El clon está fijado a una release, así que Git dice que está en estado «detached HEAD»: es lo esperado, estás en una release y no en una rama. Git también puede imprimir una línea `warning: refs/tags/… is not a commit!` al clonar: la release es un tag anotado y el clon termina bien (`git -C .truss describe --tags` imprime la release que tienes). Para pasar a una release más nueva más adelante, consulta [actualizar o desinstalar TRUSS](guides/update-and-remove.md). Si no quieres escribir el comando largo, define un alias:
 
 ```bash
 alias truss='node .truss/bin/truss.mjs'                       # bash / zsh

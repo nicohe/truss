@@ -30,7 +30,7 @@ git clone --depth 1 --branch v0.2.9 https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
 ```
 
-TRUSS lives in `.truss/` and stays out of your repository's history. The clone is pinned to a release, so Git says it is in a "detached HEAD" state: that is expected, you are on a release and not on a branch. To move to a newer release later, see [update or remove TRUSS](guides/update-and-remove.md). If you would rather not type the long command, add an alias:
+TRUSS lives in `.truss/` and stays out of your repository's history. The clone is pinned to a release, so Git says it is in a "detached HEAD" state: that is expected, you are on a release and not on a branch. Git may also print a `warning: refs/tags/… is not a commit!` line while cloning: the release is an annotated tag, and the clone still succeeds (`git -C .truss describe --tags` prints the release you have). To move to a newer release later, see [update or remove TRUSS](guides/update-and-remove.md). If you would rather not type the long command, add an alias:
 
 ```bash
 alias truss='node .truss/bin/truss.mjs'                       # bash / zsh

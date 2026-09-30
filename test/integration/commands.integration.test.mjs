@@ -151,20 +151,48 @@ test('new: a title with no usable characters is rejected', () => {
   assert.match(out(r), /empty after kebab-case/);
 });
 
-test('new: surfaces OpenSpec failures', () => {
-  const root = workspace({ config: validConfig });
+// Real OpenSpec prints failures as JSON on stdout ({ status: [{ severity, message }] }) and exits 1.
+function failingNew(root, title, reply) {
   const bin = fakeCli(
     fakeBin(root),
     'openspec',
     `const [cmd] = process.argv.slice(2);
 if (cmd === '--version') console.log('1.13.2');
-else if (cmd === 'new') { console.error('already exists'); process.exit(1); }`,
+else if (cmd === 'new') { ${reply} process.exit(1); }`,
   );
   fs.mkdirSync(path.join(root, 'openspec', 'changes'), { recursive: true });
   fs.writeFileSync(path.join(root, 'openspec', 'config.yaml'), 'schema: spec-driven\n');
-  const r = run(root, ['new', 'Add retry'], { binDirs: [bin] });
+  return run(root, ['new', title], { binDirs: [bin] });
+}
+const openspecError = (message) =>
+  `console.log(JSON.stringify({ change: null, status: [{ severity: 'error', code: 'change_error', message: ${JSON.stringify(message)} }] }, null, 2));`;
+
+test('new: an OpenSpec failure shows its message, not its JSON', () => {
+  const r = failingNew(
+    workspace({ config: validConfig }),
+    'Add retry',
+    openspecError("Change 'add-retry' already exists at /p/add-retry"),
+  );
   assert.equal(r.status, 1);
-  assert.match(out(r), /could not create change "add-retry".*already exists/);
+  assert.match(out(r), /could not create change "add-retry": Change 'add-retry' already exists at \/p\/add-retry/);
+  assert.doesNotMatch(out(r), /[{}]|severity|change_error/);
+});
+
+test('new: a failure that is not JSON is shown as plain text', () => {
+  const r = failingNew(workspace({ config: validConfig }), 'Add retry', "console.error('already exists');");
+  assert.equal(r.status, 1);
+  assert.match(out(r), /could not create change "add-retry": already exists/);
+});
+
+test('new: a very long change name is shortened in the error', () => {
+  const r = failingNew(
+    workspace({ config: validConfig }),
+    'a'.repeat(300),
+    openspecError('Change name is too long (200 characters max)'),
+  );
+  assert.equal(r.status, 1);
+  assert.match(out(r), /could not create change "a{57}\.\.\.": Change name is too long \(200 characters max\)/);
+  assert.doesNotMatch(out(r), /a{100}/);
 });
 
 test('status and continue: report no active change', () => {
@@ -183,6 +211,7 @@ test('status: a corrupt state file is reported with exit 2', () => {
   const r = run(root, ['status']);
   assert.equal(r.status, 2);
   assert.match(out(r), /Invalid TRUSS state file/);
+  assert.match(out(r), /Delete it .*truss new "Change name"/, 'says how to get out of it');
 });
 
 test('handoff: with no active change says so; with one writes a file', () => {
@@ -604,7 +633,7 @@ test('new, status and continue: an invalid or missing config is reported in full
   for (const args of [['status'], ['continue'], ['new', 'Add retry']]) {
     const r = run(missing, args, { binDirs: [fakeOpenSpec(missing)] });
     assert.equal(r.status, 2, `${args[0]} exits 2 for a missing config`);
-    assert.match(out(r), /TRUSS config not found: \.truss[\\/]config\.yaml/);
+    assert.match(out(r), /TRUSS config not found: \.truss[\\/]config\.yaml\. Run truss init to create it\./);
   }
 });
 
