@@ -22,6 +22,7 @@ TRUSS v0.1 separates implemented guarantees from agent instructions and future a
 - Graphify status/update/bootstrap commands and blocking status when configured as required;
 - `truss doctor` diagnostics and documented exit-code classes;
 - sequential, fail-fast deterministic verification and local evidence;
+- the opt-in tests-required gate of `truss verify` (`verification.tests_required`): source changed without any test change is reported (`warn`) or stops verification (`block`). It checks that test files changed, not that they were written first or are meaningful;
 - OpenSpec-backed `new`, `status`, and next-action calculation for `continue`;
 - local handoff scaffold creation and skill listing.
 

@@ -28,6 +28,22 @@ Boolean, default `true`. Habilita RED → GREEN mínimo → refactor para detall
 ## `verification.commands`
 Array de strings. `truss verify` ejecuta los comandos en orden; un fallo impide considerar Verification exitosa. Enforcement: **TRUSS**.
 
+## `verification.tests_required`
+Enum, default `off`. Valores: `off`, `warn`, `block`. Controla el **gate de tests obligatorios** de `truss verify`: ¿el cambio tocó código fuente sin tocar ningún test?
+- `off`: el gate no se ejecuta.
+- `warn`: `truss verify` informa qué archivos de código cambiaron sin tests y continúa; el exit code no cambia.
+- `block`: el mismo informe, pero `truss verify` termina con exit `1` **antes de ejecutar ningún comando** y lo registra en `.truss/verification/latest.json`.
+
+Compara el working tree con el merge-base entre `HEAD` y la rama base (ver `base_ref`): cuentan los archivos commiteados, en staging, modificados y sin seguimiento; las eliminaciones puras no exigen tests. Se evalúa **por componente**. Solo cuentan archivos con extensión de código; docs, JSON, lockfiles y fixtures se ignoran. Es test un archivo bajo un directorio de tests o llamado `*.test.*`, `*.spec.*` o `*_test.*`.
+
+Si no puede decidir (no es un work tree de Git, no hay commits, no hay rama base, clon superficial), lo informa y **no** bloquea. Límite: demuestra que cambiaron archivos de test, no que se escribieran primero (TDD), que cubran el cambio ni que pasen; eso sigue en `verification.commands`. Enforcement: **TRUSS** para la comprobación de presencia; **AGENT** para la disciplina BDD/TDD.
+
+## `verification.base_ref`
+String, default sin definir (autodetección: `origin/HEAD`, `origin/main`, `origin/master`, `main`, `master`). Ref de Git contra la que se compara el cambio. Una ref inexistente hace que el gate informe que no puede evaluar, sin bloquear. Enforcement: **TRUSS**.
+
+## `verification.source_paths` y `verification.test_paths`
+Arrays de strings, default sin definir (se usan los directorios detectados: `src`, `app`, `apps`, `lib`, `packages` y `test`, `tests`, `__tests__`, `spec`). Prefijos de directorio relativos al repositorio que reemplazan los detectados. Enforcement: **TRUSS**.
+
 ## `integrations.graphify.enabled`
 Boolean, default `true`.
 - `false`: TRUSS no intenta usar Graphify; usa descubrimiento nativo.
