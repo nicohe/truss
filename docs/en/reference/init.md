@@ -5,7 +5,7 @@
 ## Guarantees
 
 - Existing `.truss/config.yaml` is validated and adopted; it is never overwritten.
-- Missing `.truss/config.yaml` is created from TRUSS defaults.
+- Missing `.truss/config.yaml` is created from TRUSS defaults. If TRUSS cannot validate what it just created (for example, an incomplete installation), the file is removed again: `init` never leaves a half-created config behind.
 - Existing initialized OpenSpec projects are adopted without modification.
 - A missing OpenSpec project is initialized only when a compatible OpenSpec CLI is available.
 - TRUSS runs `openspec init <project> --tools none` so OpenSpec creates its durable project structure without installing runtime-specific assistant files.
