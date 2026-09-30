@@ -56,6 +56,40 @@ test('slugify follows GitHub: lower case, punctuation dropped, spaces become hyp
   assert.equal(slugify('Añadir política'), 'añadir-política', 'letters outside ASCII are kept');
 });
 
+// Each pair was checked against GitHub's own renderer (`POST /markdown/raw`), not worked out by hand.
+test('slugify keeps the text of a code span, even when it looks like a tag or a link, and drops real HTML', () => {
+  const github = [
+    ['`truss use <change> [--component name]`', 'truss-use-change---component-name'],
+    ['Use `<div>` tags', 'use-div-tags'],
+    ['A [link](x.md) and `[not](a.md)`', 'a-link-and-notamd'],
+    ['[`foo`](bar.md) page', 'foo-page'],
+    ['Nested <span>`<x>`</span> end', 'nested-x-end'],
+    ['``double `tick` code``', 'double-tick-code'],
+    ['Title <b>bold</b> end', 'title-bold-end'],
+    ['a < b > c', 'a--b--c'],
+    ['Raw <not a tag', 'raw-not-a-tag'],
+    ['Image ![alt](i.png) here', 'image--here'],
+    ['**bold** and `a*b`', 'bold-and-ab'],
+  ];
+  for (const [heading, anchor] of github) assert.equal(slugify(heading), anchor, heading);
+});
+
+test('checkLinks: a link to a heading with <placeholder> in code uses the anchor GitHub makes', () => {
+  const heading = '## `truss use <change> [--component name]`\n';
+  withTree(
+    {
+      'docs/en/a.md': `# A\n\n${heading}`,
+      'docs/en/good.md': '# Good\n\n[ok](a.md#truss-use-change---component-name)\n',
+      'docs/en/bad.md': '# Bad\n\n[no](a.md#truss-use----component-name)\n',
+    },
+    (root) => {
+      const found = messages(checkLinks(root).errors).join('\n');
+      assert.doesNotMatch(found, /good\.md/, 'the anchor GitHub generates is accepted');
+      assert.match(found, /bad\.md.*truss-use----component-name/, 'the one the old code made is not');
+    },
+  );
+});
+
 test('heading anchors: repeated headings get numeric suffixes; code fences are ignored; code headings count', () => {
   const anchors = headingAnchors(
     [

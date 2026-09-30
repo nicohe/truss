@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Quality
+- **The docs check makes heading anchors the way GitHub does when a heading has `<…>` in code.** It removed `<change>` from ``## `truss use <change> [--component name]` `` as if it were HTML, even inside a code span, and computed `truss-use----component-name` where GitHub makes `truss-use-change---component-name`. A link to such a heading would have passed the check and been broken on GitHub, and a correct one would have been reported as broken. Code spans now keep their text, only real HTML tags are dropped (`a < b > c` has none), and a link with code as its label keeps it. The expected anchors in the tests were taken from GitHub's own renderer. No heading in the repository changes its anchor: all 657 were compared.
+
 ## [0.2.13] - 2026-09-30
 
 Patch release: `truss graphify bootstrap` and `update` show why `graphify extract` failed instead of the failure of a second command, and that second command now runs only when Graphify does not know `extract`. Found by testing TRUSS with the real Graphify.
