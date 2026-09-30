@@ -4,6 +4,17 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.14] - 2026-09-30
+
+Patch release, from testing TRUSS in `spec.mode: source` with the real Graphify. `truss continue` now tells the agent about the Graphify code graph and about what `spec.mode: source` and `spec.zone_guard` ask of it, a damaged `graphify-out/graph.json` is reported instead of reading as `ready`, and the docs check makes heading anchors the way GitHub does.
+
+### Upgrade notes
+- No exit code changes.
+- `truss continue` prints more while the agent implements. With Graphify installed, it ends with a **Code graph** section (Graphify is enabled by default); with `spec.mode: source` or `spec.zone_guard: true`, the next action gains one or two lines. A project with the default spec settings and no Graphify sees no change.
+- `truss doctor` and `truss graphify` can report a new state, `damaged`, for a `graph.json` that is empty or cut short and used to read as `ready`: an optional warning, or a failure when Graphify is required.
+- TRUSS still does not check `spec.mode` or `spec.zone_guard`: they remain agent policy, and `continue` now says so to the agent.
+- Nothing else changes for an existing project.
+
 ### Added
 - **`truss continue` tells the agent about the Graphify code graph while it implements.** `continue` never mentioned the graph, although the `execute-change` workflow lists it as context. A new **Code graph** section says to use the graph when it is fresh, and what to run when it is stale (`truss graphify update`), missing or damaged (`truss graphify bootstrap`), with a way out when Graphify is optional and "before you implement" when it is required. It says nothing when Graphify is off, or optional and not installed, and only appears in the implementation phase. It is a report: `continue` keeps its exit code, and `doctor` and `graphify` are still what fail when a required Graphify is not ready.
 - **A damaged `graphify-out/graph.json` has its own state, `damaged`.** An empty file, or one that is cut short or overwritten, used to read as `ready` and `fresh`, because TRUSS only looked at its dates. It is now reported by `truss graphify`, `truss doctor` and `truss continue` (blocking when Graphify is required), with what to do: delete the file and run `truss graphify bootstrap`. TRUSS reads only the two ends of the file, so a sound graph is never flagged, however large.
