@@ -16,10 +16,15 @@ El CI se ejecuta en:
 
 ## Matriz de runtimes
 
-TRUSS declara Node.js `>=20`, así que el CI verifica la versión mayor mínima admitida y las líneas más nuevas en tres sistemas operativos (9 jobs):
+TRUSS declara Node.js `>=20`, así que el CI verifica la versión mayor mínima admitida y las líneas más nuevas (6 jobs):
 
-- Sistemas operativos: `ubuntu-latest`, `macos-latest`, `windows-latest`.
-- Node.js: 20, 22 y 24.
+| Sistema operativo | Node.js |
+|---|---|
+| `ubuntu-latest` | 20, 22 y 24 |
+| `macos-latest` | 20 y 24 |
+| `windows-latest` | 24 |
+
+El rango de versiones de Node se cubre en Ubuntu, el runner más barato. macOS y Windows están para detectar lo que depende del sistema operativo (rutas, shims, lanzamiento de procesos), así que ejecutan menos celdas. El coste es que un problema propio de un Node más antiguo en Windows, o de Node 22 en macOS o Windows, no lo detecta el CI.
 
 **Windows.** Toda la suite se ejecuta en Windows. Los CLIs falsos de OpenSpec y Graphify se instalan como npm instala un CLI global (un shim `sh` sin extensión, un shim `.cmd` y el script de Node que lanzan ambos), de modo que los tests ejercitan el mismo manejo de `.cmd` que una instalación real.
 
@@ -89,4 +94,4 @@ npm run ci
 
 Si `npm run lint` informa de problemas de formato o de lint corregibles, `npm run lint:fix` los aplica.
 
-Un fallo en el chequeo de sintaxis, en la comprobación de la documentación, en el lint o en un test hace fallar el job de CI. La protección de `main` exige que pasen los nueve jobs de la matriz antes de poder mergear una pull request. El job `Contract / real OpenSpec` no es requerido.
+Un fallo en el chequeo de sintaxis, en la comprobación de la documentación, en el lint o en un test hace fallar el job de CI. La protección de `main` exige que pasen los seis jobs de la matriz antes de poder mergear una pull request. El job `Contract / real OpenSpec` no es requerido.

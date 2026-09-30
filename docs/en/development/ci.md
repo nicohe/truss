@@ -14,10 +14,15 @@ CI runs on:
 
 ## Runtime matrix
 
-TRUSS declares Node.js `>=20`, so CI verifies the minimum supported major and the newer lines on three operating systems (9 jobs):
+TRUSS declares Node.js `>=20`, so CI verifies the minimum supported major and the newer lines (6 jobs):
 
-- Operating systems: `ubuntu-latest`, `macos-latest`, `windows-latest`.
-- Node.js: 20, 22 and 24.
+| Operating system | Node.js |
+|---|---|
+| `ubuntu-latest` | 20, 22 and 24 |
+| `macos-latest` | 20 and 24 |
+| `windows-latest` | 24 |
+
+The range of Node versions is covered on Ubuntu, the cheapest runner. macOS and Windows exist to catch what depends on the operating system (paths, shims, process spawning), so they run fewer cells. The cost is that a problem specific to an older Node on Windows, or to Node 22 on macOS or Windows, is not caught by CI.
 
 **Windows.** The whole suite runs on Windows. The fake OpenSpec/Graphify CLIs are installed the way npm installs a global CLI (an extensionless `sh` shim, a `.cmd` shim and the Node script both launch), so the tests exercise the same `.cmd` handling as a real install.
 
@@ -87,4 +92,4 @@ npm run ci
 
 If `npm run lint` reports formatting or fixable lint problems, `npm run lint:fix` applies them.
 
-A failed syntax check, docs check, lint or test causes the CI job to fail. Branch protection on `main` requires the nine matrix jobs to pass before a pull request can be merged. The `Contract / real OpenSpec` job is not required.
+A failed syntax check, docs check, lint or test causes the CI job to fail. Branch protection on `main` requires the six matrix jobs to pass before a pull request can be merged. The `Contract / real OpenSpec` job is not required.

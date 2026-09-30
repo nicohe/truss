@@ -20,17 +20,26 @@ Una release es una pull request que sube la versión, seguida de un tag y de una
    - la salida de ejemplo de `--version` en la [referencia del CLI](../reference/cli.md);
    - el placeholder de `.github/ISSUE_TEMPLATE/bug_report.yml`;
    - las mismas líneas en las páginas en español de `docs/es/`.
-5. Ejecuta `npm run ci` y abre la pull request. Necesita los nueve jobs de la matriz en verde, como cualquier otra.
+5. Ejecuta `npm run ci` y abre la pull request. Necesita los jobs requeridos de la matriz en verde, como cualquier otra.
 
 ## Después del merge
 
-Actualiza `main`, crea el tag sobre el commit del merge y publica la release, usando la sección del changelog como notas:
+Actualiza `main`. Extrae primero la sección del changelog como notas de la release y comprueba que el archivo no está vacío, para no publicar nunca una release sin notas:
+
+```bash
+awk -v v="X.Y.Z" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ {f=0} f && (NF || p) {p=1; print}' CHANGELOG.md > release-notes.md
+test -s release-notes.md && wc -l release-notes.md
+```
+
+Después crea el tag y publica:
 
 ```bash
 git tag -a vX.Y.Z -m "TRUSS vX.Y.Z" <commit-del-merge>
 git push origin vX.Y.Z
-gh release create vX.Y.Z --verify-tag --latest --title "TRUSS vX.Y.Z" --notes-file <archivo con la sección del changelog>
+gh release create vX.Y.Z --verify-tag --latest --title "TRUSS vX.Y.Z" --notes-file release-notes.md
 ```
+
+Ese `awk` funciona igual en macOS y en Linux; un `sed` de una línea que va en uno falla en el otro. Borra `release-notes.md` después: no forma parte del repositorio.
 
 Los tags son anotados. Las guías fijan un tag, así que un tag publicado nunca se mueve ni se borra: un error se corrige con la release siguiente.
 
