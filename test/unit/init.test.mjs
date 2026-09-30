@@ -4,11 +4,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DEFAULT_CONFIG, initializeProject } from '../../lib/init.mjs';
 import { ConfigError } from '../../lib/config.mjs';
-import { workspace, fakeOpenSpec, executable, fakeBin, validConfig } from '../integration/helpers.mjs';
+import { workspace, fakeOpenSpec, executable, fakeBin, validConfig, posix } from '../integration/helpers.mjs';
 import { cleanup, mkdir, write } from './helpers.mjs';
 
-// The fake OpenSpec CLI is a POSIX shell script.
-const posix = { skip: process.platform === 'win32' && 'needs a POSIX shell' };
 
 function withEnv(vars, fn) {
   const saved = Object.fromEntries(Object.keys(vars).map(k => [k, process.env[k]]));

@@ -14,6 +14,8 @@ All notable changes to TRUSS are documented here.
 - Change names keep their letters when they contain accents (`Añadir política` becomes `anadir-politica`, not `a-adir-pol-tica`).
 
 ### Added
+- CI runs on Ubuntu, macOS and Windows with Node.js 20, 22 and 24, and enforces a coverage floor (`npm run test:coverage`). Tests that need the POSIX fake OpenSpec/Graphify CLIs are skipped on Windows.
+- `scripts/run-tests.mjs` starts the test suites without relying on shell globbing.
 - `truss verify` asks for approval before running a new or changed `verification.commands` list, remembers it per project outside the repository, and refuses without a terminal unless `--trust` or `TRUSS_TRUST=1` is given. `truss init` trusts the default list it writes; `truss doctor` reports trust state.
 - Color output honors `NO_COLOR` and `FORCE_COLOR`, and is disabled when stdout is not a TTY.
 - `SECURITY.md` documents the trust model for `verification.commands`.

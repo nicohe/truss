@@ -16,14 +16,19 @@ concurrency:
 
 jobs:
   test:
-    name: Node ${{ matrix.node-version }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.os }} / Node ${{ matrix.node-version }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
         node-version:
           - 20
           - 22
+          - 24
 
     steps:
       - name: Checkout
@@ -42,5 +47,20 @@ jobs:
       - name: Syntax check
         run: npm run check
 
-      - name: Test
-        run: npm test
+      # Separate steps so one failing suite does not hide failures in the others.
+      - name: Unit tests
+        if: ${{ !(matrix.os == 'ubuntu-latest' && matrix.node-version == 22) }}
+        run: npm run test:unit
+
+      - name: Integration tests
+        if: ${{ always() && !(matrix.os == 'ubuntu-latest' && matrix.node-version == 22) }}
+        run: npm run test:integration
+
+      - name: End-to-end tests
+        if: ${{ always() && !(matrix.os == 'ubuntu-latest' && matrix.node-version == 22) }}
+        run: npm run test:e2e
+
+      # One cell also enforces the coverage floor (see test:coverage in package.json).
+      - name: Test with coverage
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == 22 }}
+        run: npm run test:coverage
