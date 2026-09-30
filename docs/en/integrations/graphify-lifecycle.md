@@ -39,6 +39,8 @@ truss graphify update
 
 Bootstrap uses the Graphify CLI to build a code graph. Update refreshes an existing graph. TRUSS does not install Graphify or silently change its version.
 
+`bootstrap`, and `update` when there is no graph yet, run `graphify extract . --code-only`: it indexes the code only and calls no language model. `update` with a graph runs `graphify update .`. When the command fails, `truss graphify` prints it with the error Graphify gave, cut to its last 12 lines (a Python traceback ends with the message that matters), and a corrupt `graphify-out/graph.json` is fixed the way Graphify says: delete the file and run `bootstrap` again. Only when your Graphify does not know `extract` (an older release) does TRUSS run the older form, `graphify . --no-viz`, and then it prints that command instead.
+
 ## Failure semantics
 
 When optional, missing/stale/unready Graphify does not block TRUSS and the agent must fall back to native repository exploration. When required, the same states block Graphify-dependent workflow and `truss graphify` returns a non-zero exit code.

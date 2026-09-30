@@ -123,6 +123,72 @@ test('graphify bootstrap: builds the index, records the git head and then report
   assert.match(out(update), /graphify update \./);
 });
 
+// A fake Graphify that logs each call, so a test can say which commands ran and in what order.
+const logged = (reply) => `fs.appendFileSync('graphify-calls.log', process.argv.slice(2).join(' ') + '\\n');\n${reply}`;
+const calls = (root) => fs.readFileSync(path.join(root, 'graphify-calls.log'), 'utf8').trim().split('\n');
+
+test('graphify bootstrap: when extract fails, its own error is shown and no other command runs', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeGraphify(root, {
+    behavior: logged(
+      "console.error('error: Cannot read graphify-out/graph.json for incremental merge. Delete the file and run a full rebuild.'); process.exit(1);",
+    ),
+  });
+  const r = run(root, ['graphify', 'bootstrap'], { binDirs: [bin] });
+  assert.equal(r.status, 0, 'a failure is still non-blocking when Graphify is optional');
+  assert.match(out(r), /Graphify update failed/);
+  assert.match(out(r), /Command\s+graphify extract \. --code-only/);
+  assert.match(out(r), /Cannot read graphify-out\/graph\.json for incremental merge\. Delete the file/);
+  assert.deepEqual(calls(root), ['extract . --code-only'], 'the path-first command did not run');
+
+  const required = workspace({ config: validConfig.replace('required: false', 'required: true') });
+  const blocked = run(required, ['graphify', 'bootstrap'], {
+    binDirs: [fakeGraphify(required, { behavior: logged('process.exit(1);') })],
+  });
+  assert.equal(blocked.status, 1);
+  assert.deepEqual(calls(required), ['extract . --code-only']);
+});
+
+test('graphify bootstrap: a Graphify without extract falls back to the path-first command', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeGraphify(root, {
+    behavior:
+      logged(`if (process.argv[2] === 'extract') { console.error("error: unknown command 'extract'"); process.exit(1); }
+fs.mkdirSync('graphify-out', { recursive: true }); fs.writeFileSync('graphify-out/graph.json', '{}');`),
+  });
+  const r = run(root, ['graphify', 'bootstrap'], { binDirs: [bin] });
+  assert.equal(r.status, 0, r.stdout);
+  assert.match(out(r), /graph updated/);
+  assert.match(out(r), /Command\s+graphify \. --no-viz/, 'it names the command that ran, not the one that failed');
+  assert.deepEqual(calls(root), ['extract . --code-only', '. --no-viz']);
+});
+
+test('graphify bootstrap: if the path-first command fails too, that failure is the one shown, with its command', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeGraphify(root, {
+    behavior:
+      logged(`if (process.argv[2] === 'extract') { console.error("error: unknown command 'extract'"); process.exit(1); }
+console.error('path-first failed'); process.exit(2);`),
+  });
+  const r = run(root, ['graphify', 'bootstrap'], { binDirs: [bin] });
+  assert.match(out(r), /Command\s+graphify \. --no-viz/);
+  assert.match(out(r), /path-first failed/);
+});
+
+test('graphify bootstrap: a long failure is cut to its last lines, which hold the message', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeGraphify(root, {
+    behavior: logged(
+      "for (let i = 1; i <= 40; i++) console.error('traceback line ' + i); console.error('RuntimeError: delete the file and rebuild'); process.exit(1);",
+    ),
+  });
+  const r = out(run(root, ['graphify', 'bootstrap'], { binDirs: [bin] }));
+  assert.match(r, /\(29 earlier lines omitted\)/);
+  assert.match(r, /RuntimeError: delete the file and rebuild/);
+  assert.match(r, /traceback line 40/);
+  assert.doesNotMatch(r, /traceback line 1\n/);
+});
+
 test('graphify status: an index older than the current git head is reported as stale', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeGraphify(root, { withIndex: true });
