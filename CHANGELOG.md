@@ -5,6 +5,8 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Documentation
+- **Reference pages brought up to date with the code.** `doctor.md` now has a table of every check (required or not, and when it passes), including `Trust`, `Tests required` and `Tasks complete`. `init.md` says that `init` approves the default command list it writes and documents its exit codes. `cli.md` no longer calls verification commands "gates" (the word now means the two opt-in checks) or the CLI a "starter", and gains an options table and an exit-code section with per-command exceptions.
+- **New page: [environment variables](docs/en/reference/environment.md)** covering `TRUSS_TRUST`, `TRUSS_HOME` / `XDG_CONFIG_HOME`, `TRUSS_OPENSPEC_PATH`, `NO_COLOR` / `FORCE_COLOR` / `TERM` and `PATH`. `FORCE_COLOR` was not documented anywhere.
 - **Getting started rewritten.** It now lists prerequisites (including how to install OpenSpec), shows the real output of each step, walks one change from `new` to `verify` including the approval prompt, covers monorepos, and has a table of the errors a new user is most likely to hit. The agent prompt no longer hard-codes paths.
 - **The documentation index is organized by what you want to do** (understand, do the work, commands, configuration, integrations, guarantees, contribute) and links every page; previously the four concept pages, the glossary and the project structure were not linked from anywhere.
 - **ADR 0001** records that the project configuration is local to each checkout (the quick start ignores all of `.truss/`), what a team can do about it today, and the versionable-configuration-file option to revisit later. It resolves the old contradiction with "commit shared TRUSS configuration".
