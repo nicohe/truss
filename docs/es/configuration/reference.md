@@ -21,10 +21,10 @@ Tipo: booleano. Por defecto: `true`. Con `true`, el comportamiento de aceptació
 Tipo: booleano. Por defecto: `false`. Con `true` se espera una separación de comportamiento entre Spec Zone y Code Zone. Se recomienda sobre todo con `mode: source`. Enforcement en v0.2: **AGENT/DECLARATIVE**; `truss continue` se lo recuerda al agente mientras implementa, y el enforcement por runtime es trabajo futuro.
 
 ## `development.bdd`
-Tipo: booleano. Por defecto: `true`. Activa el macro-loop BDD en `execute-change`: comportamiento de aceptación RED → implementación → aceptación GREEN. Enforcement en v0.2: **AGENT**.
+Tipo: booleano. Por defecto: `true`. Activa el macro-loop BDD en `execute-change`: comportamiento de aceptación RED → implementación → aceptación GREEN. Enforcement en v0.2: **AGENT**; con `false`, `truss continue` le dice al agente que el bucle no es obligatorio.
 
 ## `development.tdd`
-Tipo: booleano. Por defecto: `true`. Activa RED → GREEN mínimo → refactor para los detalles de implementación. Enforcement en v0.2: **AGENT**. TRUSS puede comprobar además que el cambio tocó algún test: consulta `verification.tests_required`.
+Tipo: booleano. Por defecto: `true`. Activa RED → GREEN mínimo → refactor para los detalles de implementación. Enforcement en v0.2: **AGENT**; con `false`, `truss continue` le dice al agente que el bucle no es obligatorio. TRUSS puede comprobar además que el cambio tocó algún test: consulta `verification.tests_required`.
 
 ## `verification.commands`
 Tipo: array de strings. Por defecto: `npm test --if-present`, `npm run lint --if-present`, `npm run typecheck --if-present` y `npm run build --if-present`. `truss verify` ejecuta los comandos en orden; un fallo impide que la verificación se considere exitosa. La lista por defecto sirve para un proyecto Node: sin `package.json`, `npm` falla en el primer comando, así que los demás proyectos deben poner sus propias comprobaciones (consulta los [ejemplos](examples.md#un-proyecto-que-no-es-node)). Enforcement: **TRUSS**.

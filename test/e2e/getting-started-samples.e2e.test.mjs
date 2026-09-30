@@ -48,6 +48,8 @@ function runGuide() {
   try {
     const outputs = {};
     outputs.init = run('init').out;
+    // The guide has the reader add their own guidance file before the first `continue`, and `continue` lists it.
+    fs.writeFileSync(path.join(project, 'AGENTS.md'), '# Guidance\n');
     outputs.new = run('new', 'Add retry policy').out;
     outputs['continue-spec'] = run('continue').out;
 

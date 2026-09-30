@@ -1141,6 +1141,71 @@ test('continue: the spec policy is only restated while the agent implements', ()
   assert.doesNotMatch(text, /authoritative|Zone guard/);
 });
 
+const BDD_OFF = /BDD is off \(development\.bdd: false\): the acceptance RED → GREEN macro-loop is not mandatory\./;
+const TDD_OFF =
+  /TDD is off \(development\.tdd: false\): the RED → minimal GREEN → refactor micro-loop is not mandatory\./;
+
+test('continue: the default development settings add nothing, and an off loop is stated to the agent', () => {
+  assert.doesNotMatch(continueWithSpec({}), /BDD is|TDD is|development\./);
+
+  const bddOff = continueWithSpec({ 'bdd: true': 'bdd: false' });
+  assert.match(bddOff.slice(bddOff.indexOf('Next action'), bddOff.indexOf('Context to load')), BDD_OFF);
+  assert.doesNotMatch(bddOff, TDD_OFF);
+
+  const tddOff = continueWithSpec({ 'tdd: true': 'tdd: false' });
+  assert.match(tddOff, TDD_OFF);
+  assert.doesNotMatch(tddOff, BDD_OFF);
+
+  const both = continueWithSpec({
+    'mode: anchored': 'mode: source',
+    'bdd: true': 'bdd: false',
+    'tdd: true': 'tdd: false',
+  });
+  assert.match(both, /authoritative[\s\S]*\nBDD is off[\s\S]*\nTDD is off/, 'one line each, after the spec policy');
+});
+
+test('continue: the development settings are only restated while the agent implements', () => {
+  const complete = continueWithSpec({ 'bdd: true': 'bdd: false', 'tdd: true': 'tdd: false' }, '- [x] one\n');
+  assert.match(complete, /Phase\s+complete/);
+  assert.doesNotMatch(complete, /BDD is off|TDD is off/);
+});
+
+test('continue: lists AGENTS.md as context only when the project has one', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  const without = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(without, /Context to load\n- openspec[\\/]changes[\\/]add-retry\n/);
+  assert.doesNotMatch(without, /AGENTS\.md/);
+
+  fs.writeFileSync(path.join(root, 'AGENTS.md'), '# Guidance\n');
+  assert.match(
+    out(run(root, ['continue'], { binDirs: [bin] })),
+    /Context to load\n- AGENTS\.md \(effective component\/workspace guidance\)\n- openspec/,
+  );
+});
+
+test('continue: a component with its own AGENTS.md lists that one, and falls back to the workspace one', () => {
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  fs.mkdirSync(path.join(root, 'apps', 'api', 'openspec'), { recursive: true });
+  assert.equal(run(root, ['new', 'Add retry', '--component', 'api'], { binDirs: [bin] }).status, 0);
+  const change = path.join(root, 'apps', 'api', 'openspec', 'changes', 'add-retry');
+  fs.writeFileSync(path.join(change, 'proposal.md'), '# Proposal\n');
+  fs.mkdirSync(path.join(change, 'specs'), { recursive: true });
+  fs.writeFileSync(path.join(change, 'specs', 'retry.md'), 'spec\n');
+  fs.writeFileSync(path.join(change, 'design.md'), '# Design\n');
+  fs.writeFileSync(path.join(change, 'tasks.md'), '- [ ] one\n');
+
+  fs.writeFileSync(path.join(root, 'AGENTS.md'), '# Workspace\n');
+  assert.match(out(run(root, ['continue'], { binDirs: [bin] })), /Context to load\n- AGENTS\.md \(effective/);
+  fs.writeFileSync(path.join(root, 'apps', 'api', 'AGENTS.md'), '# Api\n');
+  assert.match(
+    out(run(root, ['continue'], { binDirs: [bin] })),
+    /Context to load\n- apps\/api\/AGENTS\.md \(effective/,
+  );
+});
+
 test('continue: names the openspec command to write the next artifact, and the ones that close the change', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeStatefulOpenSpec(root, { initialized: true });

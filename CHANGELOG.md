@@ -5,6 +5,13 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Changed
+- **`truss continue` tells the agent when `development.bdd` or `development.tdd` is off.** Both settings were agent policy that never reached the agent: `continue` said "follow configured BDD/TDD policies" and listed no configuration file, and the `execute-change` workflow only says "if BDD is enabled", so the output was identical with both loops on or off. While the agent implements, the next action now adds `BDD is off (development.bdd: false): ...` and `TDD is off (development.tdd: false): ...`, after the spec policy lines. Both on, the default, adds nothing. TRUSS still does not check either loop.
+- **`truss continue` lists `AGENTS.md` under "Context to load" only when the project has one.** It was always listed, although `init` does not create it, so a project without one was told to load a file that is not there. A component's own `AGENTS.md` is listed with its path, else the workspace's.
+
+### Documentation
+- **The configuration reference, the effects table, the BDD/TDD concept page and the lifecycle commands page (EN/ES) say that `continue` states a loop that is off, and when it lists `AGENTS.md`.**
+
+### Changed
 - **`truss status` and `truss continue` list the changes that are open in OpenSpec when no change is active.** `.truss/state.json` is local to each checkout, so a fresh clone or a CI machine has no active change even when OpenSpec has changes in flight, and both commands answered `No active change` and pointed only to `truss new`: the one step that starts a duplicate and never mentions `truss use`. `status` now adds an `Open changes` line and puts `truss use <change>` first, with `truss new "Change name"` as the alternative; `continue` says the same in its one instruction. When a single change is open the command names it, and a change in a component's own `openspec/` is listed as `add-retry (component api)` with `--component api` in the command. The same list follows the message that the active change was archived. It reads the `openspec/changes` folders, as `truss use` does, so it does not need the OpenSpec CLI, and a component that does not resolve or a folder that cannot be read is left out instead of failing. With nothing open the output is exactly what it was, and no exit code changes.
 
 ### Documentation
