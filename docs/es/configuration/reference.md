@@ -27,7 +27,7 @@ Tipo: booleano. Por defecto: `true`. Activa el macro-loop BDD en `execute-change
 Tipo: booleano. Por defecto: `true`. Activa RED → GREEN mínimo → refactor para los detalles de implementación. Enforcement en v0.2: **AGENT**. TRUSS puede comprobar además que el cambio tocó algún test: consulta `verification.tests_required`.
 
 ## `verification.commands`
-Tipo: array de strings. Por defecto: los comandos iniciales del proyecto. `truss verify` ejecuta los comandos en orden; un fallo impide que la verificación se considere exitosa. Enforcement: **TRUSS**.
+Tipo: array de strings. Por defecto: `npm test --if-present`, `npm run lint --if-present`, `npm run typecheck --if-present` y `npm run build --if-present`. `truss verify` ejecuta los comandos en orden; un fallo impide que la verificación se considere exitosa. La lista por defecto sirve para un proyecto Node: sin `package.json`, `npm` falla en el primer comando, así que los demás proyectos deben poner sus propias comprobaciones (consulta los [ejemplos](examples.md#un-proyecto-que-no-es-node)). Enforcement: **TRUSS**.
 
 ## `verification.tests_required`
 Tipo: enum. Por defecto: `off`. Valores: `off`, `warn`, `block`. Controla el **gate tests-required** de `truss verify`: ¿el cambio tocó código fuente sin tocar ningún test?

@@ -26,7 +26,7 @@ Type: boolean. Default: `true`. Enables the BDD macro-loop in `execute-change`: 
 Type: boolean. Default: `true`. Enables RED → minimal GREEN → refactor for implementation details. Enforcement v0.2: **AGENT**. TRUSS can additionally check that a change touched tests at all: see `verification.tests_required`.
 
 ## `verification.commands`
-Type: string array. Default: project starter commands. Commands are executed in order by `truss verify`; failure stops successful verification. Enforcement: **TRUSS**.
+Type: string array. Default: `npm test --if-present`, `npm run lint --if-present`, `npm run typecheck --if-present` and `npm run build --if-present`. Commands are executed in order by `truss verify`; failure stops successful verification. The default list suits a Node project: without a `package.json`, `npm` fails on the first command, so other projects should list their own checks (see the [examples](examples.md#a-project-that-is-not-node)). Enforcement: **TRUSS**.
 
 ## `verification.tests_required`
 Type: enum. Default: `off`. Values: `off`, `warn`, `block`. Controls the **tests-required gate** of `truss verify`: did the change touch source code without touching any test?

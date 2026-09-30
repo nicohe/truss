@@ -2,7 +2,7 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../en/getting-started.md). Los mensajes que imprime TRUSS están en inglés, y por eso los ejemplos de salida también.
 
-Esta guía te lleva desde un proyecto sin TRUSS hasta un cambio verificado. Son unos diez minutos. Todas las salidas de abajo se copiaron de una ejecución real.
+Esta guía te lleva desde un proyecto sin TRUSS hasta un cambio verificado. Son unos diez minutos. Las salidas de abajo se copiaron de una ejecución real; una línea con solo `...` representa líneas omitidas.
 
 TRUSS es un harness, no un agente: reúne en un solo lugar tus specs, policies y verificación, y le dice al coding agent qué hacer a continuación. Nunca ejecuta un agente por sí mismo.
 
@@ -87,7 +87,19 @@ TRUSS doctor passed. 1 optional warning(s).
 
 ## 4. Da algo de guía a tu agente
 
-Los agentes leen un archivo de guía del proyecto, normalmente `AGENTS.md`, en la raíz del repositorio. TRUSS no crea ninguno. Empieza con unas pocas líneas sobre cómo se trabaja en tu proyecto; el [`AGENTS.md`](../../AGENTS.md) de este repositorio es un ejemplo pequeño.
+Los agentes leen un archivo de guía del proyecto, normalmente `AGENTS.md`, en la raíz del repositorio. TRUSS no crea ninguno. Unas pocas líneas bastan para que un agente siga el workflow; añádelas a tu propio archivo:
+
+```markdown
+## Working with TRUSS
+
+- Before implementing, run `node .truss/bin/truss.mjs continue` and follow the instructions and the files it lists.
+- Load skills and documentation only when the task needs them; `node .truss/bin/truss.mjs skills` lists the skills.
+- Keep specs, code and tests aligned; do not let them diverge silently.
+- When you finish, run `node .truss/bin/truss.mjs verify` and do not call the change done until it passes.
+- Write a handoff (`node .truss/bin/truss.mjs handoff`) only when work moves to another agent, runtime or session.
+```
+
+Copia estas líneas en lugar del [`AGENTS.md`](../../AGENTS.md) de este repositorio, que guía el trabajo sobre el propio TRUSS: las rutas que menciona (como `.truss/skills/`) son `.truss/.truss/skills/` en tu proyecto, y `truss continue` imprime siempre las reales.
 
 ## 5. Lleva un cambio por el workflow
 
@@ -98,8 +110,12 @@ node .truss/bin/truss.mjs new "Add retry policy"
 ```
 
 ```text
+△ TRUSS · new
+
 ● OpenSpec change created
 Change          add-retry-policy
+Component       workspace
+OpenSpec        openspec/changes/add-retry-policy
 Planning        0/4 artifacts complete
 
 Next: truss continue
@@ -112,8 +128,12 @@ node .truss/bin/truss.mjs continue
 ```
 
 ```text
+△ TRUSS · continue
+
 Change          add-retry-policy
 Phase           spec
+OpenSpec        openspec/changes/add-retry-policy
+Mode            agent-driven (TRUSS v0.2)
 
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
@@ -126,9 +146,13 @@ Pásale eso a tu agente. Un prompt que sirve con cualquier agente:
 `continue` nunca ejecuta el agente: calcula el siguiente paso a partir del estado de OpenSpec y lo imprime. Cuando existen los cuatro artefactos, la fase pasa a `implementation` y la instrucción cambia:
 
 ```text
+△ TRUSS · continue
+
 Change          add-retry-policy
 Phase           implementation
+OpenSpec        openspec/changes/add-retry-policy
 Tasks           1/2 complete
+Mode            agent-driven (TRUSS v0.2)
 
 Next action
 Implement add-retry-policy using .truss/.truss/workflows/execute-change.md. Read the active OpenSpec, start with the first incomplete task ("1.2 Add tests"), follow configured BDD/TDD policies, then run truss verify.
@@ -148,7 +172,7 @@ Las rutas que ves son las reales para tu disposición de archivos. `truss status
 node .truss/bin/truss.mjs verify
 ```
 
-`verify` ejecuta, en orden, los comandos de `verification.commands` en `.truss/config.yaml` y se detiene en el primer fallo. Registra lo ocurrido en `.truss/verification/latest.json`. La lista por defecto ejecuta tus scripts `npm test`, `lint`, `typecheck` y `build` cuando existen.
+`verify` ejecuta, en orden, los comandos de `verification.commands` en `.truss/config.yaml` y se detiene en el primer fallo. Registra lo ocurrido en `.truss/verification/latest.json`. La lista por defecto ejecuta tus scripts `npm test`, `lint`, `typecheck` y `build` cuando existen. Ese valor por defecto supone un proyecto Node: sin `package.json`, `npm` falla en el primer comando. En cualquier otro proyecto, sustituye antes la lista por tus propias comprobaciones (por ejemplo `pytest -q`); consulta [la lista de comandos por defecto](reference/verify.md#la-lista-de-comandos-por-defecto).
 
 Como esos comandos se ejecutan a través de tu shell, TRUSS pregunta antes de ejecutar una lista que no ha visto para este proyecto. `init` aprueba la lista por defecto que escribe; si editas la lista, la siguiente ejecución se detiene:
 
@@ -202,6 +226,7 @@ Las rutas de los componentes deben existir y quedar dentro del proyecto. Consult
 | `invalid config` (código de salida 2) | `config.yaml` incumple el schema | ejecuta `truss config` para ver los errores exactos |
 | `TRUSS installation is incomplete: config schema not found` | el clon de `.truss/` está dañado | vuelve a clonar TRUSS |
 | `Not trusted; nothing was executed.` | la lista de comandos cambió | revísala y luego usa `--trust` |
+| `× failed  [1/4] npm test --if-present`, con `npm error … Could not read package.json` | la lista de comandos por defecto supone un proyecto Node y este no tiene `package.json` | sustituye `verification.commands` por las comprobaciones propias de tu proyecto y aprueba la lista nueva |
 | `Unknown component "x"` | ese nombre no está declarado en `components` | decláralo u omite `--component` |
 | `OpenSpec project is not initialized` | no existe el directorio `openspec/` | ejecuta `truss init` |
 

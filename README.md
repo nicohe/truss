@@ -45,6 +45,8 @@ In a monorepo, declare `components` in `.truss/config.yaml` first and then pass 
 | `truss components` | Resolve configured project components |
 | `truss handoff` | Create concise local transition context |
 | `truss skills` | List portable TRUSS skills |
+| `truss version` | Print the installed TRUSS version (also `--version`) |
+| `truss help [command]` | List the commands, or explain one (also `<command> --help`) |
 
 Full details in the [CLI reference](docs/en/reference/cli.md).
 

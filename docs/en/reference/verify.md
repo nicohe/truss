@@ -14,6 +14,10 @@
 - Records machine-readable evidence in `.truss/verification/latest.json`.
 - Never reports success when no verification commands are configured.
 
+## The default command list
+
+`truss init` writes `npm test --if-present`, `npm run lint --if-present`, `npm run typecheck --if-present` and `npm run build --if-present`. `--if-present` skips a script the project does not define, but `npm` itself needs a `package.json`: in a project without one (Python, Go, or the root of a monorepo whose packages live in subdirectories) the first command fails with `npm error … Could not read package.json` and `verify` stops. Replace the list with your own checks in `.truss/config.yaml`; see the [examples](../configuration/examples.md#a-project-that-is-not-node).
+
 ## Exit codes
 
 | Code | Meaning |

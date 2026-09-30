@@ -27,7 +27,7 @@ OpenSpec defines **what** must change. `execute-change` coordinates **how the ch
 7. Keep code, tests and OpenSpec aligned according to `spec.mode`.
 8. Make the acceptance behavior GREEN.
 9. Update tasks and durable evidence explicitly.
-10. Run configured deterministic verification.
+10. Run configured deterministic verification with `truss verify`.
 11. Run Code Review against Spec, Standards and Risk.
 12. Create a Handoff only when context, responsibility, session or runtime changes.
 13. Continue with the next ready task or finish the change.
