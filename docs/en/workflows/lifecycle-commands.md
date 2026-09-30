@@ -148,7 +148,7 @@ Make one of them the active change with: truss use <change>, or create a new one
 
 With a single open change the command names it, as in `status`. After an archive it says `The change "x" was archived.` first and offers `create the next one`.
 
-When `spec.mode` is `source`, or `spec.zone_guard` is on, the next action of a change that is being implemented also says what that asks of the agent: the spec is read-only while it implements, and spec work and code work are kept in separate steps. See [specification modes](spec-modes.md).
+When `spec.mode` is `source`, or `spec.zone_guard` is on, the next action of a change that is being implemented also says what that asks of the agent: the spec is read-only while it implements, and spec work and code work are kept in separate steps. See [specification modes](spec-modes.md). The same goes for a development loop that is switched off: with `development.bdd: false` or `development.tdd: false` it says `BDD is off` or `TDD is off` and that the loop is not mandatory, because the workflow only says "if BDD is enabled" and does not say where that is set. Both on, the default, adds nothing.
 
 For a change that is still planning:
 
@@ -179,7 +179,7 @@ Next action
 Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy.
 ```
 
-While the tasks are open, the output also lists a **Context to load** section with the real paths of the workflow, the policies and the change, as the getting started guide shows. With Graphify enabled, the output ends with a **Code graph** section: one sentence that tells the agent to use the graph when it is fresh and what to run when it is stale, missing or damaged (see the [Graphify lifecycle](../integrations/graphify-lifecycle.md)). It says nothing when Graphify is off, or optional and not installed. A prompt that works with any agent is: "Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists."
+While the tasks are open, the output also lists a **Context to load** section with the real paths of the workflow, the policies and the change, as the getting started guide shows. It lists the project's `AGENTS.md` (the component's own, or else the workspace's) only when one exists: `init` does not create it. With Graphify enabled, the output ends with a **Code graph** section: one sentence that tells the agent to use the graph when it is fresh and what to run when it is stale, missing or damaged (see the [Graphify lifecycle](../integrations/graphify-lifecycle.md)). It says nothing when Graphify is off, or optional and not installed. A prompt that works with any agent is: "Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists."
 
 ## Which one, when
 

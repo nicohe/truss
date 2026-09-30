@@ -10,9 +10,9 @@
 | `spec.gherkin: false` | Structured non-Gherkin acceptance criteria allowed | AGENT |
 | `spec.zone_guard: true` | Expect Spec Zone / Code Zone separation; `truss continue` reminds the agent while it implements | AGENT / DECLARATIVE |
 | `development.bdd: true` | `execute-change` applies acceptance RED → GREEN macro-loop | AGENT |
-| `development.bdd: false` | BDD macro-loop is not mandatory | AGENT |
+| `development.bdd: false` | BDD macro-loop is not mandatory; `truss continue` says so to the agent while it implements | AGENT |
 | `development.tdd: true` | `execute-change` applies RED → minimal GREEN → refactor | AGENT |
-| `development.tdd: false` | TDD micro-loop is not mandatory | AGENT |
+| `development.tdd: false` | TDD micro-loop is not mandatory; `truss continue` says so to the agent while it implements | AGENT |
 | change `verification.commands` | `truss verify` executes the new command list in order | TRUSS |
 | `verification.tests_required: warn` | `truss verify` reports source changes that have no test change, then continues | TRUSS (presence check) |
 | `verification.tests_required: block` | `truss verify` exits `1` before running commands when source changed without tests | TRUSS (presence check) |

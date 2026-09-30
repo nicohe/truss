@@ -150,7 +150,7 @@ Make one of them the active change with: truss use <change>, or create a new one
 
 Con un único cambio abierto el comando lo nombra, como en `status`. Tras un archivado empieza con `The change "x" was archived.` y ofrece `create the next one`.
 
-Cuando `spec.mode` es `source`, o `spec.zone_guard` está activo, la acción siguiente de un cambio que se está implementando dice además qué le pide eso al agente: la spec es de solo lectura mientras implementa, y el trabajo de spec y el de código se mantienen en pasos separados. Consulta los [modos de especificación](spec-modes.md).
+Cuando `spec.mode` es `source`, o `spec.zone_guard` está activo, la acción siguiente de un cambio que se está implementando dice además qué le pide eso al agente: la spec es de solo lectura mientras implementa, y el trabajo de spec y el de código se mantienen en pasos separados. Consulta los [modos de especificación](spec-modes.md). Lo mismo ocurre con un bucle de desarrollo desactivado: con `development.bdd: false` o `development.tdd: false` dice `BDD is off` o `TDD is off` y que el bucle no es obligatorio, porque el workflow solo dice «si BDD está activado» y no dice dónde se configura. Con ambos activos, lo predeterminado, no añade nada.
 
 Para un cambio que sigue en planificación:
 
@@ -181,7 +181,7 @@ Next action
 Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy.
 ```
 
-Mientras hay tareas abiertas, la salida incluye además una sección **Context to load** con las rutas reales del workflow, las policies y el cambio, como muestra la guía de inicio. Con Graphify activado, la salida termina con una sección **Code graph**: una frase que le dice al agente que use el grafo cuando está al día y qué ejecutar cuando está obsoleto, falta o está dañado (consulta el [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md)). No dice nada cuando Graphify está apagado, u opcional y no instalado. Un prompt que funciona con cualquier agente es: «Implementa el cambio activo de TRUSS. Ejecuta `truss continue` y sigue las instrucciones y los archivos que lista.»
+Mientras hay tareas abiertas, la salida incluye además una sección **Context to load** con las rutas reales del workflow, las policies y el cambio, como muestra la guía de inicio. Lista el `AGENTS.md` del proyecto (el del componente, o si no el del espacio de trabajo) solo cuando existe: `init` no lo crea. Con Graphify activado, la salida termina con una sección **Code graph**: una frase que le dice al agente que use el grafo cuando está al día y qué ejecutar cuando está obsoleto, falta o está dañado (consulta el [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md)). No dice nada cuando Graphify está apagado, u opcional y no instalado. Un prompt que funciona con cualquier agente es: «Implementa el cambio activo de TRUSS. Ejecuta `truss continue` y sigue las instrucciones y los archivos que lista.»
 
 ## Cuál usar y cuándo
 

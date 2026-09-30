@@ -11,7 +11,7 @@ TRUSS le pide a los agentes trabajar en dos bucles anidados. Ambos son *policies
 
 El trabajo se corta en **vertical slices**: la pieza más pequeña que demuestra un comportamiento por sí sola. «La base de datos», «la API» y «los tests» son capas horizontales; una slice que permite a un usuario reintentar una petición fallida es vertical.
 
-`development.bdd` y `development.tdd` (ambos `true` por defecto) activan los bucles. Son instrucciones para el agente; TRUSS no las orquesta en v0.2. Desactivar `bdd` puede ser razonable en refactors o tooling sin comportamiento observable nuevo; no desactiva los tests existentes ni `truss verify`.
+`development.bdd` y `development.tdd` (ambos `true` por defecto) activan los bucles. Son instrucciones para el agente; TRUSS no las orquesta en v0.2 y solo lo dice: `truss continue` le avisa al agente cuando uno está desactivado. Desactivar `bdd` puede ser razonable en refactors o tooling sin comportamiento observable nuevo; no desactiva los tests existentes ni `truss verify`.
 
 ## Qué puede comprobar TRUSS y qué no
 
