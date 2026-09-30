@@ -30,7 +30,7 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 node .truss/bin/truss.mjs help             # la lista de comandos (igual que ejecutar truss sin comando)
 node .truss/bin/truss.mjs verify --help    # uso, opciones y códigos de salida de un comando; no se ejecuta
 node .truss/bin/truss.mjs help verify      # lo mismo
-node .truss/bin/truss.mjs --version        # truss 0.2.14
+node .truss/bin/truss.mjs --version        # truss 0.2.15
 ```
 
 `--help` nunca ejecuta el comando que la acompaña, así que `truss verify --help` siempre es seguro. Un comando mal escrito falla con código de salida `2`, para que un script no siga como si hubiera funcionado, y sugiere el nombre más parecido. Los mensajes están en inglés:
