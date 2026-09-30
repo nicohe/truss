@@ -32,10 +32,12 @@ npm ci --ignore-scripts
   ↓
 npm run check
   ↓
+npm run lint               (ubuntu / Node 22 only)
+  ↓
 unit → integration → E2E   (separate steps, so one failing suite does not hide the others)
 ```
 
-`npm run check` performs `node --check` against TRUSS JavaScript modules. The suites are started by `scripts/run-tests.mjs`, which lists the test files itself because `cmd.exe` and Node 20 do not expand globs.
+`npm run check` performs `node --check` against TRUSS JavaScript modules. `npm run lint` runs [Biome](https://biomejs.dev) (`biome check`: lint rules, formatting and import order) using `biome.jsonc`. The suites are started by `scripts/run-tests.mjs`, which lists the test files itself because `cmd.exe` and Node 20 do not expand globs.
 
 ## Coverage floor
 
@@ -55,5 +57,7 @@ Before pushing a change, run:
 npm ci --ignore-scripts
 npm run ci
 ```
+
+If `npm run lint` reports formatting or fixable lint problems, `npm run lint:fix` applies them.
 
 A failed syntax check or test causes the CI job to fail. Branch protection is a repository setting and should require the CI job before merging when the repository is hosted on GitHub.
