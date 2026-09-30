@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- **`npm run check:docs`**, run by `npm run ci` and by a CI step. It fails on broken links, broken anchors and orphan pages under `docs/en/`, and on drift between the docs and the code: an undocumented CLI command, configuration option, `truss doctor` check or environment variable. Tested with real trees and by mutating a copy of the repository with the problems found during the documentation analysis.
+
 ### Documentation
 - **Reference pages brought up to date with the code.** `doctor.md` now has a table of every check (required or not, and when it passes), including `Trust`, `Tests required` and `Tasks complete`. `init.md` says that `init` approves the default command list it writes and documents its exit codes. `cli.md` no longer calls verification commands "gates" (the word now means the two opt-in checks) or the CLI a "starter", and gains an options table and an exit-code section with per-command exceptions.
 - **New page: [environment variables](docs/en/reference/environment.md)** covering `TRUSS_TRUST`, `TRUSS_HOME` / `XDG_CONFIG_HOME`, `TRUSS_OPENSPEC_PATH`, `NO_COLOR` / `FORCE_COLOR` / `TERM` and `PATH`. `FORCE_COLOR` was not documented anywhere.

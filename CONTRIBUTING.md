@@ -14,8 +14,8 @@ Thanks for contributing to TRUSS.
 
 1. Keep the change focused and explain the problem it solves.
 2. Update tests when behavior changes.
-3. Run `npm run ci` (syntax check, Biome lint and format check, and all test suites). `npm run lint:fix` fixes formatting and safe lint findings.
-4. Update documentation when configuration, CLI behavior, workflows, or compatibility changes.
+3. Run `npm run ci` (syntax check, documentation check, Biome lint and format check, and all test suites). `npm run lint:fix` fixes formatting and safe lint findings.
+4. Update documentation when configuration, CLI behavior, workflows, or compatibility changes. `npm run check:docs` fails if you add a command, a configuration option, a `truss doctor` check or an environment variable without documenting it, or leave a broken link.
 5. Do not include confidential, proprietary, employer, customer, or otherwise unauthorized material.
 6. Do not copy third-party code, prompts, skills, documentation, or assets unless their license permits it and all required notices are preserved. See `THIRD_PARTY.md`.
 

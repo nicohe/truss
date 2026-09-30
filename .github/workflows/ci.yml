@@ -47,6 +47,11 @@ jobs:
       - name: Syntax check
         run: npm run check
 
+      # Documentation links, anchors, orphan pages and docs-vs-code drift are OS-independent, so one cell is enough.
+      - name: Docs check
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == 22 }}
+        run: npm run check:docs
+
       # Lint and format are OS-independent, so one cell is enough.
       - name: Lint and format check
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == 22 }}

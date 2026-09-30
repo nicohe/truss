@@ -32,12 +32,31 @@ npm ci --ignore-scripts
   ↓
 npm run check
   ↓
+npm run check:docs         (ubuntu / Node 22 only)
+  ↓
 npm run lint               (ubuntu / Node 22 only)
   ↓
 unit → integration → E2E   (separate steps, so one failing suite does not hide the others)
 ```
 
-`npm run check` performs `node --check` against TRUSS JavaScript modules. `npm run lint` runs [Biome](https://biomejs.dev) (`biome check`: lint rules, formatting and import order) using `biome.jsonc`. The suites are started by `scripts/run-tests.mjs`, which lists the test files itself because `cmd.exe` and Node 20 do not expand globs.
+`npm run check` performs `node --check` against TRUSS JavaScript modules. `npm run check:docs` runs the [documentation check](#documentation-check). `npm run lint` runs [Biome](https://biomejs.dev) (`biome check`: lint rules, formatting and import order) using `biome.jsonc`. The suites are started by `scripts/run-tests.mjs`, which lists the test files itself because `cmd.exe` and Node 20 do not expand globs.
+
+## Documentation check
+
+`npm run check:docs` (`scripts/check-docs.mjs`, no dependencies, no network) fails the build when the documentation drifts. It checks the Markdown files of the repository for:
+
+- **Broken links**: a relative link to a file that does not exist.
+- **Broken anchors**: a `#fragment` with no matching heading in the target page. Anchors follow GitHub's rules, including inline-code headings and repeated headings.
+- **Orphan pages**: a page under `docs/en/` that no other page links to. Other docs directories (currently `docs/es/`) only produce a warning; `--strict` enforces all of them.
+
+and, against the code they describe, that the documentation mentions:
+
+- every CLI command (`docs/en/reference/cli.md`);
+- every configuration option in the schema (`docs/en/configuration/reference.md`);
+- every `truss doctor` check (`docs/en/reference/doctor.md`);
+- every environment variable the CLI reads or a CI workflow sets (`docs/en/reference/environment.md`).
+
+So adding a command, an option, a doctor check or an environment variable without documenting it fails the build, which is the kind of drift that had left `doctor.md` and the environment variables undocumented. Use `--root <dir>` to check another tree. External links are not checked, to keep the build deterministic.
 
 ## Contract test against the real OpenSpec
 
