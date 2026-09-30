@@ -62,6 +62,7 @@ Per command:
 - `doctor`: `1` when a required check fails; `2` when the config is invalid.
 - `verify`: `1` when a command fails, none are configured, the list is not approved, or a gate set to `block` refuses; `2` for an invalid config.
 - `graphify update` / `bootstrap`: a failure is `1` only when Graphify is `required: true`, otherwise `0`.
+- `new`, `status`, `continue`: `2` when the configuration is invalid or missing, or when the component is unknown (the errors are listed, as `config` and `verify` do); `1` when OpenSpec is missing, incompatible or not initialized.
 - `status`, `continue`, `handoff`: `2` when `.truss/state.json` is unreadable.
 
 ## Output

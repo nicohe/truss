@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **`truss new`, `status` and `continue` now exit `2` and list the errors when the configuration is invalid or missing, and `new --component` exits `2` for an unknown component.** The CLI reference already said so, and `config`, `verify` and `components` already did it. These three printed only `× Invalid TRUSS configuration.` (no detail) or `× TRUSS config not found` and exited `1`, so an invalid config looked the same as a failed precondition. They now print `× invalid config` followed by the errors, as the others do. A script that relied on exit `1` for these cases needs to accept `2`.
+
 ### Documentation
 - **New page: [Troubleshooting](docs/en/guides/troubleshooting.md)**, in English and Spanish. It lists what TRUSS prints when something is wrong, what it means and what to do, in five groups: setup, verification, changes and the agent, the TRUSS installation and Windows. The messages are quoted from the real CLI. The table in Getting started stays for the first run and now points to it.
 

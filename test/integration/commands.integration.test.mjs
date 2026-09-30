@@ -590,3 +590,35 @@ test('continue: a component with its own openspec/ says where to run the command
     /Run openspec instructions proposal --change add-retry \(from apps[\\/]api\) for its format and path\./,
   );
 });
+
+test('new, status and continue: an invalid or missing config is reported in full and exits 2, like config and verify', () => {
+  const invalid = workspace({ config: 'version: 1\nbogus: true\n' });
+  const bin = fakeOpenSpec(invalid);
+  for (const args of [['status'], ['continue'], ['new', 'Add retry']]) {
+    const r = run(invalid, args, { binDirs: [bin] });
+    assert.equal(r.status, 2, `${args[0]} exits 2 for an invalid config`);
+    assert.match(out(r), /× invalid config/);
+    assert.match(out(r), /\$\.bogus: unknown property/, `${args[0]} lists what is wrong, not just that something is`);
+  }
+  const missing = workspace();
+  for (const args of [['status'], ['continue'], ['new', 'Add retry']]) {
+    const r = run(missing, args, { binDirs: [fakeOpenSpec(missing)] });
+    assert.equal(r.status, 2, `${args[0]} exits 2 for a missing config`);
+    assert.match(out(r), /TRUSS config not found: \.truss[\\/]config\.yaml/);
+  }
+});
+
+test('new: an undeclared component exits 2, as documented, and names the ones that exist', () => {
+  const none = workspace({ config: validConfig });
+  const r = run(none, ['new', 'Add retry', '--component', 'nope'], { binDirs: [fakeOpenSpec(none)] });
+  assert.equal(r.status, 2);
+  assert.match(out(r), /Unknown component "nope"\. No components are configured\./);
+
+  const some = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  fs.mkdirSync(path.join(some, 'apps', 'api'), { recursive: true });
+  const listed = run(some, ['new', 'Add retry', '--component', 'nope'], { binDirs: [fakeOpenSpec(some)] });
+  assert.equal(listed.status, 2);
+  assert.match(out(listed), /Unknown component "nope"\. Available: api/);
+});
