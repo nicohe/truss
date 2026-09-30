@@ -34,6 +34,7 @@ Empieza por `truss doctor`. No cambia nada, e informa del entorno, la configurac
 |---|---|---|
 | `The active change "x" was archived (openspec/changes/archive/…)`, de `status`, `continue` o `handoff`, o `the active change "x" was archived (…); nothing to check` bajo `Tasks complete` | archivaste el cambio con `openspec archive`, y TRUSS se dio cuenta | no pasa nada: empieza el siguiente con `truss new "Change name"` |
 | `The active change "x" is not in OpenSpec (openspec/changes/x is missing)` | la carpeta del cambio se borró o se movió sin archivarlo | restaura la carpeta, o empieza de nuevo con `truss new` |
+| `OpenSpec could not create change "x": …`, de `truss new` (código de salida `1`), seguido de lo que dijo OpenSpec, como `Change 'x' already exists at …` o `Change name is too long (200 characters max)` | OpenSpec rechazó el cambio: ya hay una carpeta con ese id en `openspec/changes/`, o el id es más largo de lo que OpenSpec permite | elige otro título, o borra la carpeta si es un resto. Un título largo se acorta en el mensaje, no en el id |
 | `Unknown component "x". No components are configured.`, o `Available: …` (código de salida `2`) | ese nombre no está declarado en `components` | decláralo en `.truss/config.yaml`, o quita `--component` |
 | `Unknown command "stauts".` y `Did you mean "status"?` (código de salida `2`) | una errata | consulta `truss help` |
 | `… already exists and was not changed.` de `truss handoff` | ya existe una nota para este cambio, y TRUSS nunca sobrescribe una | edítala, o bórrala para empezar una nueva (consulta el [handoff](../reference/handoff.md)) |
@@ -43,6 +44,7 @@ Empieza por `truss doctor`. No cambia nada, e informa del entorno, la configurac
 
 | Ves | Qué significa | Qué hacer |
 |---|---|---|
+| `warning: refs/tags/… is not a commit!` al clonar, antes de la larga nota de `detached HEAD` de Git | la release es un tag anotado, y Git lo avisa al clonarlo con `--branch` | nada: el clon termina bien y el aviso es inofensivo. `git -C .truss describe --tags` imprime la release que tienes |
 | `git pull` dentro de `.truss/` dice `Already up to date.` y nada cambia | el inicio rápido fija el clon a una release, así que no hay rama de la que hacer pull | `git fetch --tags`, y después `git checkout vX.Y.Z` (consulta [actualizar o desinstalar](update-and-remove.md)) |
 | `error: pathspec 'main' did not match any file(s) known to git` | un clon fijado a una release solo conoce su propio tag | consulta [seguir `main` en su lugar](update-and-remove.md#seguir-main-en-su-lugar) |
 | `config.yaml` o `state.json` desaparecieron de `.truss/` | son archivos sin seguimiento dentro del clon, y `git clean -fd` los borra (`git stash -u` los aparta) | restáuralos desde tu copia de la configuración, y no ejecutes ninguno de los dos comandos dentro de `.truss/` |

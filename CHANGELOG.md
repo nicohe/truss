@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss new` shows what OpenSpec said, not its JSON.** When OpenSpec refuses a change (the id already exists, the name is too long), `truss new` printed OpenSpec's whole JSON reply, and a long id twice over. It now prints the message, `OpenSpec could not create change "x": Change 'x' already exists at …`, and shortens a very long id in it. The exit code is still `1`.
+- **Two errors now say how to get out of them.** `TRUSS config not found: .truss/config.yaml` adds `Run truss init to create it.`, and `Invalid TRUSS state file` adds that the file only remembers the active change, so you delete it and start again with `truss new`. Exit codes do not change.
+
+### Documentation
+- **Getting started and Troubleshooting explain the `warning: refs/tags/… is not a commit!` line** that Git prints when cloning a release, which is harmless, and Troubleshooting lists the `OpenSpec could not create change` failure of `truss new`.
+
 ## [0.2.9] - 2026-09-30
 
 Patch release: `truss handoff` and the `tasks_complete` gate now recognize a change that was closed with `openspec archive`, as `status` and `continue` already did. The documentation separates its historical documents from the current ones.

@@ -38,7 +38,7 @@ Next: truss continue
 
 Con `--component api`, el cambio se crea dentro de un componente declarado en `components` (consulta los [componentes](../reference/components.md)).
 
-Necesita un proyecto inicializado. Sin `.truss/config.yaml` se detiene con `× invalid config` y `TRUSS config not found: .truss/config.yaml`, y código de salida `2`: ejecuta antes [`truss init`](../reference/init.md).
+Necesita un proyecto inicializado. Sin `.truss/config.yaml` se detiene con `× invalid config` y `TRUSS config not found: .truss/config.yaml. Run truss init to create it.`, y código de salida `2`: ejecuta antes [`truss init`](../reference/init.md).
 
 ## `truss status`
 

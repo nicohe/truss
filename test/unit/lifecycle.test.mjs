@@ -45,7 +45,7 @@ test('lifecycle state with invalid JSON raises LifecycleError with exit code 2',
     fs.writeFileSync(path.join(d, '.truss', 'state.json'), '{not json');
     assert.throws(
       () => readLifecycleState(d),
-      (e) => e instanceof LifecycleError && e.exitCode === 2 && /Invalid TRUSS state file/.test(e.message),
+      (e) => e instanceof LifecycleError && e.exitCode === 2 && /Invalid TRUSS state file.*Delete it/.test(e.message),
     );
   } finally {
     cleanup(d);
