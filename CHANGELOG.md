@@ -5,6 +5,9 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Changed
+- **`truss continue` lists `.truss/config.yaml` under "Context to load".** The project's settings (the verification gates, the verification commands, the policies) were never on the list, so an agent only learned of them from the loops `continue` says are off. It is one more line while the agent implements, after the change. Nothing else in the output changes, and TRUSS still does not make the agent read it.
+
+### Changed
 - **CI no longer runs `ubuntu-latest` / Node 22 or `windows-latest` / Node 24, for now,** to shorten the run. Two `exclude` entries in `ci.yml` switch them off, and deleting them brings them back. The documentation check, lint and coverage floor, which ran only in the Ubuntu / Node 22 cell, run in `ubuntu-latest` / Node 24 instead. Nothing is tested on Windows while its cell is off. The required checks of `main` are the four jobs that still run. TRUSS itself is unchanged.
 
 ## [0.2.16] - 2026-09-30

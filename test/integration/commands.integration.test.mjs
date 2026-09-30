@@ -1272,6 +1272,14 @@ test('continue: lists AGENTS.md as context only when the project has one', () =>
   );
 });
 
+test('continue: lists the settings file as context, after the change', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  assert.match(
+    out(run(root, ['continue'], { binDirs: [bin] })),
+    /Context to load\n- openspec[\\/]changes[\\/]add-retry\n- \.truss\/config\.yaml \(this project's settings: gates, verification commands, policies\)\n/,
+  );
+});
+
 test('continue: a component with its own AGENTS.md lists that one, and falls back to the workspace one', () => {
   const root = workspace({
     config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
