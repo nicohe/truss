@@ -8,6 +8,9 @@ All notable changes to TRUSS are documented here.
 - CI runs 6 jobs instead of 9: Ubuntu on Node 20, 22 and 24, macOS on 20 and 24, and Windows on 24. macOS and Windows exist to catch what depends on the operating system, and the range of Node versions is covered on Ubuntu, the cheapest runner. A problem specific to an older Node on Windows, or to Node 22 on macOS or Windows, is no longer caught by CI.
 - [Releasing](docs/en/development/releasing.md) says how to extract the changelog section as the release notes, with an `awk` command that works on macOS and Linux and a check that the file is not empty.
 
+### Documentation
+- Getting started explains Grill where it first appears (after the first `truss continue` output) and explains the doubled `.truss/.truss/` in the paths before the output that shows it, instead of after.
+
 ## [0.2.4] - 2026-09-30
 
 Patch release: `truss status` and `truss continue` now cope with a change closed by `openspec archive`, and the documentation says what the agent does at each step and how a change is finished. Nothing else about the CLI changes.

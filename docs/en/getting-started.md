@@ -138,11 +138,13 @@ Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
 ```
 
+**Grill** in that text is a round of questions the agent asks you when the idea is unclear, so that it does not have to invent requirements. It is a skill (`grill-me`; see the [glossary](reference/glossary.md)), and the agent skips it when the idea is already clear.
+
 Hand that to your agent. A prompt that works with any agent:
 
 > Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists.
 
-`continue` never runs the agent; it computes the next step from OpenSpec's state and prints it. Once the four artifacts exist, the phase becomes `implementation` and the instruction changes:
+`continue` never runs the agent; it computes the next step from OpenSpec's state and prints it. Once the four artifacts exist, the phase becomes `implementation` and the instruction changes. The paths in it look doubled, `.truss/.truss/`, and they are right: the first `.truss/` is the folder where you cloned TRUSS, and the second is TRUSS's own `.truss/` inside that clone, where its workflows and policies live.
 
 ```text
 △ TRUSS · continue
@@ -163,7 +165,7 @@ Context to load
 - .truss/.truss/policies/ (configured BDD/TDD/spec policies)
 ```
 
-The paths shown are the real ones for your layout. `truss status` shows the same progress, and a change is `complete` only when every task in `tasks.md` is checked off. Phases and commands are in the [lifecycle](workflows/lifecycle-commands.md).
+`truss continue` always prints the real paths for your layout. `truss status` shows the same progress, and a change is `complete` only when every task in `tasks.md` is checked off. Phases and commands are in the [lifecycle](workflows/lifecycle-commands.md).
 
 ### What your agent does
 
@@ -173,7 +175,7 @@ The paths shown are the real ones for your layout. `truss status` shows the same
 openspec instructions proposal --change add-retry-policy
 ```
 
-That prints the purpose, the format and the exact path of the artifact, and the same works for `specs`, `design` and `tasks`. The agent writes each one, runs `truss continue` again and repeats until the four exist. If the idea is unclear, it should first ask you questions with the `grill-me` skill (see [Grill](reference/glossary.md)). This is why the guidance snippet above has a line about `openspec instructions`.
+That prints the purpose, the format and the exact path of the artifact, and the same works for `specs`, `design` and `tasks`. The agent writes each one, runs `truss continue` again and repeats until the four exist. If the idea is unclear, it should first run a Grill round with the `grill-me` skill, as described above. This is why the guidance snippet above has a line about `openspec instructions`.
 
 Once the phase is `implementation`, the agent works through `tasks.md` and changes `- [ ]` to `- [x]` as it finishes each task. That is what `truss status` counts.
 

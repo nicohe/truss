@@ -140,11 +140,13 @@ Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
 ```
 
+**Grill**, en ese texto, es una ronda de preguntas que el agente te hace cuando la idea no está clara, para no tener que inventar requisitos. Es una skill (`grill-me`; consulta el [glosario](reference/glossary.md)), y el agente se la salta cuando la idea ya está clara.
+
 Pásale eso a tu agente. Un prompt que sirve con cualquier agente:
 
 > Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists.
 
-`continue` nunca ejecuta el agente: calcula el siguiente paso a partir del estado de OpenSpec y lo imprime. Cuando existen los cuatro artefactos, la fase pasa a `implementation` y la instrucción cambia:
+`continue` nunca ejecuta el agente: calcula el siguiente paso a partir del estado de OpenSpec y lo imprime. Cuando existen los cuatro artefactos, la fase pasa a `implementation` y la instrucción cambia. Las rutas que trae parecen duplicadas, `.truss/.truss/`, y son correctas: el primer `.truss/` es la carpeta donde clonaste TRUSS, y el segundo es el `.truss/` propio de TRUSS dentro de ese clon, donde viven sus workflows y policies.
 
 ```text
 △ TRUSS · continue
@@ -165,7 +167,7 @@ Context to load
 - .truss/.truss/policies/ (configured BDD/TDD/spec policies)
 ```
 
-Las rutas que ves son las reales para tu disposición de archivos. `truss status` muestra el mismo progreso, y un cambio está `complete` solo cuando todas las tareas de `tasks.md` están marcadas. Las fases y los comandos están en los [comandos del ciclo de vida](workflows/lifecycle-commands.md).
+`truss continue` imprime siempre las rutas reales para tu disposición de archivos. `truss status` muestra el mismo progreso, y un cambio está `complete` solo cuando todas las tareas de `tasks.md` están marcadas. Las fases y los comandos están en los [comandos del ciclo de vida](workflows/lifecycle-commands.md).
 
 ### Qué hace tu agente
 
@@ -175,7 +177,7 @@ Las rutas que ves son las reales para tu disposición de archivos. `truss status
 openspec instructions proposal --change add-retry-policy
 ```
 
-Eso imprime el propósito, el formato y la ruta exacta del artefacto, y lo mismo sirve para `specs`, `design` y `tasks`. El agente escribe cada uno, vuelve a ejecutar `truss continue` y repite hasta que existen los cuatro. Si la idea no está clara, primero debería hacerte preguntas con la skill `grill-me` (consulta [Grill](reference/glossary.md)). Por eso el fragmento de guía de arriba tiene una línea sobre `openspec instructions`.
+Eso imprime el propósito, el formato y la ruta exacta del artefacto, y lo mismo sirve para `specs`, `design` y `tasks`. El agente escribe cada uno, vuelve a ejecutar `truss continue` y repite hasta que existen los cuatro. Si la idea no está clara, primero debería hacer una ronda de Grill con la skill `grill-me`, como se ha descrito arriba. Por eso el fragmento de guía de arriba tiene una línea sobre `openspec instructions`.
 
 Cuando la fase pasa a `implementation`, el agente recorre `tasks.md` y cambia `- [ ]` por `- [x]` al terminar cada tarea. Eso es lo que cuenta `truss status`.
 
