@@ -4,22 +4,42 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
-### Changed
-- `bin/truss.mjs` is now a thin dispatcher; command logic lives in `lib/commands.mjs` and terminal output in `lib/ui.mjs`. CLI behavior and output are unchanged.
-- `handoff` reads the active change through the shared lifecycle state reader, so a corrupt `state.json` is reported instead of crashing.
-- `.truss/state.json` is written atomically (temp file + rename).
+## [0.1.1] - 2026-09-29
+
+Hardening and quality release. It stays within the v0.1 agent-driven model; runtime orchestration is still planned for v0.2.
+
+### Upgrade notes
+Three behaviors changed and can affect existing setups:
+- **`truss verify` needs approval.** The first run for a project, and any run after `verification.commands` changes, asks for confirmation. Without a terminal (CI, agents) it refuses with exit `1` unless you pass `--trust` or set `TRUSS_TRUST=1`. Review `.truss/config.yaml` before doing so.
+- **The config parser is stricter.** Anchors, aliases, tags, block/flow values, lists of objects, unterminated quotes and keys nested under a scalar are now errors instead of being silently kept as strings. Quote any value that starts with one of `& * ! | > [ {`.
+- **Change names drop accents** (`Añadir política` becomes `anadir-politica`).
+
+### Security
+- `SECURITY.md` documents the trust model for `verification.commands`, which run through the system shell.
+- `truss verify` asks before running a new or changed command list and remembers the approval per project in `$TRUSS_HOME/trusted.json` (default `~/.config/truss/`), outside the repository. `truss init` trusts the default list it writes; `truss doctor` reports trust state.
 
 ### Fixed
-- The config parser now rejects what it documents as unsupported (anchors, aliases, tags, block and flow values, lists of objects, unterminated quotes, and keys nested under a scalar) instead of silently keeping it as a string or mis-nesting it. Quote a value that starts with one of `& * ! | > [ {`.
-- Change names keep their letters when they contain accents (`Añadir política` becomes `anadir-politica`, not `a-adir-pol-tica`).
+- The config parser rejects what it documents as unsupported instead of accepting it silently or mis-nesting it.
+- Change names keep their letters when they contain accents.
+- `handoff` reports a corrupt `state.json` instead of crashing.
+- An unknown command name falls back to help instead of resolving to an object property.
 
-### Added
-- Biome for linting and formatting (`npm run lint`, `npm run lint:fix`), enforced in CI; `npm run ci` now includes it. The codebase was reformatted (see `.git-blame-ignore-revs`).
-- CI runs on Ubuntu, macOS and Windows with Node.js 20, 22 and 24, and enforces a coverage floor (`npm run test:coverage`). Tests that need the POSIX fake OpenSpec/Graphify CLIs are skipped on Windows.
-- `scripts/run-tests.mjs` starts the test suites without relying on shell globbing.
-- `truss verify` asks for approval before running a new or changed `verification.commands` list, remembers it per project outside the repository, and refuses without a terminal unless `--trust` or `TRUSS_TRUST=1` is given. `truss init` trusts the default list it writes; `truss doctor` reports trust state.
-- Color output honors `NO_COLOR` and `FORCE_COLOR`, and is disabled when stdout is not a TTY.
-- `SECURITY.md` documents the trust model for `verification.commands`.
+### Changed
+- `bin/truss.mjs` is a thin dispatcher; command logic lives in `lib/commands.mjs` and terminal output in `lib/ui.mjs`. CLI output is unchanged.
+- `.truss/state.json` is written atomically (temp file + rename).
+- Color output honors `NO_COLOR` and `FORCE_COLOR` and is disabled when stdout is not a TTY.
+- `.truss/verification/` is git-ignored.
+
+### Documentation
+- README restructured (what it is, quick start, commands, docs, license) and the quick start uses the public repository URL.
+- Root-level `docs/*.md` consolidated under `docs/en/`; exact duplicates removed.
+- Issue templates, a pull request template and Dependabot for GitHub Actions.
+
+### Quality
+- Tests: 29 unit + 10 integration + 3 E2E became 85 unit + 43 integration + 3 E2E; line coverage 84.7% to about 96%, with a coverage floor enforced in CI (`npm run test:coverage`).
+- CI runs on Ubuntu, macOS and Windows with Node.js 20, 22 and 24. Tests that need the POSIX fake OpenSpec/Graphify CLIs are skipped on Windows, so spawning a real npm-installed `openspec` there is not covered.
+- Biome for linting and formatting (`npm run lint`, `npm run lint:fix`), enforced in CI. The codebase was reformatted; see `.git-blame-ignore-revs`.
+- `scripts/run-tests.mjs` starts the suites without relying on shell globbing.
 
 ## [0.1.0] - 2026-09-29
 
