@@ -23,7 +23,9 @@ function kindOf(sample) {
 }
 
 function assertQuoted(sample, output, label) {
-  const real = output.split('\n').map((line) => line.trimEnd());
+  // TRUSS prints some paths with the operating system's separator (`openspec\changes\...` on Windows), while the
+  // guide quotes them with `/`. The wording is what is being checked, not the separator.
+  const real = output.split('\n').map((line) => line.trimEnd().replaceAll('\\', '/'));
   let from = 0;
   for (const line of sample.split('\n')) {
     const wanted = line.trimEnd();

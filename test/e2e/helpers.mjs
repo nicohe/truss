@@ -17,7 +17,10 @@ export function installTruss(destination) {
 }
 
 export function newProject() {
-  const project = fs.mkdtempSync(path.join(os.tmpdir(), 'truss-quickstart-'));
+  // The real path, so the project and the install agree on it: the temporary directory of a Windows runner is an 8.3
+  // short name (`RUNNER~1`) that `realpath` expands, and a path shown to the user is relative to the project only when
+  // both are spelled alike.
+  const project = fs.mkdtempSync(path.join(fs.realpathSync.native(os.tmpdir()), 'truss-quickstart-'));
   spawnSync('git', ['init', '-q'], { cwd: project });
   spawnSync('git', ['config', 'user.email', 'truss@example.invalid'], { cwd: project });
   spawnSync('git', ['config', 'user.name', 'TRUSS Test'], { cwd: project });
