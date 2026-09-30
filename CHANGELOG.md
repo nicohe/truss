@@ -4,6 +4,14 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-09-30
+
+Patch release: `truss continue` now names the OpenSpec commands the agent needs, and CI no longer cancels runs on `main`. Nothing else about the CLI changes.
+
+### Upgrade notes
+- The wording of two of `truss continue`'s instructions changed: while planning, it now adds `Run openspec instructions <artifact> --change <id> for its format and path`, and when every task is checked off it now says `openspec validate <id>` and `openspec archive <id>` instead of "OpenSpec verification/archive". A script that matched the old wording of either needs updating. `Use Grill first` and `first incomplete task` are unchanged, and no exit code changes.
+- Nothing else changes for an existing project.
+
 ### Changed
 - **`truss continue` names the OpenSpec commands the agent needs.** While planning, its instruction now says `Run openspec instructions <artifact> --change <id> for its format and path`, because `init` installs no OpenSpec commands in the agent and nothing else told it how to write an artifact. When every task is checked off, it says `openspec validate <id>` and, once that passes, `openspec archive <id>`, instead of "OpenSpec verification/archive". For a component that has its own `openspec/` directory, where TRUSS itself runs the CLI from, the commands carry `(from <component path>)`. A script that matched the old wording of the planning or the complete instruction needs updating; `Use Grill first` and `first incomplete task` are unchanged.
 - CI no longer cancels runs on `main`. The workflow cancelled any run in progress on the same ref when a new one started, which is right for a pull request but left a commit on `main` without its Windows result when another run started on `main` two minutes later. Runs on `main` now have one concurrency group per commit; pull requests still cancel their own older runs.
