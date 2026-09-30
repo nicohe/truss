@@ -17,7 +17,7 @@ The quick start pins the clone to a release. To move to another one, fetch the t
 ```bash
 cd .truss
 git fetch --tags
-git checkout v0.2.7      # a detached HEAD, on purpose: nothing moves until you say so
+git checkout v0.2.8      # a detached HEAD, on purpose: nothing moves until you say so
 cd ..
 node .truss/bin/truss.mjs doctor
 ```

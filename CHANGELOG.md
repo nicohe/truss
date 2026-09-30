@@ -4,6 +4,14 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-09-30
+
+Patch release: `truss new`, `status` and `continue` now exit `2` and list the errors when the configuration is invalid, as `config`, `verify` and `components` already did. The documentation gains a troubleshooting page.
+
+### Upgrade notes
+- **Exit code.** `truss new`, `status` and `continue` used to exit `1` when the configuration was invalid or missing, and printed only `× Invalid TRUSS configuration.` They now print `× invalid config` followed by the errors, and exit `2`. `truss new --component <name>` also exits `2` for an unknown component, where it exited `1`. A script that relied on `1` in these cases must accept `2`. This is what the CLI reference already documented.
+- Nothing else changes for an existing project.
+
 ### Fixed
 - **`truss new`, `status` and `continue` now exit `2` and list the errors when the configuration is invalid or missing, and `new --component` exits `2` for an unknown component.** The CLI reference already said so, and `config`, `verify` and `components` already did it. These three printed only `× Invalid TRUSS configuration.` (no detail) or `× TRUSS config not found` and exited `1`, so an invalid config looked the same as a failed precondition. They now print `× invalid config` followed by the errors, as the others do. A script that relied on exit `1` for these cases needs to accept `2`.
 
