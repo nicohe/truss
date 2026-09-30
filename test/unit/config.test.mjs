@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { ConfigError, loadConfig, parseConfigYaml, validateConfig } from '../../lib/config.mjs';
+import { harnessPath } from '../../lib/paths.mjs';
 import { cleanup, tempDir, write } from './helpers.mjs';
 
 const schema = JSON.parse(fs.readFileSync(new URL('../../.truss/schema/config.schema.json', import.meta.url), 'utf8'));
@@ -31,7 +32,6 @@ test('loadConfig applies defaults', () => {
   const d = tempDir();
   try {
     write(d, '.truss/config.yaml', 'version: 1\n');
-    write(d, '.truss/schema/config.schema.json', JSON.stringify(schema));
     const x = loadConfig(d);
     assert.equal(x.config.spec.mode, 'anchored');
     assert.equal(x.config.development.tdd, true);
@@ -40,11 +40,14 @@ test('loadConfig applies defaults', () => {
     cleanup(d);
   }
 });
-test('loadConfig rejects missing schema', () => {
+test('loadConfig takes the schema from the TRUSS installation, so a project needs none of its own', () => {
   const d = tempDir();
   try {
     write(d, '.truss/config.yaml', 'version: 1\n');
-    assert.throws(() => loadConfig(d), /schema not found/);
+    assert.equal(fs.existsSync(path.join(d, '.truss', 'schema')), false);
+    const loaded = loadConfig(d);
+    assert.equal(loaded.schemaPath, harnessPath('schema', 'config.schema.json'));
+    assert.equal(loaded.config.version, 1);
   } finally {
     cleanup(d);
   }
@@ -94,17 +97,14 @@ test('parseConfigYaml still accepts quoted flow-looking and shell-special comman
     'npm run lint -- --max-warnings=0',
   ]);
 });
-test('loadConfig reports a missing schema and unparseable YAML as ConfigError', () => {
+test('loadConfig reports a broken installation, a bad schema and unparseable YAML as ConfigError', () => {
   const d = tempDir();
   try {
     write(d, '.truss/config.yaml', 'version: 1\n');
-    assert.throws(() => loadConfig(d), /schema not found/);
-    write(d, '.truss/schema/config.schema.json', '{not json');
-    assert.throws(() => loadConfig(d), /Could not parse config schema/);
-    fs.copyFileSync(
-      new URL('../../.truss/schema/config.schema.json', import.meta.url),
-      path.join(d, '.truss/schema/config.schema.json'),
-    );
+    const missing = path.join(d, 'no-such-schema.json');
+    assert.throws(() => loadConfig(d, { schemaPath: missing }), /installation is incomplete.*no-such-schema\.json/);
+    const broken = write(d, 'broken-schema.json', '{not json');
+    assert.throws(() => loadConfig(d, { schemaPath: broken }), /Could not parse config schema/);
     write(d, '.truss/config.yaml', 'version 1\n');
     assert.throws(() => loadConfig(d), ConfigError);
     assert.equal(loadConfig(tempDir(), { required: false }), null);

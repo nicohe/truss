@@ -24,15 +24,23 @@ test('help: no arguments prints usage and exits 0', () => {
   assert.match(out(r), /verify \[--trust\]/);
 });
 
-test('skills: lists installed skills and reports when none are installed', () => {
+test('skills: lists the skills shipped with the TRUSS installation, whatever the project contains', () => {
   const root = workspace({ config: validConfig });
-  assert.match(out(run(root, ['skills'])), /No TRUSS skills installed/);
-  fs.mkdirSync(path.join(root, '.truss', 'skills'), { recursive: true });
-  fs.writeFileSync(path.join(root, '.truss', 'skills', 'grill-me.SKILL.md'), '# x');
-  fs.writeFileSync(path.join(root, '.truss', 'skills', 'notes.md'), '# not a skill');
+  assert.equal(fs.existsSync(path.join(root, '.truss', 'skills')), false);
   const r = run(root, ['skills']);
-  assert.match(out(r), /● grill-me/);
-  assert.doesNotMatch(out(r), /notes/);
+  assert.equal(r.status, 0);
+  for (const skill of [
+    'grill-me',
+    'grill-with-docs',
+    'prototype',
+    'code-review',
+    'handoff',
+    'writing-for-agents',
+    'caveman',
+  ]) {
+    assert.match(out(r), new RegExp(`● ${skill}\\b`));
+  }
+  assert.doesNotMatch(out(r), /No TRUSS skills installed/);
 });
 
 test('components: resolves configured components and rejects unknown ones', () => {

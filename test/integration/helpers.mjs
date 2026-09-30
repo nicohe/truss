@@ -15,11 +15,8 @@ export const hasAnsi = (s) => s.includes(`${ESC}[`);
 
 export function workspace({ config = null, git = true, ignore = true } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'truss-integration-'));
-  fs.mkdirSync(path.join(root, '.truss', 'schema'), { recursive: true });
-  fs.copyFileSync(
-    path.join(trussRoot, '.truss', 'schema', 'config.schema.json'),
-    path.join(root, '.truss', 'schema', 'config.schema.json'),
-  );
+  // The project holds only its own files: the schema, skills, policies and workflows come from the TRUSS install.
+  fs.mkdirSync(path.join(root, '.truss'), { recursive: true });
   if (config !== null) fs.writeFileSync(path.join(root, '.truss', 'config.yaml'), config);
   if (ignore) fs.writeFileSync(path.join(root, '.gitignore'), '.truss/\n');
   if (git) {

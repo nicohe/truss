@@ -4,6 +4,10 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **The documented quick start did not work.** Cloning TRUSS into a project's `.truss/` (as the README says) and running `truss init` failed with `TRUSS config schema not found`, because TRUSS looked for its schema, skills, policies and workflows inside the *project* instead of in its own installation. Every path the docs and `AGENTS.md` point agents to was missing there, and the same happened with TRUSS installed anywhere else. The tests hid it by copying the schema into each test project. TRUSS now reads that content from its own installation (`lib/paths.mjs`); the project keeps only `config.yaml` and its local state. `truss continue` prints the real path of the workflow and policies to read, `truss skills` lists the installed skills, and a project's own `.truss/schema` is no longer used.
+- `truss init` no longer leaves a half-created `.truss/config.yaml` behind when it cannot validate it (for example, an incomplete installation), and the error now says the installation is incomplete.
+
 ## [0.2.0] - 2026-09-29
 
 TRUSS keeps its agent-driven model and gains its first TRUSS-side checks of engineering policy: two opt-in gates in `truss verify`. It still runs no coding agent itself, so the runtime orchestration the docs used to promise for "v0.2" is now planned for v0.3 (all such references were updated). See the [v0.2.0 release contract](docs/en/reference/release-v0.2.md).

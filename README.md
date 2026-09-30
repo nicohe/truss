@@ -27,7 +27,7 @@ node .truss/bin/truss.mjs new "Add retry policy" --component worker
 node .truss/bin/truss.mjs status
 ```
 
-A shell alias/wrapper may expose `truss`; a global install is not required. Then configure `.truss/config.yaml` and follow the active OpenSpec. See [Getting started](docs/en/getting-started.md).
+A shell alias/wrapper may expose `truss`; a global install is not required. TRUSS keeps its schema, skills, policies and workflows in its own installation; your project only gets `.truss/config.yaml` and local state (see [project structure](docs/en/reference/project-structure.md)). Then configure `.truss/config.yaml` and follow the active OpenSpec. See [Getting started](docs/en/getting-started.md).
 
 ## Commands
 
