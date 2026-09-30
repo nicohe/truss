@@ -27,7 +27,7 @@ OpenSpec define **qué** debe cambiar. `execute-change` coordina **cómo se ejec
 7. Mantener código, tests y OpenSpec alineados según `spec.mode`.
 8. Llevar el comportamiento de aceptación a GREEN.
 9. Actualizar tasks y evidencia durable explícitamente.
-10. Ejecutar Verification determinística configurada.
+10. Ejecutar la verificación determinística configurada con `truss verify`.
 11. Ejecutar Code Review contra Spec, Standards y Risk.
 12. Crear Handoff solo cuando cambie contexto, responsabilidad, sesión o runtime.
 13. Continuar con la siguiente tarea lista o finalizar el cambio.

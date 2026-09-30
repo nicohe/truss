@@ -1,6 +1,6 @@
 # Getting started
 
-This walks you through adding TRUSS to a project and taking one change from idea to verified. It takes about ten minutes. Every output below was captured from a real run.
+This walks you through adding TRUSS to a project and taking one change from idea to verified. It takes about ten minutes. The outputs below were captured from a real run; a line with only `...` stands for lines left out.
 
 TRUSS is a harness, not an agent: it keeps your specs, policies and verification in one place and tells whichever coding agent you use what to do next. It never runs an agent itself.
 
@@ -85,7 +85,19 @@ TRUSS doctor passed. 1 optional warning(s).
 
 ## 4. Give your agent some guidance
 
-Agents read a project guidance file, usually `AGENTS.md`, at the repository root. TRUSS does not create one. Start with a few lines about how work is done in your project; this repository's own [`AGENTS.md`](../../AGENTS.md) is a small example.
+Agents read a project guidance file, usually `AGENTS.md`, at the repository root. TRUSS does not create one. A few lines are enough to make an agent follow the workflow; add them to your own file:
+
+```markdown
+## Working with TRUSS
+
+- Before implementing, run `node .truss/bin/truss.mjs continue` and follow the instructions and the files it lists.
+- Load skills and documentation only when the task needs them; `node .truss/bin/truss.mjs skills` lists the skills.
+- Keep specs, code and tests aligned; do not let them diverge silently.
+- When you finish, run `node .truss/bin/truss.mjs verify` and do not call the change done until it passes.
+- Write a handoff (`node .truss/bin/truss.mjs handoff`) only when work moves to another agent, runtime or session.
+```
+
+Copy these lines rather than this repository's own [`AGENTS.md`](../../AGENTS.md), which guides work on TRUSS itself: the paths it mentions (such as `.truss/skills/`) are `.truss/.truss/skills/` in your project, and `truss continue` always prints the real ones.
 
 ## 5. Take one change through the workflow
 
@@ -96,8 +108,12 @@ node .truss/bin/truss.mjs new "Add retry policy"
 ```
 
 ```text
+△ TRUSS · new
+
 ● OpenSpec change created
 Change          add-retry-policy
+Component       workspace
+OpenSpec        openspec/changes/add-retry-policy
 Planning        0/4 artifacts complete
 
 Next: truss continue
@@ -110,8 +126,12 @@ node .truss/bin/truss.mjs continue
 ```
 
 ```text
+△ TRUSS · continue
+
 Change          add-retry-policy
 Phase           spec
+OpenSpec        openspec/changes/add-retry-policy
+Mode            agent-driven (TRUSS v0.2)
 
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
@@ -124,9 +144,13 @@ Hand that to your agent. A prompt that works with any agent:
 `continue` never runs the agent; it computes the next step from OpenSpec's state and prints it. Once the four artifacts exist, the phase becomes `implementation` and the instruction changes:
 
 ```text
+△ TRUSS · continue
+
 Change          add-retry-policy
 Phase           implementation
+OpenSpec        openspec/changes/add-retry-policy
 Tasks           1/2 complete
+Mode            agent-driven (TRUSS v0.2)
 
 Next action
 Implement add-retry-policy using .truss/.truss/workflows/execute-change.md. Read the active OpenSpec, start with the first incomplete task ("1.2 Add tests"), follow configured BDD/TDD policies, then run truss verify.
@@ -146,7 +170,7 @@ The paths shown are the real ones for your layout. `truss status` shows the same
 node .truss/bin/truss.mjs verify
 ```
 
-`verify` runs the commands listed under `verification.commands` in `.truss/config.yaml`, in order, and stops at the first failure. It records what happened in `.truss/verification/latest.json`. The default list runs your `npm test`, `lint`, `typecheck` and `build` scripts when they exist.
+`verify` runs the commands listed under `verification.commands` in `.truss/config.yaml`, in order, and stops at the first failure. It records what happened in `.truss/verification/latest.json`. The default list runs your `npm test`, `lint`, `typecheck` and `build` scripts when they exist. That default assumes a Node project: without a `package.json`, `npm` fails on the first command. In any other project, replace the list with your own checks first (for example `pytest -q`); see [the default command list](reference/verify.md#the-default-command-list).
 
 Because those commands run through your shell, TRUSS asks before running a list it has not seen for this project. `init` approves the default list it writes; if you edit the list, the next run stops:
 
@@ -200,6 +224,7 @@ Component paths must exist and stay inside the project. See [component resolutio
 | `invalid config` (exit code 2) | `config.yaml` breaks the schema | run `truss config` for the exact errors |
 | `TRUSS installation is incomplete: config schema not found` | the `.truss/` clone is damaged | clone TRUSS again |
 | `Not trusted; nothing was executed.` | the command list changed | review it, then `--trust` |
+| `× failed  [1/4] npm test --if-present`, with `npm error … Could not read package.json` | the default command list assumes a Node project and this one has no `package.json` | replace `verification.commands` with your project's own checks, then approve the new list |
 | `Unknown component "x"` | that name is not declared under `components` | declare it, or omit `--component` |
 | `OpenSpec project is not initialized` | no `openspec/` directory | run `truss init` |
 

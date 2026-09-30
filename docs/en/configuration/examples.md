@@ -23,6 +23,16 @@ integrations:
 components: {}
 ```
 
+## A project that is not Node
+The default commands call `npm`, which fails when there is no `package.json`. List the checks of your own project instead:
+```yaml
+verification:
+  commands:
+    - pytest -q
+    - ruff check .
+```
+Because you edited the list, the first `truss verify` asks you to approve it (see [`truss verify`](../reference/verify.md#trust)).
+
 ## Strict spec-as-source
 ```yaml
 spec:

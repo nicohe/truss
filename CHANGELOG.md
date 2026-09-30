@@ -4,6 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **The verification policy and the `execute-change` workflow now name `truss verify`.** They said "run the configured commands", which an agent can do by hand and leave no evidence. `policies/verification.md` also mentions the approval of a new command list and the two opt-in checks.
+
+### Documentation
+- **The default verification commands assume a Node project, and the docs now say so.** In a project without a `package.json` (Python, Go, the root of a monorepo) the first command fails with `npm error … Could not read package.json` and `truss verify` stops. Getting started, the `verify` page, the configuration reference (which listed the default as "project starter commands") and the examples explain it and show a non-Node list; the troubleshooting table has the error.
+- **Getting started shows the full output** of `new` and `continue` (the samples left out lines without saying so) and says what `...` means. Step 4 now has a ready-to-paste `AGENTS.md` snippet for a project that uses TRUSS, and warns that this repository's own `AGENTS.md` uses paths that are wrong in another project (`.truss/skills/` is `.truss/.truss/skills/` there).
+- **The glossary defines eight terms** used across many pages without a definition: ADR, discovery, fail-fast, Gherkin, Grill, merge-base, RED / GREEN and vertical slice.
+- The README lists `truss version` and `truss help`.
+- Fixed a duplicated translation note in the Spanish `spec-modes.md`, introduced in 0.2.2.
+
 ## [0.2.2] - 2026-09-30
 
 Patch release: the CLI is easier to use (`--version`, `--help` per command, a clear error for a mistyped command) and the Spanish documentation is complete. The configuration schema and the behavior of `truss verify` do not change.
