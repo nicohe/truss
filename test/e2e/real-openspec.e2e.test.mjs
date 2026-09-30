@@ -56,3 +56,30 @@ test('contract: lifecycle phases and the tasks gate follow the real OpenSpec tas
   assert.equal(r.status, 0, r.stdout);
   assert.match(out(r), /all 2 task\(s\) of "add-retry-policy" are complete/);
 });
+
+test('contract: truss use goes back to a change that truss new left behind', options, () => {
+  const root = workspace({ config: validConfig });
+  assert.equal(run(root, ['init']).status, 0);
+  assert.equal(run(root, ['new', 'Add retry policy']).status, 0);
+
+  const second = run(root, ['new', 'Second change']);
+  assert.equal(second.status, 0, second.stdout);
+  assert.match(
+    out(second),
+    /"add-retry-policy" is still open in OpenSpec \(openspec[\\/]changes[\\/]add-retry-policy\)/,
+  );
+  assert.match(out(second), /Go back to it with: truss use add-retry-policy\n/);
+  assert.match(out(run(root, ['status'])), /Change\s+second-change/);
+
+  const back = run(root, ['use', 'add-retry-policy']);
+  assert.equal(back.status, 0, back.stdout);
+  assert.match(out(back), /Change\s+add-retry-policy/);
+  assert.match(out(run(root, ['status'])), /Change\s+add-retry-policy/);
+
+  const missing = run(root, ['use', 'nope']);
+  assert.equal(missing.status, 1);
+  assert.match(
+    out(missing),
+    /There is no open change "nope" in openspec[\\/]changes\. Open there: add-retry-policy, second-change\./,
+  );
+});

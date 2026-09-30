@@ -37,6 +37,7 @@ node .truss/bin/truss.mjs status
 |---|---|
 | `truss init` | Initialize local TRUSS configuration (idempotent, non-destructive) |
 | `truss new "..."` | Create a change scaffold |
+| `truss use <change>` | Make a change that is already open the active one again |
 | `truss status` | Show active change and phase |
 | `truss continue` | Recover the next action |
 | `truss verify` | Run configured deterministic checks |

@@ -1,6 +1,6 @@
 # Lifecycle commands
 
-Three commands follow a change from an idea to a finished implementation: `new` starts it, `status` shows where it stands and `continue` tells your agent what to do next. TRUSS v0.2 is **agent-driven**: none of them runs a model. They read and write the state of the change, and your agent does the work.
+Three commands follow a change from an idea to a finished implementation: `new` starts it, `status` shows where it stands and `continue` tells your agent what to do next. A fourth, `use`, makes a change that is already open the active one again. TRUSS v0.2 is **agent-driven**: none of them runs a model. They read and write the state of the change, and your agent does the work.
 
 The [getting started guide](../getting-started.md#5-take-one-change-through-the-workflow) walks through them once. This page is the reference for what each one prints and when to use it.
 
@@ -39,12 +39,34 @@ With `--component api`, the change is created inside a component declared under 
 If another change is still open in OpenSpec, `new` creates the new one and makes it the active change, and warns you that the other was left behind:
 
 ```text
-○ "add-retry-policy" is still open in OpenSpec (openspec/changes/add-retry-policy) and is no longer the active change: TRUSS follows one change at a time.
+○ "add-retry-policy" is still open in OpenSpec (openspec/changes/add-retry-policy) and is no longer the active change: TRUSS follows one change at a time. Go back to it with: truss use add-retry-policy
 ```
 
-Nothing is lost: the first change stays in OpenSpec exactly as it was, and `openspec list` still shows it. There is no command to make it the active change again. To do it, edit `.truss/state.json` so that it holds `{"change": "add-retry-policy"}`, plus `"component": "api"` when the change lives in a component; `truss status` fills in the rest. There is no warning when the previous change was archived or is gone from OpenSpec, since nothing is left behind.
+Nothing is lost: the first change stays in OpenSpec exactly as it was, and `openspec list` still shows it. [`truss use`](#truss-use) makes it the active change again. There is no warning when the previous change was archived or is gone from OpenSpec, since nothing is left behind.
 
 It needs an initialized project. Without `.truss/config.yaml` it stops with `× invalid config` and `TRUSS config not found: .truss/config.yaml. Run truss init to create it.`, and exit code `2`: run [`truss init`](../reference/init.md) first.
+
+## `truss use`
+
+`truss use <change> [--component name]`: use it to go back to a change that is already open in OpenSpec, typically one that `new` left behind. It makes that change the active one and prints where it stands:
+
+```text
+△ TRUSS · use
+
+● Active change set
+Change          add-retry-policy
+Component       workspace
+Phase           implementation
+OpenSpec        openspec/changes/add-retry-policy
+Planning        4/4 artifacts complete
+Tasks           1/3 complete
+
+Next: truss continue
+```
+
+`use` creates and changes nothing in OpenSpec. It only moves the record of which change is active, so you can run it as often as you like, including on the change that is already active. The change has to be open: one that does not exist, or that was archived, is an error (exit code `1`), and the message lists the changes that are open, for example `There is no open change "nope" in openspec/changes. Open there: add-retry-policy, second-change.`
+
+A change in a component's own `openspec/` is found through that component: `truss use add-retry-policy --component api`. Without `--component`, `use` looks in the workspace's OpenSpec, and if the name exists in a component, the error says so and gives the command. No name, or a name that is not a change id (`../x`, `archive`), is a usage error (exit code `2`).
 
 ## `truss status`
 
@@ -135,6 +157,7 @@ While the tasks are open, the output also lists a **Context to load** section wi
 ## Which one, when
 
 - **Starting something new:** `new`.
+- **Going back to a change `new` left behind:** `use`.
 - **Coming back after a break, or before a handoff:** `status`, and `truss handoff` if the work is changing hands (see [handoff](../reference/handoff.md)).
 - **Handing work to an agent:** `continue`, every time. Its output changes as the change moves.
 - **You think you are done:** `status` to see that every task is checked off, then `verify`.

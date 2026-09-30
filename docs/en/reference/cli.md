@@ -13,6 +13,7 @@ TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands 
 | `truss graphify [status\|update\|bootstrap]` | Inspects or refreshes the optional code graph | [Graphify lifecycle](../integrations/graphify-lifecycle.md) |
 | `truss components [name]` | Resolves the configured components and their context | [components](components.md) |
 | `truss new "Change name" [--component name]` | Creates an OpenSpec change and marks it active | [lifecycle](../workflows/lifecycle-commands.md) |
+| `truss use <change> [--component name]` | Makes a change that is already open in OpenSpec the active one again | [lifecycle](../workflows/lifecycle-commands.md#truss-use) |
 | `truss status` | Shows the active change, its phase, artifacts and task progress | [lifecycle](../workflows/lifecycle-commands.md) |
 | `truss continue` | Prints the next action for the agent and the files to load | [lifecycle](../workflows/lifecycle-commands.md) |
 | `truss verify [--trust]` | Runs `verification.commands` in order, stopping at the first failure; runs the opt-in checks first; asks before running a new or changed command list | [`verify`](verify.md) |
@@ -41,7 +42,7 @@ Did you mean "verify"? Run "truss help" to list the commands.
 
 | Option | On | Effect |
 |---|---|---|
-| `--component <name>` | `new` | Creates the change in a component declared under `components`. An undeclared name fails with `Unknown component`. |
+| `--component <name>` | `new`, `use` | `new` creates the change in a component declared under `components`; `use` looks for the change in that component's OpenSpec. An undeclared name fails with `Unknown component`. |
 | `--trust` | `verify` | Approves the current `verification.commands` list without asking. Use it after reading the list. |
 | `--help`, `-h` | any command | Shows the help of that command instead of running it. |
 | `--version`, `-v` | in place of the command | Prints the installed version. |
@@ -63,6 +64,7 @@ Per command:
 - `verify`: `1` when a command fails, none are configured, the list is not approved, or a gate set to `block` refuses; `2` for an invalid config.
 - `graphify update` / `bootstrap`: a failure is `1` only when Graphify is `required: true`, otherwise `0`.
 - `new`, `status`, `continue`: `2` when the configuration is invalid or missing, or when the component is unknown (the errors are listed, as `config` and `verify` do); `1` when OpenSpec is missing, incompatible or not initialized.
+- `use`: `1` when the change is not open (it does not exist, or it was archived) or OpenSpec is missing or incompatible; `2` when no change is named or the name is not a change id, the configuration is invalid or the component is unknown.
 - `status`, `continue`, `handoff`: `2` when `.truss/state.json` is unreadable.
 
 ## Output

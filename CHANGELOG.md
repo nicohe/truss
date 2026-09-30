@@ -4,6 +4,15 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- **`truss use <change> [--component name]` makes a change that is already open in OpenSpec the active one again.** Until now, going back to a change that `truss new` had left behind meant editing `.truss/state.json` by hand. `use` only moves the record of which change is active: it creates and changes nothing in OpenSpec, and it is safe to repeat. The change has to be open (a missing or archived one is an error, exit code `1`, and the message lists what is open, and names the component when the change lives in one); no name, or a name that is not a change id, is a usage error (exit code `2`).
+
+### Changed
+- **The warning `truss new` prints when it leaves another change behind now ends with the command that goes back**, `Go back to it with: truss use add-retry-policy`, with `--component` when the change lives in a component.
+
+### Documentation
+- **The lifecycle commands page documents `use`**, and the CLI reference, the README and Troubleshooting list it.
+
 ## [0.2.11] - 2026-09-30
 
 Patch release: `truss new` now warns when it leaves another change behind. Starting a change while another was still open in OpenSpec used to replace the active change without a word, and there is no command to go back to it, so the first change looked lost.
