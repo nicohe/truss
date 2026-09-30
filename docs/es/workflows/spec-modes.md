@@ -1,5 +1,9 @@
 # Modos de especificación
 
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/workflows/spec-modes.md).
+
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/workflows/spec-modes.md).
+
 TRUSS requiere OpenSpec. `spec.mode` controla cómo puede interactuar la implementación con la especificación activa.
 
 ## Spec-Anchored (`anchored`) — default

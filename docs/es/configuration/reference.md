@@ -1,76 +1,84 @@
 # Referencia de configuración
 
-> Traducción al español. La documentación en `docs/en/` es la referencia canónica.
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/configuration/reference.md).
 
-Regla: **No configuration without semantics.** Cada opción pública documenta tipo, default, valores permitidos, efecto, fallback/fallo y responsable del enforcement.
+Regla: **No configuration without semantics.** Cada opción pública documenta tipo, valor por defecto, valores permitidos, efecto, comportamiento ante fallos o fallback y quién hace el enforcement.
 
 ## `version`
-Entero, default `1`. Selecciona la versión del schema de configuración TRUSS. Una versión no soportada debe fallar validación. Enforcement: **TRUSS**.
+Tipo: entero. Por defecto: `1`. Selecciona la versión del schema de configuración de TRUSS. Una versión no soportada debe fallar la validación. Enforcement: **TRUSS**.
 
 ## `spec.mode`
-Enum, default `anchored`. Valores: `anchored`, `source`.
-- `anchored`: OpenSpec permanece como ancla; spec, tests y código pueden evolucionar con reconciliación explícita.
-- `source`: OpenSpec es autoritativa; los cambios de comportamiento vuelven primero a la fase de spec.
-Enforcement v0.2: **AGENT**. Objetivo v0.3: **TRUSS + AGENT**.
+Tipo: enum. Por defecto: `anchored`. Valores: `anchored`, `source`.
+- `anchored`: OpenSpec sigue siendo el ancla permanente; una reconciliación explícita puede hacer evolucionar juntos la spec, los tests y el código.
+- `source`: OpenSpec es la autoridad; los cambios de comportamiento vuelven primero a la fase de spec.
+
+Enforcement en v0.2: **policy del AGENT**. Objetivo en v0.3: **TRUSS + AGENT**.
 
 ## `spec.gherkin`
-Boolean, default `true`. `true` espera escenarios Gherkin para comportamiento observable cuando corresponda; `false` permite criterios de aceptación estructurados sin Gherkin. Enforcement v0.2: **AGENT**.
+Tipo: booleano. Por defecto: `true`. Con `true`, el comportamiento de aceptación observable debería expresarse como escenarios Gherkin cuando corresponda. Con `false` se admiten criterios de aceptación estructurados sin Gherkin. Enforcement en v0.2: **AGENT**.
 
 ## `spec.zone_guard`
-Boolean, default `false`. `true` espera separación Spec Zone / Code Zone. Recomendado principalmente con `mode: source`. Enforcement v0.2: **AGENT/DECLARATIVE**.
+Tipo: booleano. Por defecto: `false`. Con `true` se espera una separación de comportamiento entre Spec Zone y Code Zone. Se recomienda sobre todo con `mode: source`. Enforcement en v0.2: **AGENT/DECLARATIVE**; el enforcement por runtime es trabajo futuro.
 
 ## `development.bdd`
-Boolean, default `true`. Habilita el macro-loop BDD en `execute-change`: aceptación RED → implementación → aceptación GREEN. Enforcement v0.2: **AGENT**.
+Tipo: booleano. Por defecto: `true`. Activa el macro-loop BDD en `execute-change`: comportamiento de aceptación RED → implementación → aceptación GREEN. Enforcement en v0.2: **AGENT**.
 
 ## `development.tdd`
-Boolean, default `true`. Habilita RED → GREEN mínimo → refactor para detalles de implementación. Enforcement v0.2: **AGENT**.
+Tipo: booleano. Por defecto: `true`. Activa RED → GREEN mínimo → refactor para los detalles de implementación. Enforcement en v0.2: **AGENT**. TRUSS puede comprobar además que el cambio tocó algún test: consulta `verification.tests_required`.
 
 ## `verification.commands`
-Array de strings. `truss verify` ejecuta los comandos en orden; un fallo impide considerar Verification exitosa. Enforcement: **TRUSS**.
+Tipo: array de strings. Por defecto: los comandos iniciales del proyecto. `truss verify` ejecuta los comandos en orden; un fallo impide que la verificación se considere exitosa. Enforcement: **TRUSS**.
 
 ## `verification.tests_required`
-Enum, default `off`. Valores: `off`, `warn`, `block`. Controla el **gate de tests obligatorios** de `truss verify`: ¿el cambio tocó código fuente sin tocar ningún test?
+Tipo: enum. Por defecto: `off`. Valores: `off`, `warn`, `block`. Controla el **gate tests-required** de `truss verify`: ¿el cambio tocó código fuente sin tocar ningún test?
 - `off`: el gate no se ejecuta.
-- `warn`: `truss verify` informa qué archivos de código cambiaron sin tests y continúa; el exit code no cambia.
-- `block`: el mismo informe, pero `truss verify` termina con exit `1` **antes de ejecutar ningún comando** y lo registra en `.truss/verification/latest.json`.
+- `warn`: `truss verify` imprime qué archivos fuente cambiaron sin tests y continúa; el código de salida no cambia.
+- `block`: el mismo informe, pero `truss verify` termina con código `1` **antes de ejecutar ningún comando** y registra el resultado en `.truss/verification/latest.json`.
 
-Compara el working tree con el merge-base entre `HEAD` y la rama base (ver `base_ref`): cuentan los archivos commiteados, en staging, modificados y sin seguimiento; las eliminaciones puras no exigen tests. Se evalúa **por componente**. Solo cuentan archivos con extensión de código; docs, JSON, lockfiles y fixtures se ignoran. Es test un archivo bajo un directorio de tests o llamado `*.test.*`, `*.spec.*` o `*_test.*`.
+El gate compara el árbol de trabajo con el merge-base de `HEAD` y la rama base (consulta `base_ref`): cuentan los archivos confirmados, en staging, modificados sin staging y sin seguimiento; las eliminaciones puras no exigen tests. Los cambios se agrupan **por componente** (o como un único workspace cuando `components` está vacío), así que un monorepo necesita tests en cada componente que cambió. Solo cuentan como fuente o test los archivos con extensión de código; se ignoran la documentación, el JSON, los lockfiles y los fixtures. Un archivo es un test cuando está bajo un directorio de tests o se llama `*.test.*`, `*.spec.*` o `*_test.*`; es fuente cuando está bajo un directorio de fuentes y no es un test.
 
-Si no puede decidir (no es un work tree de Git, no hay commits, no hay rama base, clon superficial), lo informa y **no** bloquea. Límite: demuestra que cambiaron archivos de test, no que se escribieran primero (TDD), que cubran el cambio ni que pasen; eso sigue en `verification.commands`. Enforcement: **TRUSS** para la comprobación de presencia; **AGENT** para la disciplina BDD/TDD.
+Si no puede decidir (no es un work tree de Git, no hay commits, no hay rama base, un clon superficial sin el merge-base, un componente que no se resuelve), informa del motivo y **no** bloquea.
+
+Límites: demuestra que cambiaron archivos de test, no que los tests se escribieron primero (TDD), que ejercitan el cambio ni que pasan. Que los tests pasen sigue siendo trabajo de `verification.commands`. Enforcement: **TRUSS** para la comprobación de presencia; **AGENT** para la disciplina BDD/TDD en sí.
 
 ## `verification.tasks_complete`
-Enum, default `off`. Valores: `off`, `warn`, `block`. Controla el **gate de tareas completas** de `truss verify`: ¿todas las tareas del cambio activo de OpenSpec están marcadas?
+Tipo: enum. Por defecto: `off`. Valores: `off`, `warn`, `block`. Controla el **gate tasks-complete** de `truss verify`: ¿están marcadas todas las tareas del cambio OpenSpec activo?
 - `off`: el gate no se ejecuta.
 - `warn`: `truss verify` lista las tareas abiertas y continúa.
-- `block`: el mismo informe, pero `truss verify` termina con exit `1` **antes de ejecutar ningún comando** y lo registra en `.truss/verification/latest.json`.
+- `block`: el mismo informe, pero `truss verify` termina con código `1` **antes de ejecutar ningún comando** y registra el resultado en `.truss/verification/latest.json`.
 
-El cambio activo es el de `.truss/state.json` (lo crea `truss new`). El progreso es el que informa OpenSpec con `openspec instructions apply` (las casillas de `tasks.md`). Si no hay cambio activo, OpenSpec no está disponible o es incompatible, o `tasks.md` no tiene tareas, lo informa y **no** bloquea. Comprueba que las tareas están *marcadas*, no que se hicieran de verdad. Enforcement: **TRUSS** para la comprobación; **AGENT** para hacer el trabajo.
+El cambio activo es el de `.truss/state.json` (lo crea `truss new`). El progreso es el que informa OpenSpec con `openspec instructions apply` (las casillas de `tasks.md`). Si no hay cambio activo, OpenSpec no está disponible o es incompatible, o `tasks.md` no tiene tareas, el gate lo dice y **no** bloquea.
+
+Usa `warn` mientras trabajas (la verificación suele ejecutarse a mitad de la implementación) y `block` donde se exija un cambio terminado. Comprueba que las tareas están *marcadas*, no que se hicieran de verdad. Enforcement: **TRUSS** para la comprobación; **AGENT** para hacer el trabajo y marcarlo.
 
 ## `verification.base_ref`
-String, default sin definir (autodetección: `origin/HEAD`, `origin/main`, `origin/master`, `main`, `master`). Ref de Git contra la que se compara el cambio. Una ref inexistente hace que el gate informe que no puede evaluar, sin bloquear. Enforcement: **TRUSS**.
+Tipo: string. Por defecto: sin definir (autodetección). Ref de Git contra la que se compara el cambio. Si no se define, TRUSS prueba `origin/HEAD`, `origin/main`, `origin/master`, `main` y luego `master`. Defínela para otros modelos de ramas (por ejemplo `develop` o `release/1.x`). Una ref desconocida hace que el gate informe «no se puede evaluar» sin bloquear. Solo se usa cuando `tests_required` no es `off`. Enforcement: **TRUSS**.
 
 ## `verification.source_paths` y `verification.test_paths`
-Arrays de strings, default sin definir (se usan los directorios detectados: `src`, `app`, `apps`, `lib`, `packages` y `test`, `tests`, `__tests__`, `spec`). Prefijos de directorio relativos al repositorio que reemplazan los detectados. Enforcement: **TRUSS**.
+Tipo: arrays de strings. Por defecto: sin definir (se usan los directorios detectados). Prefijos de directorio relativos al repositorio que reemplazan los detectados. Los directorios de fuentes detectados son `src`, `app`, `apps`, `lib` y `packages`; los de tests son `test`, `tests`, `__tests__` y `spec` (cada uno relativo a la raíz del componente, y solo si existe). Defínelos cuando tu estructura sea distinta, por ejemplo `source_paths: [server]` y `test_paths: [checks]`. Solo se usan cuando `tests_required` no es `off`. Enforcement: **TRUSS**.
 
 ## `integrations.graphify.enabled`
-Boolean, default `true`.
-- `false`: TRUSS no intenta usar Graphify; usa descubrimiento nativo.
-- `true`: Graphify puede usarse para relaciones/impacto del código.
-Enforcement v0.2: **TRUSS** para habilitar/deshabilitar los comandos y diagnósticos de Graphify; **AGENT** para decidir cuándo usar Graphify opcional durante implementación.
+Tipo: booleano. Por defecto: `true`.
+- `false`: TRUSS no usa Graphify de forma intencional; se usa el descubrimiento de código nativo.
+- `true`: Graphify puede usarse para analizar relaciones e impacto del código.
+
+Enforcement en v0.2: **TRUSS** para los comandos de ciclo de vida y estado configurados; **AGENT** para decidir cuándo usar Graphify opcional durante la implementación.
 
 ## `integrations.graphify.required`
-Boolean, default `false`. Solo válido con `enabled: true`.
-- `false`: si Graphify no está disponible, fallback a search/grep/LSP/exploración nativa.
-- `true`: Graphify es requisito del proyecto. `truss graphify` y `truss doctor` lo reportan como bloqueante si no está disponible/listo.
-Enforcement v0.2: **TRUSS** para esos checks ejecutables; **AGENT** debe respetar el requisito durante implementación agent-driven. El gating centralizado de workflows queda para orquestación posterior.
+Tipo: booleano. Por defecto: `false`. Solo válido con `enabled: true`.
+- `false`: si Graphify no está disponible, se usa search/grep/LSP/exploración nativa del runtime.
+- `true`: Graphify es un requisito del proyecto. `truss graphify` y `truss doctor` lo informan como bloqueante cuando no está disponible o no está listo.
 
-`enabled: false` + `required: true` es configuración inválida.
+Enforcement en v0.2: **TRUSS** para esas comprobaciones ejecutables; el **AGENT** debe respetar el requisito durante la implementación dirigida por el agente. El gating centralizado de todo el workflow pertenece a la orquestación posterior.
+
+`enabled: false` + `required: true` es una configuración inválida.
 
 ## `components`
-Mapa, default `{}`.
-- `{}`: repo tratado como un único workspace.
-- con entradas: declara unidades direccionables dentro de monorepo/workspace.
+Tipo: mapa. Por defecto: `{}`.
+- `{}`: el repositorio se trata como un único workspace.
+- con entradas: declara unidades direccionables en un monorepo o workspace.
 
+Ejemplo:
 ```yaml
 components:
   api:
@@ -78,13 +86,13 @@ components:
   worker:
     path: ./apps/worker
 ```
-La key es el identificador estable del componente y `path` su raíz relativa al repo. Puede usarse para scope de instrucciones locales, código, tests y trabajo OpenSpec. Enforcement v0.2: **TRUSS** valida y resuelve paths de componentes, guidance AGENTS local/workspace, scope OpenSpec y roots comunes de source/tests; la orquestación profunda de tasks queda para v0.3.
+Cada clave de componente es un identificador estable de TRUSS; `path` apunta a su raíz relativa al repositorio. La resolución de componentes puede acotar la guía local, el contexto de código, los tests y el trabajo de OpenSpec. Enforcement en v0.2: **TRUSS** valida y resuelve las rutas de los componentes, la guía `AGENTS` local o del workspace, el alcance de OpenSpec y las raíces comunes de fuentes y tests. La orquestación más profunda de tareas pertenece a v0.3.
 
-## OpenSpec no es opcional
-OpenSpec es requerido por TRUSS y no aparece bajo `integrations`. TRUSS debe detectar/reutilizar un OpenSpec compatible existente o inicializarlo si falta, sin reemplazar silenciosamente datos OpenSpec existentes.
+## OpenSpec no se puede configurar como opcional
+TRUSS exige OpenSpec y por eso no aparece bajo `integrations`. TRUSS debe detectar y reutilizar un proyecto OpenSpec compatible existente, o inicializarlo cuando falte; nunca debe reemplazar en silencio los datos de OpenSpec existentes.
 
 ## Schema legible por máquina
 
-El contrato v1 legible por máquina vive en `.truss/schema/config.schema.json` y usa JSON Schema Draft 2020-12. Define la estructura soportada, tipos, enums, estructura de componentes, política de propiedades desconocidas y la combinación inválida `graphify.enabled: false` + `graphify.required: true`.
+El contrato v1 legible por máquina está en `.truss/schema/config.schema.json` y usa JSON Schema Draft 2020-12. Define la forma de objeto admitida, los tipos de los campos, los valores de los enums, la estructura de los componentes, la política de propiedades desconocidas y la combinación inválida `graphify.enabled: false` + `graphify.required: true`.
 
-El schema es el contrato estructural. El parseo YAML, aplicación de defaults, diagnósticos y enforcement real del CLI corresponden al paso de validación de configuración.
+El schema es el contrato estructural. El parseo de YAML, la aplicación de valores por defecto, los diagnósticos y el enforcement del CLI están implementados en `lib/config.mjs`; consulta la [validación de la configuración](validation.md).

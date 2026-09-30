@@ -1,6 +1,8 @@
 # Ejemplos de configuración
 
-## Default recomendado
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/configuration/examples.md).
+
+## Configuración por defecto recomendada
 ```yaml
 version: 1
 spec:
@@ -23,7 +25,7 @@ integrations:
 components: {}
 ```
 
-## Spec-as-source estricto
+## Spec-as-Source estricto
 ```yaml
 spec:
   mode: source
@@ -34,7 +36,27 @@ development:
   tdd: true
 ```
 
-## Graphify deshabilitado
+## Exigir tests con cada cambio de código
+```yaml
+verification:
+  tests_required: block   # o warn para solo informar
+  base_ref: develop       # opcional; si no, se autodetecta main/master
+  # source_paths: [server]  # anulaciones opcionales de la estructura detectada
+  # test_paths: [checks]
+  commands:
+    - npm test
+```
+
+## Exigir tareas terminadas
+```yaml
+verification:
+  tasks_complete: warn    # block donde se exija un cambio OpenSpec terminado, p. ej. antes de archivar
+  tests_required: block
+  commands:
+    - npm test
+```
+
+## Graphify desactivado
 ```yaml
 integrations:
   graphify:
@@ -49,7 +71,7 @@ integrations:
     enabled: true
     required: true
 ```
-En v0.2, `truss graphify` y `truss doctor` hacen enforcement de readiness/bloqueo cuando `required: true`. Durante implementación agent-driven, el agente también debe respetar ese requisito.
+En v0.2, `truss graphify` y `truss doctor` aplican la disponibilidad y el bloqueo cuando `required: true`. Durante la implementación dirigida por el agente, el agente también debe respetar ese requisito.
 
 ## Monorepo
 ```yaml

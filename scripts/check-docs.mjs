@@ -11,6 +11,9 @@
 //   - every environment variable TRUSS reads is in the environment reference.
 //   A translation (`docs/es`) is held to the same drift checks for each of those pages it has.
 //
+// Warnings never fail the check: pages of another docs directory that nothing links to, and English pages that a
+// translation does not have yet.
+//
 // Options: `--strict` enforces the orphan check in every docs directory; `--root <dir>` checks another tree.
 // Exit code 0 when there are no errors (warnings never fail); 1 otherwise.
 import fs from 'node:fs';
@@ -192,6 +195,21 @@ export function findOrphans(files, inbound, { enforced = ENFORCED_ORPHAN_DIRS, s
   return { errors, warnings };
 }
 
+// English pages with no counterpart in a translation directory (`docs/en/a/b.md` -> `docs/es/a/b.md`). Only a warning: a
+// missing translation does not break the documentation, but it should be visible.
+export function findMissingTranslations(files, { translations = TRANSLATION_DIRS } = {}) {
+  const known = new Set(files);
+  const missing = [];
+  for (const file of files) {
+    if (!file.startsWith('docs/en/')) continue;
+    for (const directory of translations) {
+      const counterpart = `${directory}/${file.slice('docs/en/'.length)}`;
+      if (!known.has(counterpart)) missing.push({ file: counterpart, message: `no translation of ${file}` });
+    }
+  }
+  return missing;
+}
+
 // --- Drift checks: documentation against the code it describes -----------------------------------------------------
 
 const read = (root, file) => {
@@ -317,6 +335,7 @@ export function checkDocs(root, { commands = [], strict = false } = {}) {
       { title: 'Docs out of step with the code', errors: checkDrift(root, { commands }) },
     ],
     warnings: orphans.warnings,
+    missingTranslations: findMissingTranslations(files),
   };
 }
 
@@ -330,6 +349,10 @@ function report(result) {
   if (result.warnings.length) {
     console.log(`○ ${result.warnings.length} page(s) in directories not enforced yet have no inbound link:`);
     for (const { file } of result.warnings) console.log(`    ${file}`);
+  }
+  if (result.missingTranslations.length) {
+    console.log(`○ ${result.missingTranslations.length} English page(s) have no translation yet:`);
+    for (const { file } of result.missingTranslations) console.log(`    ${file}`);
   }
   console.log(failed.length ? '\nDocs check failed.' : `\nDocs check passed (${result.files} Markdown files).`);
   return failed.length ? 1 : 0;

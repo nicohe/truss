@@ -92,4 +92,4 @@ OpenSpec is required by TRUSS and therefore does not appear under `integrations`
 
 The v1 machine-readable contract lives at `.truss/schema/config.schema.json` and uses JSON Schema Draft 2020-12. It defines the supported object shape, field types, enum values, component structure, unknown-property policy, and the invalid `graphify.enabled: false` + `graphify.required: true` combination.
 
-The schema is the structural contract. Actual YAML parsing, default application, diagnostics, and CLI enforcement are implemented in the configuration-validation step.
+The schema is the structural contract. YAML parsing, default application, diagnostics and CLI enforcement are implemented in `lib/config.mjs`; see [configuration validation](validation.md).

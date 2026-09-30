@@ -1,4 +1,4 @@
-# OpenSpec detection (TRUSS v0.1.9)
+# OpenSpec detection
 
 TRUSS treats OpenSpec as a required core dependency but does not own its lifecycle.
 
@@ -16,7 +16,7 @@ TRUSS treats OpenSpec as a required core dependency but does not own its lifecyc
 
 OpenSpec's current `init` contract creates `openspec/config.yaml`, so TRUSS uses that file as the positive initialization marker. TRUSS does not modify, refresh, or overwrite OpenSpec during detection.
 
-Compatibility policy is intentionally not evaluated in this step; version compatibility belongs to Step 6.
+Detection does not judge the version. Whether the installed version is supported is a separate question, described in the [compatibility contract](openspec-compatibility.md).
 
 ## Commands
 
@@ -25,4 +25,4 @@ truss openspec
 truss doctor
 ```
 
-`truss openspec` exits non-zero when the CLI is missing or the project is not recognized as initialized. `truss doctor` now reports these two checks separately.
+`truss openspec` exits non-zero when the CLI is missing or the project is not recognized as initialized. `truss doctor` reports these two checks separately (`CLI` and `Project`) and the version check as `Compatibility`.

@@ -1,6 +1,6 @@
 # Modelo de enforcement
 
-> Traducción al español. `docs/en/reference/enforcement.md` es la referencia canónica.
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/reference/enforcement.md).
 
 TRUSS v0.2 separa garantías implementadas de instrucciones para agentes y comportamiento futuro de adapters.
 

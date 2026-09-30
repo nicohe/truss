@@ -1,4 +1,4 @@
-> Traducción al español. `docs/en` es la referencia canónica.
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/integrations/graphify.md).
 
 # Graphify
 

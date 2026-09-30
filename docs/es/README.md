@@ -1,6 +1,6 @@
 # Documentación de TRUSS
 
-> Traducción al español. La documentación canónica está en [`docs/en/`](../en/README.md). Los enlaces marcados con *(en inglés)* llevan a páginas que todavía no están traducidas.
+> Traducción al español. La documentación canónica está en [`docs/en/`](../en/README.md); cada página de allí tiene su versión en esta carpeta. Los archivos de la raíz del repositorio (`CONTRIBUTING`, `SECURITY`, `CHANGELOG`) solo existen en inglés.
 
 **¿Eres nuevo?** Lee [Primeros pasos](getting-started.md): te lleva de cero a un cambio verificado en unos diez minutos.
 
@@ -23,7 +23,7 @@ Cómo avanza un cambio por TRUSS.
 - [Ciclo de vida del cambio](workflows/lifecycle.md): el orden de comandos, workflows y skills.
 - [`execute-change`](workflows/execute-change.md): el workflow central de implementación.
 - [Modos de especificación](workflows/spec-modes.md): Spec-Anchored y Spec-as-Source en detalle.
-- [Comandos del ciclo de vida](../en/workflows/lifecycle-commands.md) *(en inglés)*: `new`, `status`, `continue` y las fases.
+- [Comandos del ciclo de vida](workflows/lifecycle-commands.md): `new`, `status`, `continue` y las fases.
 - [Skills](skills/overview.md): las skills portables para agentes.
 
 ## Comandos
@@ -33,7 +33,7 @@ Cómo avanza un cambio por TRUSS.
 - [`truss init`](reference/init.md)
 - [`truss doctor`](reference/doctor.md)
 - [`truss verify`](reference/verify.md): comandos, aprobación y los dos gates opcionales.
-- [Resolución de componentes](../en/reference/components.md) *(en inglés)*: monorepos y `--component`.
+- [Resolución de componentes](reference/components.md): monorepos y `--component`.
 
 ## Configuración
 
@@ -42,23 +42,26 @@ Cada opción, su valor por defecto y qué cambia al cambiarla.
 - [Referencia](configuration/reference.md): tipos, valores por defecto, valores posibles y quién exige cada opción.
 - [Efectos](configuration/effects.md): qué cambia cuando cambia un valor.
 - [Ejemplos](configuration/examples.md): perfiles completos.
-- [Validación](../en/configuration/validation.md) *(en inglés)*: cómo se comprueba `.truss/config.yaml`.
+- [Validación](configuration/validation.md): cómo se comprueba `.truss/config.yaml`.
 - [Estructura del proyecto](reference/project-structure.md): la instalación de TRUSS frente al proyecto.
 
 ## Integraciones
 
 - [OpenSpec](integrations/openspec.md): la base requerida.
-  - [Detección](../en/integrations/openspec-detection.md) y [compatibilidad](../en/integrations/openspec-compatibility.md) *(en inglés)*
+  - [Detección](integrations/openspec-detection.md) y [compatibilidad](integrations/openspec-compatibility.md)
 - [Graphify](integrations/graphify.md): inteligencia de código opcional.
-  - [Ciclo de vida](../en/integrations/graphify-lifecycle.md) *(en inglés)*
+  - [Ciclo de vida](integrations/graphify-lifecycle.md)
 
 ## Qué está garantizado
 
 - [Modelo de enforcement](reference/enforcement.md): qué comprueba TRUSS por sí mismo, qué le pide al agente y qué necesita un runtime adapter.
-- [Contrato de la versión v0.2.0](../en/reference/release-v0.2.md) *(en inglés)*
+- [Contrato de la versión v0.2.0](reference/release-v0.2.md)
+- [Contrato de la versión v0.1.0](reference/release-v0.1.md) (histórico)
+- [Auditoría de la documentación](reference/documentation-audit.md) (histórica)
 
 ## Contribuir y mantener
 
-- [Pruebas](../en/development/testing.md), [pruebas end-to-end](../en/development/e2e.md) e [integración continua](../en/development/ci.md) *(en inglés)*
-- [Decisiones de diseño](../en/development/decisions/0001-local-project-configuration.md) *(en inglés)*: ADR 0001, dónde vive la configuración del proyecto.
+- [Pruebas](development/testing.md), [pruebas end-to-end](development/e2e.md) e [integración continua](development/ci.md)
+- [Decisiones de diseño](development/decisions/0001-local-project-configuration.md): ADR 0001, dónde vive la configuración del proyecto.
+- [Marca y uso del logo](reference/brand.md)
 - Consulta también [CONTRIBUTING](../../CONTRIBUTING.md), [SECURITY](../../SECURITY.md) y el [changelog](../../CHANGELOG.md) *(en inglés)*.

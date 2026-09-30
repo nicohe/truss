@@ -51,4 +51,4 @@ TRUSS localiza `openspec` (salvo que se defina `TRUSS_OPENSPEC_PATH`), `graphify
 
 ## Solo para tests y CI
 
-`TRUSS_REQUIRE_REAL_OPENSPEC=1` lo usa el job de CI `Contract / real OpenSpec`. Con ella, `test/e2e/real-openspec.e2e.test.mjs` falla cuando no hay un OpenSpec compatible instalado, en lugar de omitirse. No tiene efecto sobre el CLI. Consulta la [integración continua](../../en/development/ci.md) (en inglés).
+`TRUSS_REQUIRE_REAL_OPENSPEC=1` lo usa el job de CI `Contract / real OpenSpec`. Con ella, `test/e2e/real-openspec.e2e.test.mjs` falla cuando no hay un OpenSpec compatible instalado, en lugar de omitirse. No tiene efecto sobre el CLI. Consulta la [integración continua](../development/ci.md).
