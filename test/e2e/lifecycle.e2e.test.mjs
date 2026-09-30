@@ -21,7 +21,8 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
 
   result = run(root, ['new', 'Add retry policy'], { binDirs: [bin] });
   assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.ok(fs.existsSync(path.join(root, 'openspec', 'changes', 'add-retry-policy', 'proposal.md')));
+  const change = path.join(root, 'openspec', 'changes', 'add-retry-policy');
+  assert.ok(fs.existsSync(change));
   const state = JSON.parse(fs.readFileSync(path.join(root, '.truss', 'state.json'), 'utf8'));
   assert.equal(state.change, 'add-retry-policy');
   assert.equal(state.phase, 'spec');
@@ -31,21 +32,26 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   assert.match(result.stdout, /proposal/);
   assert.match(result.stdout, /Use Grill first/);
 
-  const change = path.join(root, 'openspec', 'changes', 'add-retry-policy');
+  // Planning: an artifact is done when its file exists, exactly as OpenSpec reports it.
+  fs.writeFileSync(path.join(change, 'proposal.md'), '# Proposal\n');
+  fs.mkdirSync(path.join(change, 'specs'), { recursive: true });
   fs.writeFileSync(
     path.join(change, 'specs', 'retry.md'),
     'Given retryable failure\nWhen retrying\nThen apply policy\n',
   );
   fs.writeFileSync(path.join(change, 'design.md'), '# Design\n');
-  fs.writeFileSync(path.join(change, 'tasks.md'), '- [ ] implement retry\n');
-  fs.writeFileSync(path.join(change, '.planning-complete'), '');
+  result = run(root, ['status'], { binDirs: [bin] });
+  assert.match(result.stdout, /Phase\s+spec/, 'tasks.md is still missing, so planning is not complete');
+  fs.writeFileSync(path.join(change, 'tasks.md'), '## 1. Work\n- [ ] implement retry\n- [ ] document retry\n');
 
   result = run(root, ['status'], { binDirs: [bin] });
   assert.equal(result.status, 0);
   assert.match(result.stdout, /Phase\s+implementation/);
+  assert.match(result.stdout, /Tasks\s+0\/2 complete/);
   result = run(root, ['continue'], { binDirs: [bin] });
   assert.match(result.stdout, /execute-change\.md/);
   assert.match(result.stdout, /BDD\/TDD/);
+  assert.match(result.stdout, /first incomplete task \("implement retry"\)/);
 
   fs.mkdirSync(path.join(root, 'src'), { recursive: true });
   fs.writeFileSync(path.join(root, 'src', 'retry.js'), 'export const retry = true;\n');
@@ -59,8 +65,18 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   const evidence = JSON.parse(fs.readFileSync(path.join(root, '.truss', 'verification', 'latest.json'), 'utf8'));
   assert.equal(evidence.status, 'passed');
 
-  fs.writeFileSync(path.join(change, 'tasks.md'), '- [x] implement retry\n');
-  fs.writeFileSync(path.join(change, '.complete'), '');
+  // Regression: one of two tasks done is still implementation. All artifacts existing does not mean done.
+  fs.writeFileSync(path.join(change, 'tasks.md'), '## 1. Work\n- [x] implement retry\n- [ ] document retry\n');
+  result = run(root, ['status'], { binDirs: [bin] });
+  assert.match(result.stdout, /Phase\s+implementation/);
+  assert.match(result.stdout, /Tasks\s+1\/2 complete/);
+  result = run(root, ['continue'], { binDirs: [bin] });
+  assert.match(result.stdout, /first incomplete task \("document retry"\)/);
+  assert.doesNotMatch(result.stdout, /are complete/);
+
+  fs.writeFileSync(path.join(change, 'tasks.md'), '## 1. Work\n- [x] implement retry\n- [x] document retry\n');
+  result = run(root, ['status'], { binDirs: [bin] });
+  assert.match(result.stdout, /Phase\s+complete/);
   result = run(root, ['continue'], { binDirs: [bin] });
   assert.equal(result.status, 0);
   assert.match(result.stdout, /code review and OpenSpec verification\/archive/);

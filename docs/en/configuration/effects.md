@@ -16,6 +16,8 @@
 | change `verification.commands` | `truss verify` executes the new command list in order | TRUSS |
 | `verification.tests_required: warn` | `truss verify` reports source changes that have no test change, then continues | TRUSS (presence check) |
 | `verification.tests_required: block` | `truss verify` exits `1` before running commands when source changed without tests | TRUSS (presence check) |
+| `verification.tasks_complete: warn` | `truss verify` lists the open tasks of the active OpenSpec change, then continues | TRUSS (progress check) |
+| `verification.tasks_complete: block` | `truss verify` exits `1` before running commands while the active change has open tasks | TRUSS (progress check) |
 | `verification.base_ref` / `source_paths` / `test_paths` | Change what the tests-required gate compares against and how it classifies files | TRUSS |
 | `graphify.enabled: false` | Graphify commands treat the capability as disabled; agent uses native discovery | TRUSS + AGENT |
 | `graphify.enabled: true, required: false` | TRUSS reports Graphify readiness; missing/unready is non-blocking; agent may use native fallback | TRUSS + AGENT |

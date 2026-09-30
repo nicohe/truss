@@ -38,6 +38,14 @@ Compara el working tree con el merge-base entre `HEAD` y la rama base (ver `base
 
 Si no puede decidir (no es un work tree de Git, no hay commits, no hay rama base, clon superficial), lo informa y **no** bloquea. Límite: demuestra que cambiaron archivos de test, no que se escribieran primero (TDD), que cubran el cambio ni que pasen; eso sigue en `verification.commands`. Enforcement: **TRUSS** para la comprobación de presencia; **AGENT** para la disciplina BDD/TDD.
 
+## `verification.tasks_complete`
+Enum, default `off`. Valores: `off`, `warn`, `block`. Controla el **gate de tareas completas** de `truss verify`: ¿todas las tareas del cambio activo de OpenSpec están marcadas?
+- `off`: el gate no se ejecuta.
+- `warn`: `truss verify` lista las tareas abiertas y continúa.
+- `block`: el mismo informe, pero `truss verify` termina con exit `1` **antes de ejecutar ningún comando** y lo registra en `.truss/verification/latest.json`.
+
+El cambio activo es el de `.truss/state.json` (lo crea `truss new`). El progreso es el que informa OpenSpec con `openspec instructions apply` (las casillas de `tasks.md`). Si no hay cambio activo, OpenSpec no está disponible o es incompatible, o `tasks.md` no tiene tareas, lo informa y **no** bloquea. Comprueba que las tareas están *marcadas*, no que se hicieran de verdad. Enforcement: **TRUSS** para la comprobación; **AGENT** para hacer el trabajo.
+
 ## `verification.base_ref`
 String, default sin definir (autodetección: `origin/HEAD`, `origin/main`, `origin/master`, `main`, `master`). Ref de Git contra la que se compara el cambio. Una ref inexistente hace que el gate informe que no puede evaluar, sin bloquear. Enforcement: **TRUSS**.
 

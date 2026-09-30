@@ -102,32 +102,59 @@ else if (cmd === 'init' && ${initCreatesProject}) {
   return path.join(root, '.fake-bin');
 }
 
-// A stateful OpenSpec: planning/completion are driven by marker files inside the change directory.
+// A stateful OpenSpec that mirrors the real CLI (checked against @fission-ai/openspec 1.12):
+// - `status`: an artifact is done when its file exists; `isPlanningComplete` and `isComplete` both mean "all
+//   artifacts exist" (NOT "all tasks are checked off");
+// - `instructions apply`: task progress is read from the checkboxes of tasks.md.
 export function fakeStatefulOpenSpec(root, { initialized = false } = {}) {
   fakeCli(
     fakeBin(root),
     'openspec',
     `const fs = require('node:fs');
+const path = require('node:path');
 const args = process.argv.slice(2);
-const done = ['proposal', 'specs', 'design', 'tasks'].map((id) => ({ id, status: 'done' }));
-const blocked = ['specs', 'design', 'tasks'].map((id) => ({ id, status: 'blocked' }));
-if (args[0] === '--version') console.log('1.13.2');
+const changeArg = () => args[args.indexOf('--change') + 1];
+const dirOf = (name) => path.resolve('openspec', 'changes', name);
+const exists = (dir, file) => fs.existsSync(path.join(dir, file));
+const hasSpecs = (dir) => exists(dir, 'specs') && fs.readdirSync(path.join(dir, 'specs')).length > 0;
+const DEPENDS = { proposal: [], specs: ['proposal'], design: ['proposal'], tasks: ['specs', 'design'] };
+const present = (dir) => ({
+  proposal: exists(dir, 'proposal.md'),
+  specs: hasSpecs(dir),
+  design: exists(dir, 'design.md'),
+  tasks: exists(dir, 'tasks.md'),
+});
+const tasksOf = (dir) => {
+  if (!exists(dir, 'tasks.md')) return [];
+  const boxes = fs.readFileSync(path.join(dir, 'tasks.md'), 'utf8').split('\\n').map((line) => line.match(/^\\s*- \\[( |x|X)\\] (.+)$/)).filter(Boolean);
+  return boxes.map((m, index) => ({ id: String(index + 1), description: m[2], done: m[1] !== ' ' }));
+};
+if (args[0] === '--version') console.log('1.12.0');
 else if (args[0] === 'init') {
   fs.mkdirSync('openspec/specs', { recursive: true });
   fs.mkdirSync('openspec/changes', { recursive: true });
   if (!fs.existsSync('openspec/config.yaml')) fs.writeFileSync('openspec/config.yaml', 'schema: spec-driven\\n');
 } else if (args[0] === 'new' && args[1] === 'change') {
-  fs.mkdirSync('openspec/changes/' + args[2] + '/specs', { recursive: true });
-  fs.writeFileSync('openspec/changes/' + args[2] + '/proposal.md', '# Proposal\\n');
-  console.log(JSON.stringify({ change: args[2] }));
+  const dir = dirOf(args[2]);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, '.openspec.yaml'), 'schema: spec-driven\\n');
+  console.log(JSON.stringify({ change: { id: args[2], path: dir, schema: 'spec-driven' } }));
 } else if (args[0] === 'status') {
-  const base = 'openspec/changes/' + args[args.indexOf('--change') + 1];
-  const state = fs.existsSync(base + '/.complete')
-    ? { artifacts: done, isPlanningComplete: true, isComplete: true }
-    : fs.existsSync(base + '/.planning-complete')
-      ? { artifacts: done, isPlanningComplete: true, isComplete: false }
-      : { artifacts: [{ id: 'proposal', status: 'ready' }, ...blocked], isPlanningComplete: false, isComplete: false };
-  console.log(JSON.stringify({ ...state, applyRequires: ['tasks'] }));
+  const name = changeArg();
+  const dir = dirOf(name);
+  const done = present(dir);
+  const artifacts = Object.keys(DEPENDS).map((id) => ({
+    id,
+    status: done[id] ? 'done' : DEPENDS[id].every((dep) => done[dep]) ? 'ready' : 'blocked',
+  }));
+  const all = Object.values(done).every(Boolean);
+  console.log(JSON.stringify({ changeName: name, changeRoot: dir, artifacts, applyRequires: ['tasks'], isPlanningComplete: all, isComplete: all }));
+} else if (args[0] === 'instructions' && args[1] === 'apply') {
+  const name = changeArg();
+  const tasks = tasksOf(dirOf(name));
+  const complete = tasks.filter((t) => t.done).length;
+  const state = !exists(dirOf(name), 'tasks.md') ? 'blocked' : tasks.length && complete === tasks.length ? 'all_done' : 'ready';
+  console.log(JSON.stringify({ changeName: name, state, progress: { total: tasks.length, complete, remaining: tasks.length - complete }, tasks }));
 }
 `,
   );

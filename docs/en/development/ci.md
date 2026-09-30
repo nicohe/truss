@@ -39,6 +39,10 @@ unit → integration → E2E   (separate steps, so one failing suite does not hi
 
 `npm run check` performs `node --check` against TRUSS JavaScript modules. `npm run lint` runs [Biome](https://biomejs.dev) (`biome check`: lint rules, formatting and import order) using `biome.jsonc`. The suites are started by `scripts/run-tests.mjs`, which lists the test files itself because `cmd.exe` and Node 20 do not expand globs.
 
+## Contract test against the real OpenSpec
+
+The `Contract / real OpenSpec` job installs `@fission-ai/openspec@1` and runs the E2E suite with `TRUSS_REQUIRE_REAL_OPENSPEC=1`, so `test/e2e/real-openspec.e2e.test.mjs` cannot be skipped there. The fake OpenSpec used by the other jobs mirrors the real CLI, but only this job proves it. It is deliberately **not** a required check: a registry problem or a new OpenSpec release should not block merges. Locally the test runs whenever a compatible `openspec` is on `PATH` and is skipped otherwise.
+
 ## Coverage floor
 
 The `ubuntu-latest` / Node 22 job runs the whole suite through `npm run test:coverage` instead, which fails when coverage drops below the floor defined in `package.json` (lines 90%, branches 75%, functions 95%). Locally:

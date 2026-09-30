@@ -4,10 +4,15 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **`truss status` / `truss continue` reported a change as complete while tasks were still open.** With a real OpenSpec, `isComplete` from `openspec status` means "all artifacts exist", not "all tasks are done", so the `implementation` phase was effectively unreachable and `continue` said "Implementation tasks are complete" for a change with unchecked tasks. The phase now comes from task progress (`openspec instructions apply`): `complete` only when there are tasks and none remain open. `status` shows `Tasks 1/3 complete` and `continue` names the first incomplete task. If progress is unavailable the change is reported as `implementation`, never `complete`.
+
 ### Documentation
 - `SECURITY.md` points to GitHub's private vulnerability reporting, which is now enabled for the repository.
 
 ### Added
+- **Tasks-complete gate** (`verification.tasks_complete: off | warn | block`, default `off`). `truss verify` can list, or refuse to run while, the active OpenSpec change has open tasks. It never blocks when it cannot decide (no active change, OpenSpec unavailable, no tasks) and records the result under `tasksComplete` in the evidence. `truss doctor` shows the mode.
+- Contract test against the real OpenSpec CLI (`test/e2e/real-openspec.e2e.test.mjs`) and a non-required `Contract / real OpenSpec` CI job. The fake OpenSpec used by the other tests now mirrors the real CLI's task-progress semantics.
 - **Tests-required gate** (`verification.tests_required: off | warn | block`, default `off`). `truss verify` can now report, or refuse to run, a change that touches source code without touching any test. It compares the working tree with the merge-base of `HEAD` and the base branch (`verification.base_ref`, auto-detected), per component, and records the result in the evidence file. It never blocks when it cannot decide (no Git work tree, no base branch, shallow clone). `verification.source_paths` and `verification.test_paths` override the detected layout. `truss doctor` shows the mode. It proves test files changed, not that they were written first or are meaningful. This is the first step of TRUSS-side enforcement for BDD/TDD.
 
 ## [0.1.2] - 2026-09-29

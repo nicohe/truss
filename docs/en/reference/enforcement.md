@@ -23,7 +23,8 @@ TRUSS v0.1 separates implemented guarantees from agent instructions and future a
 - `truss doctor` diagnostics and documented exit-code classes;
 - sequential, fail-fast deterministic verification and local evidence;
 - the opt-in tests-required gate of `truss verify` (`verification.tests_required`): source changed without any test change is reported (`warn`) or stops verification (`block`). It checks that test files changed, not that they were written first or are meaningful;
-- OpenSpec-backed `new`, `status`, and next-action calculation for `continue`;
+- OpenSpec-backed `new`, `status`, and next-action calculation for `continue`, with the phase (`spec` / `implementation` / `complete`) derived from OpenSpec's task progress;
+- the opt-in tasks-complete gate of `truss verify` (`verification.tasks_complete`): open tasks in the active change are reported (`warn`) or stop verification (`block`). It checks that tasks are checked off, not that the work is real;
 - local handoff scaffold creation and skill listing.
 
 ## Agent-enforced in v0.1

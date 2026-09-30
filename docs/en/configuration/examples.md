@@ -45,6 +45,15 @@ verification:
     - npm test
 ```
 
+## Require finished tasks
+```yaml
+verification:
+  tasks_complete: warn    # block where a finished OpenSpec change is required, e.g. before archiving
+  tests_required: block
+  commands:
+    - npm test
+```
+
 ## Graphify disabled
 ```yaml
 integrations:

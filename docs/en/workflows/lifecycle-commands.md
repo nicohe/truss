@@ -16,7 +16,13 @@ TRUSS v0.1 remains **agent-driven**. These commands make OpenSpec the operationa
 - reads the active change pointer from `.truss/state.json`;
 - queries `openspec status --change <id> --json` every time;
 - reports artifact readiness and planning progress from OpenSpec rather than stale TRUSS phase data;
-- refreshes the local phase pointer (`spec`, `implementation`, `complete`).
+- reports task progress (`Tasks 1/3 complete`) read from `openspec instructions apply`, i.e. the checkboxes of `tasks.md`;
+- refreshes the local phase pointer:
+  - `spec`: planning artifacts are still missing;
+  - `implementation`: every artifact exists but at least one task is open (or task progress is unavailable);
+  - `complete`: there are tasks and every one is checked off.
+
+`openspec status` alone cannot tell `implementation` from `complete`: its `isComplete` means *all artifacts exist*, not *all tasks are done*. TRUSS therefore never reports `complete` unless task progress says so.
 
 ## `truss continue`
 
@@ -24,7 +30,7 @@ TRUSS v0.1 remains **agent-driven**. These commands make OpenSpec the operationa
 
 - no active change → create one;
 - planning incomplete → create/refine the next ready OpenSpec artifact, using Grill when ambiguity remains;
-- planning complete → follow `.truss/workflows/execute-change.md`, BDD/TDD and verification policies;
-- implementation tasks complete → run deterministic verification, code review, then OpenSpec verification/archive.
+- planning complete, tasks open → follow `.truss/workflows/execute-change.md`, BDD/TDD and verification policies, starting with the first incomplete task;
+- all tasks complete → run deterministic verification, code review, then OpenSpec verification/archive.
 
 This keeps the boundary explicit: OpenSpec owns change/artifact state; TRUSS owns engineering workflow policy; the coding agent performs non-deterministic implementation in v0.1.
