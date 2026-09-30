@@ -2,7 +2,7 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/workflows/lifecycle-commands.md).
 
-Tres comandos siguen un cambio desde una idea hasta una implementación terminada: `new` lo empieza, `status` muestra en qué punto está y `continue` le dice a tu agente qué hacer a continuación. TRUSS v0.2 es **dirigido por el agente**: ninguno ejecuta un modelo. Leen y escriben el estado del cambio, y tu agente hace el trabajo.
+Tres comandos siguen un cambio desde una idea hasta una implementación terminada: `new` lo empieza, `status` muestra en qué punto está y `continue` le dice a tu agente qué hacer a continuación. Un cuarto, `use`, vuelve a marcar como activo un cambio que ya está abierto. TRUSS v0.2 es **dirigido por el agente**: ninguno ejecuta un modelo. Leen y escriben el estado del cambio, y tu agente hace el trabajo.
 
 La [guía de inicio](../getting-started.md#5-lleva-un-cambio-por-el-workflow) los recorre una vez. Esta página es la referencia de lo que imprime cada uno y de cuándo usarlo.
 
@@ -41,12 +41,34 @@ Con `--component api`, el cambio se crea dentro de un componente declarado en `c
 Si otro cambio sigue abierto en OpenSpec, `new` crea el nuevo y lo convierte en el cambio activo, y te avisa de que el otro se quedó atrás:
 
 ```text
-○ "add-retry-policy" is still open in OpenSpec (openspec/changes/add-retry-policy) and is no longer the active change: TRUSS follows one change at a time.
+○ "add-retry-policy" is still open in OpenSpec (openspec/changes/add-retry-policy) and is no longer the active change: TRUSS follows one change at a time. Go back to it with: truss use add-retry-policy
 ```
 
-No se pierde nada: el primer cambio queda en OpenSpec exactamente como estaba, y `openspec list` lo sigue mostrando. No hay un comando para volver a convertirlo en el cambio activo. Para hacerlo, edita `.truss/state.json` para que contenga `{"change": "add-retry-policy"}`, y además `"component": "api"` cuando el cambio vive en un componente; `truss status` completa el resto. No hay aviso cuando el cambio anterior se archivó o ya no está en OpenSpec, porque no queda nada atrás.
+No se pierde nada: el primer cambio queda en OpenSpec exactamente como estaba, y `openspec list` lo sigue mostrando. [`truss use`](#truss-use) vuelve a convertirlo en el cambio activo. No hay aviso cuando el cambio anterior se archivó o ya no está en OpenSpec, porque no queda nada atrás.
 
 Necesita un proyecto inicializado. Sin `.truss/config.yaml` se detiene con `× invalid config` y `TRUSS config not found: .truss/config.yaml. Run truss init to create it.`, y código de salida `2`: ejecuta antes [`truss init`](../reference/init.md).
+
+## `truss use`
+
+`truss use <cambio> [--component name]`: úsalo para volver a un cambio que ya está abierto en OpenSpec, normalmente uno que `new` dejó atrás. Lo convierte en el cambio activo e imprime en qué punto está:
+
+```text
+△ TRUSS · use
+
+● Active change set
+Change          add-retry-policy
+Component       workspace
+Phase           implementation
+OpenSpec        openspec/changes/add-retry-policy
+Planning        4/4 artifacts complete
+Tasks           1/3 complete
+
+Next: truss continue
+```
+
+`use` no crea ni cambia nada en OpenSpec. Solo mueve el registro de cuál es el cambio activo, así que puedes ejecutarlo tantas veces como quieras, también sobre el cambio que ya está activo. El cambio tiene que estar abierto: uno que no existe, o que se archivó, es un error (código de salida `1`), y el mensaje lista los cambios que están abiertos, por ejemplo `There is no open change "nope" in openspec/changes. Open there: add-retry-policy, second-change.`
+
+Un cambio que vive en el `openspec/` propio de un componente se encuentra a través de ese componente: `truss use add-retry-policy --component api`. Sin `--component`, `use` busca en el OpenSpec del espacio de trabajo, y si el nombre existe en un componente, el error lo dice y da el comando. Ningún nombre, o un nombre que no es un id de cambio (`../x`, `archive`), es un error de uso (código de salida `2`).
 
 ## `truss status`
 
@@ -137,6 +159,7 @@ Mientras hay tareas abiertas, la salida incluye además una sección **Context t
 ## Cuál usar y cuándo
 
 - **Empezar algo nuevo:** `new`.
+- **Volver a un cambio que `new` dejó atrás:** `use`.
 - **Retomar tras una pausa, o antes de un handoff:** `status`, y `truss handoff` si el trabajo cambia de manos (consulta el [handoff](../reference/handoff.md)).
 - **Dar trabajo a un agente:** `continue`, cada vez. Su salida cambia a medida que el cambio avanza.
 - **Crees que has terminado:** `status` para ver que todas las tareas están marcadas, y después `verify`.
