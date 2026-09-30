@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { workspace, fakeBin, executable, fakeGraphify, run, validConfig } from './helpers.mjs';
+import { workspace, fakeBin, executable, fakeGraphify, run, validConfig, posix } from './helpers.mjs';
 
 function fakeStatefulOpenSpec(root,{initialized=false}={}) {
   const dir=fakeBin(root);
@@ -50,7 +50,7 @@ function configWithVerifyMarker(){
   return validConfig.replace('    - node -e "process.exit(0)"', '    - node -e "require(\'fs\').writeFileSync(\'verified.marker\',\'ok\')"');
 }
 
-test('E2E: new workspace completes init -> new -> planning -> implementation -> verify -> completion',()=>{
+test('E2E: new workspace completes init -> new -> planning -> implementation -> verify -> completion',posix,()=>{
   const root=workspace({config:configWithVerifyMarker()});
   const bin=fakeStatefulOpenSpec(root,{initialized:false});
 
@@ -102,7 +102,7 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   assert.match(result.stdout,/code review and OpenSpec verification\/archive/);
 });
 
-test('E2E: existing OpenSpec project is adopted without changing durable files',()=>{
+test('E2E: existing OpenSpec project is adopted without changing durable files',posix,()=>{
   const root=workspace({config:validConfig});
   const bin=fakeStatefulOpenSpec(root,{initialized:true});
   fs.writeFileSync(path.join(root,'openspec','specs','existing.md'),'# Existing contract\n');
@@ -113,7 +113,7 @@ test('E2E: existing OpenSpec project is adopted without changing durable files',
   assert.equal(fs.readFileSync(path.join(root,'openspec','specs','existing.md'),'utf8'),before);
 });
 
-test('E2E: Graphify can be enabled after project adoption without blocking when optional',()=>{
+test('E2E: Graphify can be enabled after project adoption without blocking when optional',posix,()=>{
   const root=workspace({config:validConfig.replace('enabled: true','enabled: false')});
   const osBin=fakeStatefulOpenSpec(root,{initialized:true});
   let result=run(root,['doctor'],{binDirs:[osBin]});

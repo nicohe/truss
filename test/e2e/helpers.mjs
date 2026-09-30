@@ -8,6 +8,9 @@ const here=path.dirname(fileURLToPath(import.meta.url));
 export const trussRoot=path.resolve(here,'../..');
 export const cli=path.join(trussRoot,'bin','truss.mjs');
 
+// The fake OpenSpec/Graphify CLIs are POSIX shell scripts, so tests that rely on them cannot run on Windows.
+export const posix={skip:process.platform==='win32'&&'needs POSIX shell fake CLIs'};
+
 export function workspace({config=null, git=true, ignore=true}={}) {
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'truss-integration-'));
   fs.mkdirSync(path.join(root,'.truss','schema'),{recursive:true});
