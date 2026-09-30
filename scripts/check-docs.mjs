@@ -10,6 +10,9 @@
 //   - every `truss doctor` check is in the doctor reference;
 //   - every environment variable TRUSS reads is in the environment reference.
 //   A translation (`docs/es`) is held to the same drift checks for each of those pages it has.
+// Translation checks (a translated page against its English original):
+//   - it has the same structure: headings, code blocks, table rows, list items and relative links;
+//   - it has exactly one translation note.
 //
 // Warnings never fail the check: pages of another docs directory that nothing links to, and English pages that a
 // translation does not have yet.
@@ -24,9 +27,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 // are brought up to date. `--strict` enforces every directory.
 export const ENFORCED_ORPHAN_DIRS = ['docs/en', 'docs/es'];
 
-// Translations of the pages the drift checks read. `docs/en` must have them; a translation only has to be complete for
-// the pages it already has, so a page that is not translated yet is not an error.
-export const TRANSLATION_DIRS = ['docs/es'];
+// Translations of `docs/en`. `note` matches the line every translated page carries to say so. A translation has to be
+// complete only for the pages it already has, so a page that is not translated yet is not an error.
+export const TRANSLATIONS = [{ directory: 'docs/es', note: /^> Traducción al español\./ }];
+export const TRANSLATION_DIRS = TRANSLATIONS.map(({ directory }) => directory);
 
 const toPosix = (value) => value.split(path.sep).join('/');
 
@@ -210,6 +214,64 @@ export function findMissingTranslations(files, { translations = TRANSLATION_DIRS
   return missing;
 }
 
+// --- Translation checks: a translated page against its English original ----------------------------------------------
+
+// What a translation must keep of its original, counted outside code blocks (a code block counts once). The
+// translation note is not part of the original, so it is left out, and so are links that point into another language's
+// directory (`skipLinks`): the English index links to the Spanish one, and the Spanish note links back.
+export function structureOf(text, { note, skipLinks } = {}) {
+  const lines = text.split('\n').filter((line) => !note?.test(line));
+  let fence = null;
+  let codeBlocks = 0;
+  for (const line of lines) {
+    const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/)?.[1];
+    if (fence) {
+      if (marker && marker[0] === fence[0] && marker.length >= fence.length) fence = null;
+    } else if (marker) {
+      fence = marker;
+      codeBlocks += 1;
+    }
+  }
+  const outside = stripFences(lines.join('\n')).split('\n');
+  const count = (pattern) => outside.filter((line) => pattern.test(line)).length;
+  return {
+    headings: count(/^ {0,3}#{1,6}\s/),
+    'code blocks': codeBlocks,
+    'table rows': count(/^\|(?![\s:|-]+\|?$)/),
+    'list items': count(/^\s*(?:[-*]|\d+\.)\s/),
+    links: linksOf(lines.join('\n')).filter(({ target }) => !isExternal(target) && !skipLinks?.test(target)).length,
+  };
+}
+
+// Errors for every translated page that lost or gained something its English original has, or that does not carry
+// exactly one translation note. Only pages that have an English original are compared; the rest only need the note.
+export function checkTranslations(root, files = listMarkdown(root), { translations = TRANSLATIONS } = {}) {
+  const errors = [];
+  const known = new Set(files);
+  for (const { directory, note } of translations) {
+    for (const file of files.filter((candidate) => candidate.startsWith(`${directory}/`))) {
+      const text = fs.readFileSync(path.join(root, file), 'utf8');
+      const notes = text.split('\n').filter((line) => note.test(line)).length;
+      if (notes !== 1) {
+        errors.push({
+          file,
+          message: notes ? `has ${notes} translation notes; it needs exactly one` : 'has no translation note',
+        });
+      }
+      const original = `docs/en/${file.slice(directory.length + 1)}`;
+      if (!known.has(original)) continue;
+      const toTranslation = new RegExp(`(^|/)${path.basename(directory)}/`);
+      const expected = structureOf(fs.readFileSync(path.join(root, original), 'utf8'), { skipLinks: toTranslation });
+      const actual = structureOf(text, { note });
+      const differences = Object.keys(expected)
+        .filter((key) => expected[key] !== actual[key])
+        .map((key) => `${actual[key]} ${key} (English ${expected[key]})`);
+      if (differences.length) errors.push({ file, message: `differs from ${original}: ${differences.join(', ')}` });
+    }
+  }
+  return errors;
+}
+
 // --- Drift checks: documentation against the code it describes -----------------------------------------------------
 
 const read = (root, file) => {
@@ -333,6 +395,7 @@ export function checkDocs(root, { commands = [], strict = false } = {}) {
       { title: 'Broken links and anchors', errors: links.errors },
       { title: 'Pages nothing links to', errors: orphans.errors },
       { title: 'Docs out of step with the code', errors: checkDrift(root, { commands }) },
+      { title: 'Translations out of step with the English pages', errors: checkTranslations(root, files) },
     ],
     warnings: orphans.warnings,
     missingTranslations: findMissingTranslations(files),

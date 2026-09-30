@@ -16,7 +16,7 @@ TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands 
 | `truss status` | Shows the active change, its phase, artifacts and task progress | [lifecycle](../workflows/lifecycle-commands.md) |
 | `truss continue` | Prints the next action for the agent and the files to load | [lifecycle](../workflows/lifecycle-commands.md) |
 | `truss verify [--trust]` | Runs `verification.commands` in order, stopping at the first failure; runs the opt-in checks first; asks before running a new or changed command list | [`verify`](verify.md) |
-| `truss handoff` | Writes a short handoff note for the active change | [context management](../concepts/context-management.md) |
+| `truss handoff` | Writes a short handoff note for the active change | [`handoff`](handoff.md) |
 | `truss skills` | Lists the portable skills shipped with the installation | [skills](../skills/overview.md) |
 | `truss version` | Prints the installed TRUSS version (`truss --version` and `truss -v` do the same) | |
 | `truss help [command]` | Lists the commands, or explains one. Running `truss` with no command does the same as `truss help` | [getting help](#getting-help) |

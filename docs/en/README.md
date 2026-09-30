@@ -26,6 +26,14 @@ How a change moves through TRUSS.
 - [Lifecycle commands](workflows/lifecycle-commands.md): `new`, `status`, `continue` and the phases.
 - [Skills](skills/overview.md): the portable agent skills.
 
+## Guides
+
+Step-by-step answers to a task.
+
+- [Use TRUSS with a coding agent](guides/agents.md): the loop, where each agent reads its guidance, and approving verification once.
+- [Use TRUSS in CI](guides/ci.md): a pinned install, the configuration, approval and an example workflow.
+- [Update or remove TRUSS](guides/update-and-remove.md): pinning a release, and what not to delete.
+
 ## Commands
 
 - [CLI reference](reference/cli.md): every command, its options and exit codes.
@@ -33,6 +41,7 @@ How a change moves through TRUSS.
 - [`truss init`](reference/init.md)
 - [`truss doctor`](reference/doctor.md)
 - [`truss verify`](reference/verify.md): commands, approval, and the two opt-in gates.
+- [`truss handoff`](reference/handoff.md): the transition note, and what it does not protect.
 - [Component resolution](reference/components.md): monorepos and `--component`.
 
 ## Configuration

@@ -32,7 +32,7 @@ External CLIs are represented by deterministic local fixtures, installed the way
 
 ## End-to-end tests
 
-The E2E suite exercises the complete user-visible lifecycle across real TRUSS CLI processes and temporary Git workspaces. It covers a new project lifecycle, adoption of an existing OpenSpec project without overwriting durable files, enabling optional Graphify later, both documented ways of installing TRUSS, and one contract test against the real OpenSpec CLI. See [end-to-end tests](e2e.md).
+The E2E suite exercises the complete user-visible lifecycle across real TRUSS CLI processes and temporary Git workspaces. It covers a new project lifecycle, adoption of an existing OpenSpec project without overwriting durable files, enabling optional Graphify later, both documented ways of installing TRUSS, a test that the outputs quoted in getting started are what TRUSS prints, and one contract test against the real OpenSpec CLI. See [end-to-end tests](e2e.md).
 
 Automatic coding-agent execution and automatic OpenSpec archive remain outside the E2E boundary because those are intentionally agent/user-driven until v0.3.
 

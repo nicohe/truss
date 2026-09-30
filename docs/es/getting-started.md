@@ -99,7 +99,7 @@ Los agentes leen un archivo de guía del proyecto, normalmente `AGENTS.md`, en l
 - Write a handoff (`node .truss/bin/truss.mjs handoff`) only when work moves to another agent, runtime or session.
 ```
 
-Copia estas líneas en lugar del [`AGENTS.md`](../../AGENTS.md) de este repositorio, que guía el trabajo sobre el propio TRUSS: las rutas que menciona (como `.truss/skills/`) son `.truss/.truss/skills/` en tu proyecto, y `truss continue` imprime siempre las reales.
+Copia estas líneas en lugar del [`AGENTS.md`](../../AGENTS.md) de este repositorio, que guía el trabajo sobre el propio TRUSS: las rutas que menciona (como `.truss/skills/`) son `.truss/.truss/skills/` en tu proyecto, y `truss continue` imprime siempre las reales. [Usar TRUSS con un coding agent](guides/agents.md) indica dónde lee cada agente su guía.
 
 ## 5. Lleva un cambio por el workflow
 
@@ -238,4 +238,5 @@ Las rutas de los componentes deben existir y quedar dentro del proyecto. Consult
 - [Workflows](workflows/overview.md) y el workflow [`execute-change`](workflows/execute-change.md) que sigue tu agente.
 - [Configuración](configuration/reference.md): cada opción y qué cambia.
 - [Modelo de enforcement](reference/enforcement.md): qué comprueba TRUSS por sí mismo y qué solo le pide al agente.
+- [Guías](guides/agents.md): usar TRUSS con tu agente, en [CI](guides/ci.md), y [actualizarlo o desinstalarlo](guides/update-and-remove.md).
 - [Referencia del CLI](reference/cli.md).

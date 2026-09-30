@@ -1,57 +1,16 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { fakeStatefulOpenSpec, plain, trussRoot } from './helpers.mjs';
+import { cleanupAll, fakeStatefulOpenSpec, installTruss, newProject, trussRunner as runner } from './helpers.mjs';
 
 // The documented quick start: TRUSS is installed apart from the project (README: a clone inside the project's
 // `.truss/`) and run on it. The install holds the schema, skills, policies and workflows; the project must not
 // need a copy of any of them. This test copies the working tree, so it also covers uncommitted changes.
 
-function installTruss(destination) {
-  fs.cpSync(trussRoot, destination, {
-    recursive: true,
-    filter: (source) => !/[\\/](\.git|node_modules|\.fake-bin|\.truss-home)([\\/]|$)/.test(source),
-  });
-}
-
-function newProject() {
-  const project = fs.mkdtempSync(path.join(os.tmpdir(), 'truss-quickstart-'));
-  spawnSync('git', ['init', '-q'], { cwd: project });
-  spawnSync('git', ['config', 'user.email', 'truss@example.invalid'], { cwd: project });
-  spawnSync('git', ['config', 'user.name', 'TRUSS Test'], { cwd: project });
-  fs.writeFileSync(path.join(project, '.gitignore'), '.truss/\n');
-  fs.writeFileSync(path.join(project, 'README.md'), '# project\n');
-  spawnSync('git', ['add', '-A'], { cwd: project });
-  spawnSync('git', ['commit', '-qm', 'initial'], { cwd: project });
-  return project;
-}
-
 const layouts = {
   'cloned into the project as .truss (the documented layout)': (project) => path.join(project, '.truss'),
   'installed in a separate directory': (project) => path.join(project, '..', `${path.basename(project)}-truss-install`),
-};
-
-const runner =
-  (project, install, bin) =>
-  (...args) => {
-    const result = spawnSync(process.execPath, [path.join(install, 'bin', 'truss.mjs'), ...args], {
-      cwd: project,
-      encoding: 'utf8',
-      env: {
-        ...process.env,
-        NO_COLOR: '1',
-        TRUSS_TRUST: '',
-        TRUSS_HOME: path.join(project, '.truss-home'),
-        PATH: `${bin}${path.delimiter}${process.env.PATH}`,
-      },
-    });
-    return { status: result.status, out: plain(result.stdout) };
-  };
-const cleanupAll = (...dirs) => {
-  for (const dir of dirs) fs.rmSync(dir, { recursive: true, force: true });
 };
 
 for (const [name, locate] of Object.entries(layouts)) {
