@@ -55,7 +55,8 @@ and, against the code they describe, that the documentation mentions:
 - every CLI command (`docs/en/reference/cli.md`);
 - every configuration option in the schema (`docs/en/configuration/reference.md`);
 - every `truss doctor` check (`docs/en/reference/doctor.md`);
-- every environment variable the CLI reads or a CI workflow sets (`docs/en/reference/environment.md`).
+- every environment variable the CLI reads or a CI workflow sets (`docs/en/reference/environment.md`);
+- the current version wherever a page or template spells it out (pinned installs in the guides, the `--version` example, the bug report placeholder), matching `package.json`. See [Releasing](releasing.md).
 
 The Spanish translations of those four pages (`docs/es/...`) are checked the same way when they exist. The check also lists, as a warning that does not fail the build, every English page that has no counterpart under `docs/es/`.
 

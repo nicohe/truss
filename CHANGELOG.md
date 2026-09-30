@@ -4,6 +4,10 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- `npm run check:docs` compares the version spelled out in the guides (pinned installs), the `--version` example and the bug report placeholder with `package.json`, so a release cannot leave them behind.
+- [Releasing](docs/en/development/releasing.md): the checklist for a version, a tag and a GitHub release (with a Spanish translation).
+
 ## [0.2.3] - 2026-09-30
 
 Patch release: `truss handoff` no longer loses a note, and the documentation gains three guides, a "who does what" page and checks that keep the Spanish translation and the guide's examples in step with the English pages and the code. Nothing else about the CLI changes.

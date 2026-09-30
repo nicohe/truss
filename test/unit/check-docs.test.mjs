@@ -9,6 +9,7 @@ import {
   checkDrift,
   checkLinks,
   checkTranslations,
+  checkVersionReferences,
   doctorCheckNames,
   environmentVariables,
   findMissingTranslations,
@@ -498,4 +499,26 @@ test('the script exits 1 and names the problem on a broken tree, and exits 0 on 
   const real = runScript();
   assert.equal(real.status, 0, real.stdout);
   assert.match(real.stdout, /Docs check passed \(\d+ Markdown files\)\./);
+});
+
+test('version references: each place that spells out the release must match package.json', () => {
+  const files = {
+    'package.json': JSON.stringify({ version: '1.2.3' }),
+    'docs/en/guides/ci.md': 'git clone --depth 1 --branch v1.2.3 https://example.invalid/truss.git .truss',
+    'docs/es/guides/update-and-remove.md': 'git checkout v1.2.2',
+    'docs/en/reference/cli.md': 'node bin/truss.mjs --version        # truss 1.2.3',
+    '.github/ISSUE_TEMPLATE/bug_report.yml': 'placeholder: "node 22.x"',
+  };
+  withTree(files, (root) => {
+    assert.deepEqual(messages(checkVersionReferences(root)), [
+      'docs/es/guides/update-and-remove.md names 1.2.2, but package.json says 1.2.3',
+      '.github/ISSUE_TEMPLATE/bug_report.yml does not name the current version 1.2.3',
+    ]);
+  });
+});
+
+test('version references: without a package.json there is nothing to compare with', () => {
+  withTree({ 'docs/en/guides/ci.md': '--branch v9.9.9' }, (root) => {
+    assert.deepEqual(checkVersionReferences(root), []);
+  });
 });

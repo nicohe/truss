@@ -72,6 +72,7 @@ Every option, its default, and what changes when you change it.
 ## Contribute and maintain
 
 - [Testing](development/testing.md), [end-to-end tests](development/e2e.md) and [continuous integration](development/ci.md)
+- [Releasing](development/releasing.md): the checklist for a version, a tag and a GitHub release.
 - [Design decisions](development/decisions/0001-local-project-configuration.md): ADR 0001, where the project configuration lives.
 - [Brand and logo usage](reference/brand.md)
 - See also [CONTRIBUTING](../../CONTRIBUTING.md), [SECURITY](../../SECURITY.md) and the [changelog](../../CHANGELOG.md).
