@@ -1,5 +1,6 @@
 node_modules/
 .truss/state.json
+.truss/verification/
 .truss/sessions/
 .truss/cache/
 .truss/checkpoints/

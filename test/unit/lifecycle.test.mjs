@@ -8,3 +8,4 @@ test('slugifyChange creates OpenSpec-safe change names',()=>assert.equal(slugify
 test('slugifyChange returns empty slug when no safe characters remain',()=>assert.equal(slugifyChange('!!!'),''));
 test('lifecycle state defaults to no active change',()=>{const d=tempDir();try{assert.deepEqual(readLifecycleState(d),{});}finally{cleanup(d);}});
 test('lifecycle state round-trips',()=>{const d=tempDir();try{const s={change:'x',component:'api',phase:'spec',path:'openspec/changes/x'};writeLifecycleState(d,s);assert.deepEqual(readLifecycleState(d),s);assert.ok(fs.existsSync(path.join(d,'.truss/state.json')));}finally{cleanup(d);}});
+test('lifecycle state write leaves no temp files behind',()=>{const d=tempDir();try{writeLifecycleState(d,{change:'x'});writeLifecycleState(d,{change:'y'});assert.deepEqual(fs.readdirSync(path.join(d,'.truss')),['state.json']);assert.equal(readLifecycleState(d).change,'y');}finally{cleanup(d);}});
