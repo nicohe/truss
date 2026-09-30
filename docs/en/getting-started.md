@@ -253,7 +253,7 @@ Component paths must exist and stay inside the project. See [component resolutio
 | `Unknown component "x"` | that name is not declared under `components` | declare it, or omit `--component` |
 | `OpenSpec project is not initialized` | no `openspec/` directory | run `truss init` |
 
-`truss doctor` diagnoses most of these without changing anything.
+`truss doctor` diagnoses most of these without changing anything. [Troubleshooting](guides/troubleshooting.md) covers more, including verification, changes and the installation.
 
 ## Where next
 

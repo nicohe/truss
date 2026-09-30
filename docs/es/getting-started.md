@@ -255,7 +255,7 @@ Las rutas de los componentes deben existir y quedar dentro del proyecto. Consult
 | `Unknown component "x"` | ese nombre no está declarado en `components` | decláralo u omite `--component` |
 | `OpenSpec project is not initialized` | no existe el directorio `openspec/` | ejecuta `truss init` |
 
-`truss doctor` diagnostica casi todo esto sin cambiar nada.
+`truss doctor` diagnostica casi todo esto sin cambiar nada. [Solución de problemas](guides/troubleshooting.md) cubre más, incluidas la verificación, los cambios y la instalación.
 
 ## Siguientes pasos
 

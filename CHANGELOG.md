@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Documentation
+- **New page: [Troubleshooting](docs/en/guides/troubleshooting.md)**, in English and Spanish. It lists what TRUSS prints when something is wrong, what it means and what to do, in five groups: setup, verification, changes and the agent, the TRUSS installation and Windows. The messages are quoted from the real CLI. The table in Getting started stays for the first run and now points to it.
+
 ## [0.2.7] - 2026-09-30
 
 Patch release: `truss continue` now names the OpenSpec commands the agent needs, and CI no longer cancels runs on `main`. Nothing else about the CLI changes.
