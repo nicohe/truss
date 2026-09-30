@@ -18,7 +18,7 @@ Un cambio está siempre en una fase, y `status` y `continue` la muestran:
 
 La fase se recalcula desde OpenSpec cada vez que preguntas, así que no puede quedar obsoleta. `complete` significa *todas las tareas están marcadas*, nada más: no dice nada sobre si las tareas se hicieron bien. Para eso están [`truss verify`](../reference/verify.md) y la revisión.
 
-Archivar un cambio con `openspec archive` no se lo comunica a TRUSS, que se entera la próxima vez que preguntas: `status` y `continue` dicen que el cambio activo fue archivado, y terminan con código `0`; `handoff` no escribe ninguna nota para él, y el gate [`tasks_complete`](../reference/verify.md) lo informa como archivado en lugar de fallar al leer sus tareas. Empieza el siguiente con `truss new`.
+Archivar un cambio con `openspec archive` no se lo comunica a TRUSS, que se entera la próxima vez que preguntas: `status` y `continue` dicen que el cambio activo fue archivado (y listan los cambios que siguen abiertos), y terminan con código `0`; `handoff` no escribe ninguna nota para él, y el gate [`tasks_complete`](../reference/verify.md) lo informa como archivado en lugar de fallar al leer sus tareas. Empieza el siguiente con `truss new`, o vuelve a uno que siga abierto con [`truss use`](#truss-use).
 
 ## `truss new "Nombre del cambio" [--component name]`
 
@@ -70,6 +70,8 @@ Next: truss continue
 
 Un cambio que vive en el `openspec/` propio de un componente se encuentra a través de ese componente: `truss use add-retry-policy --component api`. Sin `--component`, `use` busca en el OpenSpec del espacio de trabajo, y si el nombre existe en un componente, el error lo dice y da el comando. Ningún nombre, o un nombre que no es un id de cambio (`../x`, `archive`), es un error de uso (código de salida `2`).
 
+`.truss/state.json` es local a cada copia de trabajo, así que un clon nuevo o una máquina de CI no tiene cambio activo aunque OpenSpec tenga cambios en curso. `use` es la forma de retomar uno, y [`truss status`](#truss-status) lista los que están abiertos.
+
 ## `truss status`
 
 Úsalo siempre que quieras saber en qué punto está el cambio, antes de dárselo a un agente o al retomarlo. No cambia nada, salvo refrescar la fase que recuerda.
@@ -103,7 +105,19 @@ No active change.
 Next: truss new "Change name"
 ```
 
-Cuando el cambio se archivó, lo dice en su lugar:
+Cuando hay cambios abiertos en OpenSpec, `status` los lista y señala primero [`truss use`](#truss-use). Es lo que muestra un clon nuevo o una copia en CI, porque el registro del cambio activo es local a cada copia de trabajo:
+
+```text
+△ TRUSS · status
+
+No active change.
+Open changes    add-retry-policy, second-change
+Next: truss use <change>, or truss new "Change name" for a new one
+```
+
+Con un único cambio abierto el comando lo nombra (`truss use add-retry-policy`). Un cambio que vive en el `openspec/` propio de un componente aparece como `add-retry-policy (component api)`, y entonces el comando dice `truss use add-retry-policy --component api`. La lista sale de leer las carpetas `openspec/changes`, así que no necesita el CLI de OpenSpec, y un componente que no se resuelve se omite en lugar de fallar.
+
+Cuando el cambio se archivó, lo dice en su lugar, seguido de las mismas dos líneas si otros cambios siguen abiertos:
 
 ```text
 △ TRUSS · status
@@ -120,10 +134,21 @@ Si OpenSpec ha perdido el cambio activo sin archivarlo (por ejemplo, se borró s
 
 | El cambio está | La siguiente acción |
 |---|---|
-| sin crear | crear uno con `truss new` |
+| sin crear | volver con `truss use` a uno que esté abierto en OpenSpec, o crear uno con `truss new` |
 | todavía en planificación | escribir o refinar el siguiente artefacto que esté listo, usando Grill cuando quede ambigüedad |
 | planificado, con tareas abiertas | seguir el workflow [`execute-change`](execute-change.md), empezando por la primera tarea sin marcar |
 | con todas las tareas marcadas | ejecutar `truss verify`, después el code review y la verificación y el archivado de OpenSpec |
+
+Sin cambio activo y con cambios abiertos en OpenSpec, `continue` los lista antes de ofrecer `truss new`, para que un agente en una copia nueva vuelva al cambio en curso en lugar de empezar un duplicado:
+
+```text
+△ TRUSS · continue
+
+No active change. Open in OpenSpec: add-retry-policy, second-change.
+Make one of them the active change with: truss use <change>, or create a new one with: truss new "Change name"
+```
+
+Con un único cambio abierto el comando lo nombra, como en `status`. Tras un archivado empieza con `The change "x" was archived.` y ofrece `create the next one`.
 
 Cuando `spec.mode` es `source`, o `spec.zone_guard` está activo, la acción siguiente de un cambio que se está implementando dice además qué le pide eso al agente: la spec es de solo lectura mientras implementa, y el trabajo de spec y el de código se mantienen en pasos separados. Consulta los [modos de especificación](spec-modes.md).
 
@@ -162,6 +187,7 @@ Mientras hay tareas abiertas, la salida incluye además una sección **Context t
 
 - **Empezar algo nuevo:** `new`.
 - **Volver a un cambio que `new` dejó atrás:** `use`.
+- **Un clon nuevo o una copia en CI, donde nada está activo:** `status` lista lo que está abierto en OpenSpec, y `use` lo retoma.
 - **Retomar tras una pausa, o antes de un handoff:** `status`, y `truss handoff` si el trabajo cambia de manos (consulta el [handoff](../reference/handoff.md)).
 - **Dar trabajo a un agente:** `continue`, cada vez. Su salida cambia a medida que el cambio avanza.
 - **Crees que has terminado:** `status` para ver que todas las tareas están marcadas, y después `verify`.

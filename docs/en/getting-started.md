@@ -39,7 +39,7 @@ function truss { node .truss/bin/truss.mjs @args }            # PowerShell
 
 The examples below use the long form. See [project structure](reference/project-structure.md) for what lives where.
 
-One thing to know early: `.truss/` is ignored by Git, so your `.truss/config.yaml` is **local to this checkout**. If several people or a CI machine work on the project, each needs its own copy of the configuration; see [ADR 0001](development/decisions/0001-local-project-configuration.md).
+One thing to know early: `.truss/` is ignored by Git, so your `.truss/config.yaml` is **local to this checkout**. If several people or a CI machine work on the project, each needs its own copy of the configuration; see [ADR 0001](development/decisions/0001-local-project-configuration.md). The same goes for the record of the active change: a fresh clone has none, so `truss status` lists the changes that are open in OpenSpec and `truss use <change>` picks one up.
 
 ## 3. Initialize and check the setup
 
@@ -218,7 +218,7 @@ A passing `verify` does not close the change: `truss continue` then asks for a c
 2. **Validate.** `openspec validate add-retry-policy` checks that the change's specs are well formed.
 3. **Archive.** `openspec archive add-retry-policy` moves the change to `openspec/changes/archive/`, dated, and merges its spec deltas into `openspec/specs/`. It asks for confirmation (`-y` skips it); add `--skip-specs` for a change that alters no behavior, such as tooling or documentation.
 
-Commit `openspec/` with the code: specs and archived changes are durable (see [durable vs ephemeral](concepts/durable-vs-ephemeral.md)). TRUSS notices the archive: `truss status` and `truss continue` say the active change was archived and point to `truss new` for the next one.
+Commit `openspec/` with the code: specs and archived changes are durable (see [durable vs ephemeral](concepts/durable-vs-ephemeral.md)). TRUSS notices the archive: `truss status` and `truss continue` say the active change was archived and point to `truss new` for the next one (or to `truss use` when another change is still open).
 
 ## 7. Monorepos
 

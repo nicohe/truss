@@ -16,7 +16,7 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 | `truss components [name]` | Resuelve los componentes configurados y su contexto | [componentes](components.md) |
 | `truss new "Nombre del cambio" [--component name]` | Crea un cambio de OpenSpec y lo marca como activo | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
 | `truss use <cambio> [--component name]` | Vuelve a marcar como activo un cambio que ya está abierto en OpenSpec | [comandos del ciclo de vida](../workflows/lifecycle-commands.md#truss-use) |
-| `truss status` | Muestra el cambio activo, su fase, sus artefactos y el progreso de tareas | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
+| `truss status` | Muestra el cambio activo, su fase, sus artefactos y el progreso de tareas, o los cambios abiertos cuando ninguno está activo | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
 | `truss continue` | Imprime la siguiente acción para el agente y los archivos que debe cargar | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
 | `truss verify [--trust]` | Ejecuta `verification.commands` en orden y se detiene en el primer fallo; ejecuta antes las comprobaciones opcionales; pregunta antes de ejecutar una lista de comandos nueva o modificada | [`verify`](verify.md) |
 | `truss handoff` | Escribe una nota de handoff breve para el cambio activo | [`handoff`](handoff.md) |
