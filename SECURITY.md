@@ -8,7 +8,7 @@ TRUSS is currently pre-1.0. Security fixes are applied to the latest maintained 
 
 Do not publish exploitable vulnerability details in a public issue before maintainers have had a reasonable opportunity to investigate and address them.
 
-Use the repository's private security-reporting mechanism when available. If the repository does not provide one, contact the maintainers privately through a documented maintainer contact before public disclosure.
+Report it privately through GitHub: [open a private security advisory](https://github.com/nicohe/truss/security/advisories/new) (Security tab → Report a vulnerability). Only the maintainers can see it. Please do not open a public issue for a suspected vulnerability.
 
 Include, when possible:
 
