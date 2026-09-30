@@ -4,7 +4,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { ConfigError } from '../../lib/config.mjs';
 import { DEFAULT_CONFIG, initializeProject } from '../../lib/init.mjs';
-import { executable, fakeBin, fakeOpenSpec, posix, validConfig, workspace } from '../integration/helpers.mjs';
+import { fakeBin, fakeCli, fakeOpenSpec, validConfig, workspace } from '../integration/helpers.mjs';
 import { cleanup, mkdir, write } from './helpers.mjs';
 
 function withEnv(vars, fn) {
@@ -22,7 +22,7 @@ function withEnv(vars, fn) {
 const withOpenSpec = (bin, fn) => withEnv({ TRUSS_OPENSPEC_PATH: path.join(bin, 'openspec') }, fn);
 const noOpenSpec = (fn) => withEnv({ TRUSS_OPENSPEC_PATH: '', PATH: '' }, fn);
 
-test('init creates the default config when none exists', posix, () => {
+test('init creates the default config when none exists', () => {
   const root = workspace({ config: null });
   try {
     const bin = fakeOpenSpec(root);
@@ -36,7 +36,7 @@ test('init creates the default config when none exists', posix, () => {
   }
 });
 
-test('init adopts an existing valid config without rewriting it', posix, () => {
+test('init adopts an existing valid config without rewriting it', () => {
   const root = workspace({ config: validConfig });
   try {
     const bin = fakeOpenSpec(root);
@@ -71,7 +71,7 @@ test('init reports a missing OpenSpec CLI but still writes the config', () => {
   }
 });
 
-test('init refuses an incompatible OpenSpec version and does not touch openspec/', posix, () => {
+test('init refuses an incompatible OpenSpec version and does not touch openspec/', () => {
   const root = workspace({ config: validConfig });
   try {
     const bin = fakeOpenSpec(root, { version: '0.9.0', initialized: false });
@@ -83,7 +83,7 @@ test('init refuses an incompatible OpenSpec version and does not touch openspec/
   }
 });
 
-test('init preserves a partial or legacy openspec/ directory', posix, () => {
+test('init preserves a partial or legacy openspec/ directory', () => {
   const root = workspace({ config: validConfig });
   try {
     const bin = fakeOpenSpec(root, { initialized: false });
@@ -97,11 +97,15 @@ test('init preserves a partial or legacy openspec/ directory', posix, () => {
   }
 });
 
-test('init reports failure when `openspec init` fails', posix, () => {
+test('init reports failure when `openspec init` fails', () => {
   const root = workspace({ config: validConfig });
   try {
     const bin = fakeBin(root);
-    executable(bin, 'openspec', 'if [ "${1:-}" = "--version" ]; then echo 1.13.2; exit 0; fi\necho boom >&2\nexit 3');
+    fakeCli(
+      bin,
+      'openspec',
+      "if (process.argv[2] === '--version') console.log('1.13.2'); else { console.error('boom'); process.exit(3); }",
+    );
     const r = withOpenSpec(bin, () => initializeProject(root));
     assert.equal(r.openspec.state, 'init_failed');
     assert.match(r.openspec.init.stderr, /boom/);
@@ -110,7 +114,7 @@ test('init reports failure when `openspec init` fails', posix, () => {
   }
 });
 
-test('init reports unverified initialization when openspec/ does not appear', posix, () => {
+test('init reports unverified initialization when openspec/ does not appear', () => {
   const root = workspace({ config: validConfig });
   try {
     const bin = fakeOpenSpec(root, { initialized: false, initCreatesProject: false });
@@ -121,7 +125,7 @@ test('init reports unverified initialization when openspec/ does not appear', po
   }
 });
 
-test('init can skip initializing OpenSpec', posix, () => {
+test('init can skip initializing OpenSpec', () => {
   const root = workspace({ config: validConfig });
   try {
     const bin = fakeOpenSpec(root, { initialized: false });

@@ -3,17 +3,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
-import {
-  executable,
-  fakeBin,
-  fakeGraphify,
-  fakeOpenSpec,
-  plain,
-  posix,
-  run,
-  validConfig,
-  workspace,
-} from './helpers.mjs';
+import { fakeBin, fakeCli, fakeGraphify, fakeOpenSpec, plain, run, validConfig, workspace } from './helpers.mjs';
 
 const out = (r) => plain(r.stdout);
 
@@ -85,28 +75,23 @@ test('graphify update: does nothing when disabled', () => {
   assert.match(out(r), /disabled in config/);
 });
 
-test('graphify update: failure is non-blocking when optional and blocking when required', posix, () => {
-  const failing = 'if [ "${1:-}" = "--version" ]; then echo "graphify 0.1.0"; exit 0; fi; echo nope >&2; exit 4';
+test('graphify update: failure is non-blocking when optional and blocking when required', () => {
+  const failing = { behavior: "console.error('nope'); process.exit(4);" };
   const optional = workspace({ config: validConfig });
-  executable(fakeBin(optional), 'graphify', failing);
-  const o = run(optional, ['graphify', 'update'], { binDirs: [path.join(optional, '.fake-bin')] });
+  const o = run(optional, ['graphify', 'update'], { binDirs: [fakeGraphify(optional, failing)] });
   assert.equal(o.status, 0);
   assert.match(out(o), /Graphify update failed/);
 
   const required = workspace({ config: validConfig.replace('required: false', 'required: true') });
-  executable(fakeBin(required), 'graphify', failing);
-  const r = run(required, ['graphify', 'bootstrap'], { binDirs: [path.join(required, '.fake-bin')] });
+  const r = run(required, ['graphify', 'bootstrap'], { binDirs: [fakeGraphify(required, failing)] });
   assert.equal(r.status, 1);
 });
 
-test('graphify bootstrap: builds the index, records the git head and then reports ready', posix, () => {
+test('graphify bootstrap: builds the index, records the git head and then reports ready', () => {
   const root = workspace({ config: validConfig });
-  const bin = fakeBin(root);
-  executable(
-    bin,
-    'graphify',
-    'if [ "${1:-}" = "--version" ]; then echo "graphify 0.1.0"; exit 0; fi\nmkdir -p graphify-out; echo {} > graphify-out/graph.json',
-  );
+  const bin = fakeGraphify(root, {
+    behavior: "fs.mkdirSync('graphify-out', { recursive: true }); fs.writeFileSync('graphify-out/graph.json', '{}');",
+  });
   const boot = run(root, ['graphify', 'bootstrap'], { binDirs: [bin] });
   assert.equal(boot.status, 0, boot.stdout);
   assert.match(out(boot), /graph updated/);
@@ -120,7 +105,7 @@ test('graphify bootstrap: builds the index, records the git head and then report
   assert.match(out(update), /graphify update \./);
 });
 
-test('graphify status: an index older than the current git head is reported as stale', posix, () => {
+test('graphify status: an index older than the current git head is reported as stale', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeGraphify(root, { withIndex: true });
   fs.writeFileSync(path.join(root, 'change.txt'), 'x');
@@ -140,7 +125,7 @@ test('new: usage error without a title, and a clear error without OpenSpec', () 
   assert.match(out(noCli), /OpenSpec CLI is not installed/);
 });
 
-test('new: a title with no usable characters is rejected', posix, () => {
+test('new: a title with no usable characters is rejected', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeOpenSpec(root);
   const r = run(root, ['new', '!!!'], { binDirs: [bin] });
@@ -148,13 +133,14 @@ test('new: a title with no usable characters is rejected', posix, () => {
   assert.match(out(r), /empty after kebab-case/);
 });
 
-test('new: surfaces OpenSpec failures', posix, () => {
+test('new: surfaces OpenSpec failures', () => {
   const root = workspace({ config: validConfig });
-  const bin = fakeBin(root);
-  executable(
-    bin,
+  const bin = fakeCli(
+    fakeBin(root),
     'openspec',
-    'if [ "${1:-}" = "--version" ]; then echo 1.13.2; exit 0; fi\nif [ "${1:-}" = "new" ]; then echo "already exists" >&2; exit 1; fi\nexit 0',
+    `const [cmd] = process.argv.slice(2);
+if (cmd === '--version') console.log('1.13.2');
+else if (cmd === 'new') { console.error('already exists'); process.exit(1); }`,
   );
   fs.mkdirSync(path.join(root, 'openspec', 'changes'), { recursive: true });
   fs.writeFileSync(path.join(root, 'openspec', 'config.yaml'), 'schema: spec-driven\n');
@@ -163,7 +149,7 @@ test('new: surfaces OpenSpec failures', posix, () => {
   assert.match(out(r), /could not create change "add-retry".*already exists/);
 });
 
-test('status and continue: report no active change', posix, () => {
+test('status and continue: report no active change', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeOpenSpec(root);
   const s = run(root, ['status'], { binDirs: [bin] });
@@ -197,7 +183,7 @@ test('handoff: with no active change says so; with one writes a file', () => {
   assert.match(text, /Branch: (main|master)/);
 });
 
-test('init: exit codes for missing, incompatible and partial OpenSpec', posix, () => {
+test('init: exit codes for missing, incompatible and partial OpenSpec', () => {
   const missing = workspace({ config: validConfig });
   const m = run(missing, ['init'], { env: { PATH: fakeBin(missing), TRUSS_OPENSPEC_PATH: '' } });
   assert.equal(m.status, 1);
@@ -226,14 +212,14 @@ test('init: an invalid existing config stops with exit 2 and is left untouched',
   assert.equal(fs.readFileSync(path.join(root, '.truss', 'config.yaml'), 'utf8'), 'version: 1\nunknown: true\n');
 });
 
-test('init: warns when .truss/ is not git-ignored', posix, () => {
+test('init: warns when .truss/ is not git-ignored', () => {
   const root = workspace({ config: validConfig, ignore: false });
   const bin = fakeOpenSpec(root);
   const r = run(root, ['init'], { binDirs: [bin] });
   assert.match(out(r), /no \.gitignore detected/);
 });
 
-test('openspec: reports a missing CLI with exit 1 and a healthy one with exit 0', posix, () => {
+test('openspec: reports a missing CLI with exit 1 and a healthy one with exit 0', () => {
   const root = workspace({ config: validConfig });
   const none = run(root, ['openspec'], { env: { PATH: fakeBin(root), TRUSS_OPENSPEC_PATH: '' } });
   assert.equal(none.status, 1);

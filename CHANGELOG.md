@@ -4,6 +4,12 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **Windows: npm-installed OpenSpec and Graphify were not usable.** `where` lists npm's extensionless `sh` shim before the `.cmd` one and Node cannot spawn `.cmd` files, so TRUSS reported a working OpenSpec as incompatible and could not run `init`, `new`, `status` or `doctor`. TRUSS now picks the runnable file and, for an npm-style `.cmd` shim, launches the Node script it points to directly. No shell is involved, so arguments such as a change title are never re-parsed by `cmd.exe`. A `.cmd` that is not an npm shim is reported with a clear error; point `TRUSS_OPENSPEC_PATH` at an `.exe` or at the npm shim. On Windows that path may omit the extension; TRUSS uses the `.exe`/`.cmd` next to it.
+
+### Quality
+- The fake OpenSpec/Graphify CLIs in the tests are installed like npm installs a global CLI, so no test is skipped on Windows anymore.
+
 ## [0.1.1] - 2026-09-29
 
 Hardening and quality release. It stays within the v0.1 agent-driven model; runtime orchestration is still planned for v0.2.

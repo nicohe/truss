@@ -8,12 +8,10 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 export const trussRoot = path.resolve(here, '../..');
 export const cli = path.join(trussRoot, 'bin', 'truss.mjs');
 
-// The fake OpenSpec/Graphify CLIs are POSIX shell scripts, so tests that rely on them cannot run on Windows.
 // ANSI escapes are matched through a RegExp built from the ESC character (control characters in regex literals are linted).
 export const ESC = String.fromCharCode(27);
 export const plain = (s) => s.replace(new RegExp(`${ESC}\\[[0-9;]*m`, 'g'), '');
 export const hasAnsi = (s) => s.includes(`${ESC}[`);
-export const posix = { skip: process.platform === 'win32' && 'needs POSIX shell fake CLIs' };
 
 export function workspace({ config = null, git = true, ignore = true } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'truss-integration-'));
@@ -41,39 +39,112 @@ export function fakeBin(root) {
   return dir;
 }
 
-export function executable(dir, name, body) {
-  const file = path.join(dir, name);
-  fs.writeFileSync(file, `#!/bin/sh\nset -eu\n${body}\n`);
-  fs.chmodSync(file, 0o755);
-  return file;
-}
-
-export function fakeOpenSpec(root, { version = '1.13.2', initialized = true, initCreatesProject = true } = {}) {
-  const dir = fakeBin(root);
-  executable(
-    dir,
-    'openspec',
-    `\
-if [ "${'$'}{1:-}" = "--version" ]; then echo "${version}"; exit 0; fi
-if [ "${'$'}{1:-}" = "init" ]; then
-  ${initCreatesProject ? 'mkdir -p openspec/specs openspec/changes; printf "schema: spec-driven\\n" > openspec/config.yaml' : ':'}
-  exit 0
-fi
-if [ "${'$'}{1:-}" = "status" ]; then printf '%s\\n' '{"artifacts":[],"applyRequires":[]}'; exit 0; fi
-if [ "${'$'}{1:-}" = "new" ]; then exit 0; fi
-exit 0`,
+// Fake CLIs are installed the way npm installs a global one, so they behave the same on every OS:
+//   <name>       POSIX sh shim          <name>.cmd   Windows cmd shim (npm's cmd-shim format)
+//   node_modules/<name>-fake/bin/<name>.js   the Node script both shims launch
+// On Windows `where <name>` lists the extensionless sh shim first, which cannot be executed there.
+export function fakeCli(dir, name, source) {
+  const pkg = path.join(dir, 'node_modules', `${name}-fake`);
+  fs.mkdirSync(path.join(pkg, 'bin'), { recursive: true });
+  fs.writeFileSync(path.join(pkg, 'package.json'), '{"type":"commonjs"}\n');
+  fs.writeFileSync(path.join(pkg, 'bin', `${name}.js`), source);
+  const sh = path.join(dir, name);
+  fs.writeFileSync(
+    sh,
+    `#!/bin/sh\nbasedir=$(dirname "$0")\nexec "${process.execPath}" "$basedir/node_modules/${name}-fake/bin/${name}.js" "$@"\n`,
   );
-  if (initialized) {
-    fs.mkdirSync(path.join(root, 'openspec', 'specs'), { recursive: true });
-    fs.mkdirSync(path.join(root, 'openspec', 'changes'), { recursive: true });
-    fs.writeFileSync(path.join(root, 'openspec', 'config.yaml'), 'schema: spec-driven\n');
-  }
+  fs.chmodSync(sh, 0o755);
+  const cmd = [
+    '@ECHO off',
+    'GOTO start',
+    ':find_dp0',
+    'SET dp0=%~dp0',
+    'EXIT /b',
+    ':start',
+    'SETLOCAL',
+    'CALL :find_dp0',
+    '',
+    'IF EXIST "%dp0%\\node.exe" (',
+    '  SET "_prog=%dp0%\\node.exe"',
+    ') ELSE (',
+    '  SET "_prog=node"',
+    '  SET PATHEXT=%PATHEXT:;.JS;=;%',
+    ')',
+    '',
+    `endLocal & goto #_undefined_# 2>NUL || title %COMSPEC% & "%_prog%"  "%dp0%\\node_modules\\${name}-fake\\bin\\${name}.js" %*`,
+    '',
+  ].join('\r\n');
+  fs.writeFileSync(path.join(dir, `${name}.cmd`), cmd);
   return dir;
 }
 
-export function fakeGraphify(root, { withIndex = false } = {}) {
-  const dir = fakeBin(root);
-  executable(dir, 'graphify', `if [ "${'$'}{1:-}" = "--version" ]; then echo 'graphify 0.1.0'; exit 0; fi; exit 0`);
+const seedOpenSpecProject = (root) => {
+  fs.mkdirSync(path.join(root, 'openspec', 'specs'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'openspec', 'changes'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'openspec', 'config.yaml'), 'schema: spec-driven\n');
+};
+
+export function fakeOpenSpec(root, { version = '1.13.2', initialized = true, initCreatesProject = true } = {}) {
+  fakeCli(
+    fakeBin(root),
+    'openspec',
+    `const fs = require('node:fs');
+const [cmd] = process.argv.slice(2);
+if (cmd === '--version') console.log(${JSON.stringify(version)});
+else if (cmd === 'init' && ${initCreatesProject}) {
+  fs.mkdirSync('openspec/specs', { recursive: true });
+  fs.mkdirSync('openspec/changes', { recursive: true });
+  fs.writeFileSync('openspec/config.yaml', 'schema: spec-driven\\n');
+} else if (cmd === 'status') console.log('{"artifacts":[],"applyRequires":[]}');
+`,
+  );
+  if (initialized) seedOpenSpecProject(root);
+  return path.join(root, '.fake-bin');
+}
+
+// A stateful OpenSpec: planning/completion are driven by marker files inside the change directory.
+export function fakeStatefulOpenSpec(root, { initialized = false } = {}) {
+  fakeCli(
+    fakeBin(root),
+    'openspec',
+    `const fs = require('node:fs');
+const args = process.argv.slice(2);
+const done = ['proposal', 'specs', 'design', 'tasks'].map((id) => ({ id, status: 'done' }));
+const blocked = ['specs', 'design', 'tasks'].map((id) => ({ id, status: 'blocked' }));
+if (args[0] === '--version') console.log('1.13.2');
+else if (args[0] === 'init') {
+  fs.mkdirSync('openspec/specs', { recursive: true });
+  fs.mkdirSync('openspec/changes', { recursive: true });
+  if (!fs.existsSync('openspec/config.yaml')) fs.writeFileSync('openspec/config.yaml', 'schema: spec-driven\\n');
+} else if (args[0] === 'new' && args[1] === 'change') {
+  fs.mkdirSync('openspec/changes/' + args[2] + '/specs', { recursive: true });
+  fs.writeFileSync('openspec/changes/' + args[2] + '/proposal.md', '# Proposal\\n');
+  console.log(JSON.stringify({ change: args[2] }));
+} else if (args[0] === 'status') {
+  const base = 'openspec/changes/' + args[args.indexOf('--change') + 1];
+  const state = fs.existsSync(base + '/.complete')
+    ? { artifacts: done, isPlanningComplete: true, isComplete: true }
+    : fs.existsSync(base + '/.planning-complete')
+      ? { artifacts: done, isPlanningComplete: true, isComplete: false }
+      : { artifacts: [{ id: 'proposal', status: 'ready' }, ...blocked], isPlanningComplete: false, isComplete: false };
+  console.log(JSON.stringify({ ...state, applyRequires: ['tasks'] }));
+}
+`,
+  );
+  if (initialized) seedOpenSpecProject(root);
+  return path.join(root, '.fake-bin');
+}
+
+// Behavior is a JS snippet run after the --version check, e.g. "process.exit(3)".
+export function fakeGraphify(root, { withIndex = false, behavior = '' } = {}) {
+  fakeCli(
+    fakeBin(root),
+    'graphify',
+    `const fs = require('node:fs');
+if (process.argv[2] === '--version') { console.log('graphify 0.1.0'); process.exit(0); }
+${behavior}
+`,
+  );
   if (withIndex) {
     fs.mkdirSync(path.join(root, 'graphify-out'), { recursive: true });
     fs.writeFileSync(path.join(root, 'graphify-out', 'graph.json'), '{}\n');
@@ -83,7 +154,7 @@ export function fakeGraphify(root, { withIndex = false } = {}) {
       `${JSON.stringify({ gitHead: head, updatedAt: new Date().toISOString() }, null, 2)}\n`,
     );
   }
-  return dir;
+  return path.join(root, '.fake-bin');
 }
 
 export function run(root, args, { binDirs = [], env = {} } = {}) {

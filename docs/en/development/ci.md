@@ -19,7 +19,7 @@ TRUSS declares Node.js `>=20`, so CI verifies the minimum supported major and th
 - Operating systems: `ubuntu-latest`, `macos-latest`, `windows-latest`.
 - Node.js: 20, 22 and 24.
 
-**Windows.** The unit suite and every integration test that does not need a fake OpenSpec/Graphify CLI run on Windows. Tests that use the fake CLIs are skipped there, because those are POSIX shell scripts. Spawning a real npm-installed `openspec`/`graphify` (a `.cmd` shim on Windows) is therefore not covered by CI.
+**Windows.** The whole suite runs on Windows. The fake OpenSpec/Graphify CLIs are installed the way npm installs a global CLI (an extensionless `sh` shim, a `.cmd` shim and the Node script both launch), so the tests exercise the same `.cmd` handling as a real install.
 
 ## Required checks
 
