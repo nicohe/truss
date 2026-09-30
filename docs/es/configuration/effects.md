@@ -2,7 +2,7 @@
 
 > Traducción al español. Esta página responde: **¿qué cambia cuando modifico un valor?**
 
-| Cambio | Comportamiento efectivo | Enforcement v0.1 |
+| Cambio | Comportamiento efectivo | Enforcement v0.2 |
 |---|---|---|
 | `spec.mode: anchored` | Spec queda como ancla; spec/tests/código pueden evolucionar con reconciliación explícita | AGENT |
 | `spec.mode: source` | Cambios de comportamiento vuelven a spec antes de continuar implementación | AGENT |

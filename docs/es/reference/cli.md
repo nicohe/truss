@@ -1,8 +1,8 @@
 # Referencia CLI
 
-TRUSS v0.1 es principalmente un Harness declarativo/agent-driven. La tabla distingue los comandos que ejecutan comportamiento de los que preparan o exponen estado.
+TRUSS v0.2 es principalmente un Harness declarativo/agent-driven. La tabla distingue los comandos que ejecutan comportamiento de los que preparan o exponen estado.
 
-| Comando | Comportamiento v0.1 | Siguiente paso |
+| Comando | Comportamiento v0.2 | Siguiente paso |
 |---|---|---|
 | `truss init` | Crea `.truss/config.yaml` si falta; no lo sobrescribe | `truss doctor` |
 | `truss doctor` | Comprueba Node, Git, config TRUSS, OpenSpec CLI/proyecto requeridos y disponibilidad opcional de Graphify | Resolver fallos requeridos |
@@ -19,7 +19,7 @@ TRUSS v0.1 es principalmente un Harness declarativo/agent-driven. La tabla disti
 
 ## Review
 
-`code-review` existe como skill/workflow en v0.1, pero el CLI starter **no implementa actualmente** un comando ejecutable `truss review`. El review dirigido por runtime pertenece a la orquestación posterior. La documentación no debe insinuar lo contrario.
+`code-review` existe como skill/workflow en v0.2, pero el CLI starter **no implementa actualmente** un comando ejecutable `truss review`. El review dirigido por runtime pertenece a la orquestación posterior. La documentación no debe insinuar lo contrario.
 
 ## Orden canónico
 

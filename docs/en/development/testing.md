@@ -1,6 +1,6 @@
 # TRUSS testing
 
-TRUSS v0.1 keeps permanent unit, integration, and end-to-end suites under `test/`.
+TRUSS v0.2 keeps permanent unit, integration, and end-to-end suites under `test/`.
 
 Run:
 
@@ -38,13 +38,13 @@ npm test
 
 ## End-to-end tests
 
-The E2E suite exercises the complete v0.1 user-visible lifecycle across real TRUSS CLI processes and temporary Git workspaces.
+The E2E suite exercises the complete v0.2 user-visible lifecycle across real TRUSS CLI processes and temporary Git workspaces.
 
 ```bash
 npm run test:e2e
 ```
 
-It covers a new project lifecycle, adoption of an existing OpenSpec project without overwriting durable files, and enabling optional Graphify later. Automatic coding-agent execution and automatic OpenSpec archive remain outside the v0.1 E2E boundary because those are intentionally agent/user-driven until v0.2.
+It covers a new project lifecycle, adoption of an existing OpenSpec project without overwriting durable files, and enabling optional Graphify later. Automatic coding-agent execution and automatic OpenSpec archive remain outside the v0.2 E2E boundary because those are intentionally agent/user-driven until v0.3.
 
 ## CI
 

@@ -1,6 +1,6 @@
 # Continuous Integration
 
-TRUSS v0.1 runs its permanent verification suite in GitHub Actions.
+TRUSS v0.2 runs its permanent verification suite in GitHub Actions.
 
 Workflow: `.github/workflows/ci.yml`
 

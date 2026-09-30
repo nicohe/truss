@@ -1,6 +1,6 @@
 # OpenSpec compatibility contract
 
-TRUSS v0.1 supports stable OpenSpec releases in this range:
+TRUSS v0.2 supports stable OpenSpec releases in this range:
 
 ```text
 >=1.0.0 <2.0.0
@@ -16,6 +16,6 @@ TRUSS treats OpenSpec as an independently owned required dependency. It detects 
 - `unknown`: version cannot be parsed or is a prerelease; compatibility is not assumed.
 - `missing`: CLI is not installed.
 
-A newer 1.x release is accepted by the v0.1 contract. A future major version is deliberately fail-closed because it may change commands, project layout, or artifact semantics.
+A newer 1.x release is accepted by the v0.2 contract. A future major version is deliberately fail-closed because it may change commands, project layout, or artifact semantics.
 
 TRUSS does not silently run `openspec update` and does not silently install a different version. The user remains in control of OpenSpec lifecycle changes.

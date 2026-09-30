@@ -10,9 +10,9 @@ TRUSS coordinates specs, engineering policies, verification and runtime adapters
 
 **Intent → Spec → Behavior → Implementation → Evidence → Verification**
 
-TRUSS is agent-agnostic. [OpenSpec](docs/en/integrations/openspec.md) is a required foundation and anchors expected behavior; tests provide executable evidence. [Graphify](docs/en/integrations/graphify.md) is optional. Runtime-specific orchestration is an extension point rather than a v0.1 guarantee.
+TRUSS is agent-agnostic. [OpenSpec](docs/en/integrations/openspec.md) is a required foundation and anchors expected behavior; tests provide executable evidence. [Graphify](docs/en/integrations/graphify.md) is optional. Runtime-specific orchestration is an extension point rather than a v0.2 guarantee.
 
-**Status:** v0.1 stable baseline. The CLI provides deterministic project/configuration checks and an agent-driven change lifecycle; runtime orchestration is planned for v0.2. See the [release contract](docs/en/reference/release-v0.1.md).
+**Status:** v0.2. TRUSS runs no coding agent itself: the change lifecycle is agent-driven, and runtime orchestration is planned for v0.3. What TRUSS does check, deterministically, is the project and its configuration, the OpenSpec state and, opt-in, that a change touches tests and has no open tasks (`verification.tests_required`, `verification.tasks_complete`). See the [release contract](docs/en/reference/release-v0.2.md).
 
 ## Quick start
 
@@ -56,7 +56,7 @@ Canonical documentation lives in [`docs/en/`](docs/en/README.md); Spanish transl
 - [Architecture](docs/en/concepts/architecture.md) and [workflow](docs/en/workflows/overview.md)
 - [Skills](docs/en/skills/overview.md)
 - [Configuration](docs/en/configuration/reference.md): [effects](docs/en/configuration/effects.md), [examples](docs/en/configuration/examples.md) and [validation](docs/en/configuration/validation.md)
-- [v0.1 enforcement model](docs/en/reference/enforcement.md)
+- [v0.2 enforcement model](docs/en/reference/enforcement.md)
 - [Testing](docs/en/development/testing.md) and [CI](docs/en/development/ci.md)
 - [Brand and logo usage](docs/en/reference/brand.md)
 - [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)

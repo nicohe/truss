@@ -37,6 +37,6 @@ A v0.1.0 release is ready only when:
 5. Package/version metadata is `0.1.0`.
 6. The release archive passes ZIP integrity validation.
 
-## v0.2 boundary
+## Later releases
 
-v0.2 may make TRUSS orchestration-driven by adding runtime adapters, context resolution, automatic task execution/routing, isolated review, handoff automation, and capability-aware execution. Those are not v0.1 guarantees.
+This document is the historical v0.1.0 contract. It expected runtime orchestration in v0.2; that has moved. v0.2.0 kept the agent-driven model and added opt-in TRUSS-side gates (see the [v0.2.0 contract](release-v0.2.md)), and orchestration-driven TRUSS (runtime adapters, context resolution, automatic task execution/routing, isolated review, handoff automation, capability-aware execution) is now planned for v0.3. None of that was a v0.1 guarantee.

@@ -18,4 +18,4 @@ Follow configured BDD/TDD policies and run `truss verify`
 before considering the change complete.
 ```
 
-En v0.1 el agente sigue el workflow; TRUSS todavía no controla automáticamente el runtime. Para monorepos declarás `components` y podés usar `--component`. Para cambiar de agente/runtime/sesión, `truss handoff`.
+En v0.2 el agente sigue el workflow; TRUSS todavía no controla automáticamente el runtime. Para monorepos declarás `components` y podés usar `--component`. Para cambiar de agente/runtime/sesión, `truss handoff`.

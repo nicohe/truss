@@ -31,7 +31,7 @@ git config blame.ignoreRevsFile .git-blame-ignore-revs
 
 By submitting a contribution, you agree that your contribution may be distributed under the MIT License that covers TRUSS. You must have the right to submit the contribution.
 
-No Contributor License Agreement (CLA) or Developer Certificate of Origin (DCO) is required for TRUSS v0.1.
+No Contributor License Agreement (CLA) or Developer Certificate of Origin (DCO) is required for TRUSS v0.2.
 
 ## Pull request expectations
 

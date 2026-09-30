@@ -2,16 +2,16 @@
 
 > Canonical TRUSS documentation.
 
-TRUSS v0.1 separates implemented guarantees from agent instructions and future adapter behavior. Read every behavioral claim using these labels.
+TRUSS v0.2 separates implemented guarantees from agent instructions and future adapter behavior. Read every behavioral claim using these labels.
 
-| Label | Meaning in v0.1 |
+| Label | Meaning in v0.2 |
 |---|---|
 | **[TRUSS]** | Enforced by executable TRUSS code and covered by automated tests where practical. |
-| **[AGENT]** | Instruction/policy that the coding agent is expected to follow. TRUSS v0.1 does not technically force it. |
-| **[ADAPTER]** | Requires a runtime-specific adapter/capability. v0.1 does not provide full runtime orchestration. |
-| **[DECLARATIVE]** | Describes intended/project policy but is not technically enforced by TRUSS v0.1. |
+| **[AGENT]** | Instruction/policy that the coding agent is expected to follow. TRUSS v0.2 does not technically force it. |
+| **[ADAPTER]** | Requires a runtime-specific adapter/capability. v0.2 does not provide full runtime orchestration. |
+| **[DECLARATIVE]** | Describes intended/project policy but is not technically enforced by TRUSS v0.2. |
 
-## Guaranteed by TRUSS v0.1
+## Guaranteed by TRUSS v0.2
 
 **[TRUSS]** The CLI currently enforces or executes:
 
@@ -27,13 +27,13 @@ TRUSS v0.1 separates implemented guarantees from agent instructions and future a
 - the opt-in tasks-complete gate of `truss verify` (`verification.tasks_complete`): open tasks in the active change are reported (`warn`) or stop verification (`block`). It checks that tasks are checked off, not that the work is real;
 - local handoff scaffold creation and skill listing.
 
-## Agent-enforced in v0.1
+## Agent-enforced in v0.2
 
 **[AGENT]** These remain instructions, not technical guarantees:
 
 - Spec-Anchored / Spec-as-Source workflow discipline;
 - Gherkin usage;
-- BDD and TDD loops;
+- BDD and TDD loops (TRUSS can only check that tests changed, via `verification.tests_required`);
 - reconciling implementation discoveries with the spec;
 - deciding when Graphify is useful when it is optional;
 - using native search/grep/LSP as the semantic fallback when Graphify is unavailable;
@@ -43,17 +43,17 @@ TRUSS v0.1 separates implemented guarantees from agent instructions and future a
 
 ## Adapter/future enforcement
 
-**[ADAPTER]** Runtime-specific enforcement is not guaranteed by v0.1. This includes automatic coding-agent invocation, isolated reviewer contexts, subagent/team routing, write-zone enforcement, hooks, MCP orchestration, automatic worktree management, and capability-based runtime routing.
+**[ADAPTER]** Runtime-specific enforcement is not guaranteed by v0.2. This includes automatic coding-agent invocation, isolated reviewer contexts, subagent/team routing, write-zone enforcement, hooks, MCP orchestration, automatic worktree management, and capability-based runtime routing.
 
-**[DECLARATIVE]** `spec.zone_guard` declares desired Spec Zone / Code Zone behavior in v0.1; it does not itself prevent writes.
+**[DECLARATIVE]** `spec.zone_guard` declares desired Spec Zone / Code Zone behavior in v0.2; it does not itself prevent writes.
 
 ## Important distinction: Graphify
 
 **[TRUSS]** `graphify.required: true` is operationally blocking in `truss graphify` and `truss doctor` when Graphify is unavailable or not ready.
 
-**[AGENT]** TRUSS v0.1 does not centrally wrap every possible workflow command, so the coding agent must still respect that required capability during agent-driven implementation. Optional native fallback is likewise an agent workflow behavior, not an automatic repository-search engine implemented by TRUSS.
+**[AGENT]** TRUSS v0.2 does not centrally wrap every possible workflow command, so the coding agent must still respect that required capability during agent-driven implementation. Optional native fallback is likewise an agent workflow behavior, not an automatic repository-search engine implemented by TRUSS.
 
-## v0.1 boundary
+## v0.2 boundary
 
 ```text
 TRUSS executable guarantees
@@ -62,9 +62,9 @@ agent-followed engineering policies
         +
 OpenSpec / Git / tests
         ↓
-TRUSS v0.1
+TRUSS v0.2
 
 Automatic runtime orchestration
         ↓
-not a v0.1 guarantee
+not a v0.2 guarantee
 ```

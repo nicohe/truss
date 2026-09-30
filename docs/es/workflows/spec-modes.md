@@ -85,7 +85,7 @@ execute-change
                  archive
 ```
 
-Con `spec.zone_guard: true`, los runtimes con controles de escritura deberían aplicar la separación Spec Zone / Code Zone. En v0.1 es una policy para el agente; el enforcement automático corresponde a adapters/orquestación posteriores.
+Con `spec.zone_guard: true`, los runtimes con controles de escritura deberían aplicar la separación Spec Zone / Code Zone. En v0.2 es una policy para el agente; el enforcement automático corresponde a adapters/orquestación posteriores.
 
 ## Elección del modo
 

@@ -11,19 +11,19 @@ Type: integer. Default: `1`. Selects the TRUSS configuration schema version. Uns
 Type: enum. Default: `anchored`. Values: `anchored`, `source`.
 - `anchored`: OpenSpec remains the permanent anchor; explicit reconciliation may evolve spec, tests and code together.
 - `source`: OpenSpec is authoritative; behavioral changes return to the spec phase first.
-Enforcement v0.1: **AGENT policy**. Target v0.2: **TRUSS + AGENT**.
+Enforcement v0.2: **AGENT policy**. Target v0.3: **TRUSS + AGENT**.
 
 ## `spec.gherkin`
-Type: boolean. Default: `true`. When true, observable acceptance behavior should be expressed as Gherkin scenarios where appropriate. When false, structured non-Gherkin acceptance criteria are allowed. Enforcement v0.1: **AGENT**.
+Type: boolean. Default: `true`. When true, observable acceptance behavior should be expressed as Gherkin scenarios where appropriate. When false, structured non-Gherkin acceptance criteria are allowed. Enforcement v0.2: **AGENT**.
 
 ## `spec.zone_guard`
-Type: boolean. Default: `false`. When true, separate Spec Zone and Code Zone behavior is expected. Recommended mainly with `mode: source`. Enforcement v0.1: **AGENT/DECLARATIVE**; runtime enforcement is future work.
+Type: boolean. Default: `false`. When true, separate Spec Zone and Code Zone behavior is expected. Recommended mainly with `mode: source`. Enforcement v0.2: **AGENT/DECLARATIVE**; runtime enforcement is future work.
 
 ## `development.bdd`
-Type: boolean. Default: `true`. Enables the BDD macro-loop in `execute-change`: acceptance behavior RED → implementation → acceptance GREEN. Enforcement v0.1: **AGENT**.
+Type: boolean. Default: `true`. Enables the BDD macro-loop in `execute-change`: acceptance behavior RED → implementation → acceptance GREEN. Enforcement v0.2: **AGENT**.
 
 ## `development.tdd`
-Type: boolean. Default: `true`. Enables RED → minimal GREEN → refactor for implementation details. Enforcement v0.1: **AGENT**.
+Type: boolean. Default: `true`. Enables RED → minimal GREEN → refactor for implementation details. Enforcement v0.2: **AGENT**. TRUSS can additionally check that a change touched tests at all: see `verification.tests_required`.
 
 ## `verification.commands`
 Type: string array. Default: project starter commands. Commands are executed in order by `truss verify`; failure stops successful verification. Enforcement: **TRUSS**.
@@ -60,13 +60,13 @@ Type: string arrays. Default: unset (use the detected directories). Repository-r
 Type: boolean. Default: `true`.
 - `false`: TRUSS does not intentionally use Graphify; native code discovery is used.
 - `true`: Graphify may be used for code relationships/impact analysis.
-Enforcement v0.1: **TRUSS** for configured lifecycle/status commands; **AGENT** for deciding when optional Graphify should be used during implementation.
+Enforcement v0.2: **TRUSS** for configured lifecycle/status commands; **AGENT** for deciding when optional Graphify should be used during implementation.
 
 ## `integrations.graphify.required`
 Type: boolean. Default: `false`. Valid only when `enabled: true`.
 - `false`: if Graphify is unavailable, use native search/grep/LSP/runtime exploration.
 - `true`: Graphify is a project requirement. `truss graphify` and `truss doctor` report it as blocking when unavailable/unready.
-Enforcement v0.1: **TRUSS** for those executable checks; **AGENT** must respect the requirement during agent-driven implementation. Full centralized workflow gating belongs to later orchestration.
+Enforcement v0.2: **TRUSS** for those executable checks; **AGENT** must respect the requirement during agent-driven implementation. Full centralized workflow gating belongs to later orchestration.
 
 `enabled: false` + `required: true` is invalid configuration.
 
@@ -83,7 +83,7 @@ components:
   worker:
     path: ./apps/worker
 ```
-Each component key is a stable TRUSS identifier; `path` points to its repository-relative root. Component resolution may scope local guidance, code context, tests and OpenSpec work. Enforcement in v0.1: **TRUSS** validates and resolves component paths, local/workspace AGENTS guidance, OpenSpec scope, and common source/test roots. Deeper task orchestration belongs to v0.2.
+Each component key is a stable TRUSS identifier; `path` points to its repository-relative root. Component resolution may scope local guidance, code context, tests and OpenSpec work. Enforcement in v0.2: **TRUSS** validates and resolves component paths, local/workspace AGENTS guidance, OpenSpec scope, and common source/test roots. Deeper task orchestration belongs to v0.3.
 
 ## OpenSpec is not configurable as optional
 OpenSpec is required by TRUSS and therefore does not appear under `integrations`. TRUSS must detect/reuse an existing compatible OpenSpec project or initialize it when absent; it must never silently replace existing OpenSpec data.

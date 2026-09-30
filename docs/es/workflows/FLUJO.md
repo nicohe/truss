@@ -1,4 +1,4 @@
-# Flujo TRUSS v0.1
+# Flujo TRUSS v0.2
 
 ```text
 Intent

@@ -27,4 +27,4 @@ Comenzar por [Getting Started](getting-started.md). La documentación se organiz
 
 ## Enforcement
 
-- [Modelo de enforcement v0.1](reference/enforcement.md)
+- [Modelo de enforcement v0.2](reference/enforcement.md)

@@ -1,6 +1,6 @@
-# TRUSS v0.1 lifecycle commands
+# TRUSS v0.2 lifecycle commands
 
-TRUSS v0.1 remains **agent-driven**. These commands make OpenSpec the operational source for change state without introducing the runtime orchestration planned for v0.2.
+TRUSS v0.2 remains **agent-driven**. These commands make OpenSpec the operational source for change state without introducing the runtime orchestration planned for v0.3.
 
 ## `truss new "Change name" [--component name]`
 
@@ -26,11 +26,11 @@ TRUSS v0.1 remains **agent-driven**. These commands make OpenSpec the operationa
 
 ## `truss continue`
 
-`continue` does not invoke a coding model in v0.1. It computes and prints the next agent action:
+`continue` does not invoke a coding model in v0.2. It computes and prints the next agent action:
 
 - no active change → create one;
 - planning incomplete → create/refine the next ready OpenSpec artifact, using Grill when ambiguity remains;
 - planning complete, tasks open → follow `.truss/workflows/execute-change.md`, BDD/TDD and verification policies, starting with the first incomplete task;
 - all tasks complete → run deterministic verification, code review, then OpenSpec verification/archive.
 
-This keeps the boundary explicit: OpenSpec owns change/artifact state; TRUSS owns engineering workflow policy; the coding agent performs non-deterministic implementation in v0.1.
+This keeps the boundary explicit: OpenSpec owns change/artifact state; TRUSS owns engineering workflow policy; the coding agent performs non-deterministic implementation in v0.2.

@@ -27,7 +27,7 @@ Start with [Getting Started](getting-started.md). Documentation is organized by 
 
 ## Enforcement
 
-- [v0.1 enforcement model](reference/enforcement.md)
+- [v0.2 enforcement model](reference/enforcement.md)
 
 ## Command details
 
@@ -49,6 +49,7 @@ Start with [Getting Started](getting-started.md). Documentation is organized by 
 - [Testing](development/testing.md)
 - [End-to-end tests](development/e2e.md)
 - [Continuous integration](development/ci.md)
-- [v0.1.0 release contract](reference/release-v0.1.md)
+- [v0.2.0 release contract](reference/release-v0.2.md)
+- [v0.1.0 release contract](reference/release-v0.1.md) (historical)
 - [Documentation audit](reference/documentation-audit.md)
 - [Brand and logo usage](reference/brand.md)

@@ -49,7 +49,7 @@ integrations:
     enabled: true
     required: true
 ```
-En v0.1, `truss graphify` y `truss doctor` hacen enforcement de readiness/bloqueo cuando `required: true`. Durante implementación agent-driven, el agente también debe respetar ese requisito.
+En v0.2, `truss graphify` y `truss doctor` hacen enforcement de readiness/bloqueo cuando `required: true`. Durante implementación agent-driven, el agente también debe respetar ese requisito.
 
 ## Monorepo
 ```yaml
