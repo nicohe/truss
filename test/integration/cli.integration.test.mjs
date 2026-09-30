@@ -104,3 +104,33 @@ test('init: initializes missing OpenSpec once and second run is idempotent',()=>
   assert.equal(fs.readFileSync(path.join(root,'.truss','config.yaml'),'utf8'),configAfterFirst);
   assert.equal(fs.readFileSync(path.join(root,'openspec','config.yaml'),'utf8'),specAfterFirst);
 });
+
+test('output: piped stdout has no ANSI escapes by default',()=>{
+  const root=workspace({config:validConfig});
+  const result=run(root,['config'],{env:{FORCE_COLOR:'',NO_COLOR:''}});
+  assert.equal(result.status,0,result.stderr||result.stdout);
+  assert.equal(/\x1b\[/.test(result.stdout),false);
+});
+
+test('output: FORCE_COLOR enables color and NO_COLOR overrides it',()=>{
+  const root=workspace({config:validConfig});
+  const forced=run(root,['config'],{env:{FORCE_COLOR:'1',NO_COLOR:''}});
+  assert.equal(/\x1b\[/.test(forced.stdout),true);
+  const disabled=run(root,['config'],{env:{FORCE_COLOR:'1',NO_COLOR:'1'}});
+  assert.equal(/\x1b\[/.test(disabled.stdout),false);
+});
+
+test('handoff: reports a corrupt state file instead of crashing',()=>{
+  const root=workspace({config:validConfig});
+  fs.writeFileSync(path.join(root,'.truss','state.json'),'{not json');
+  const result=run(root,['handoff']);
+  assert.equal(result.status,2);
+  assert.match(plain(result.stdout),/Invalid TRUSS state file/);
+});
+
+test('unknown command falls back to help',()=>{
+  const root=workspace({config:validConfig});
+  const result=run(root,['constructor']);
+  assert.equal(result.status,0);
+  assert.match(result.stdout,/Usage: truss <command>/);
+});
