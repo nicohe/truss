@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Documentation
+- Getting started and "Who does what" now say that Grill comes as two skills: `grill-me` for an idea, and `grill-with-docs` when there are requirements, a proposal, a ticket or an ADR to start from, with an example prompt. They only named `grill-me` before.
+
 ## [0.2.5] - 2026-09-30
 
 Patch release with no change to the CLI. The quick start now installs a release instead of `main`, the guide to update TRUSS is rewritten for that, and Getting started explains Grill and the doubled `.truss/.truss/` where the reader first meets them. CI and the release checklist also change.
