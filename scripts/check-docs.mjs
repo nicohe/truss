@@ -3,12 +3,13 @@
 // Structure checks (Markdown only, no network):
 //   - every relative link points to a file that exists;
 //   - every `#anchor` matches a heading of the target page;
-//   - every page under an enforced docs directory is linked from somewhere.
+//   - every page under an enforced docs directory (`docs/en`, `docs/es`) is linked from somewhere.
 // Drift checks (docs against the code they describe):
 //   - every CLI command is in the CLI reference;
 //   - every schema option is in the configuration reference;
 //   - every `truss doctor` check is in the doctor reference;
 //   - every environment variable TRUSS reads is in the environment reference.
+//   A translation (`docs/es`) is held to the same drift checks for each of those pages it has.
 //
 // Options: `--strict` enforces the orphan check in every docs directory; `--root <dir>` checks another tree.
 // Exit code 0 when there are no errors (warnings never fail); 1 otherwise.
@@ -18,7 +19,11 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // Pages under these directories must be reachable from another page. Other docs directories only warn, until they
 // are brought up to date. `--strict` enforces every directory.
-export const ENFORCED_ORPHAN_DIRS = ['docs/en'];
+export const ENFORCED_ORPHAN_DIRS = ['docs/en', 'docs/es'];
+
+// Translations of the pages the drift checks read. `docs/en` must have them; a translation only has to be complete for
+// the pages it already has, so a page that is not translated yet is not an error.
+export const TRANSLATION_DIRS = ['docs/es'];
 
 const toPosix = (value) => value.split(path.sep).join('/');
 
@@ -250,27 +255,32 @@ export function environmentVariables(root) {
 
 export function checkDrift(root, { commands = [] } = {}) {
   const errors = [];
-  const expectIn = (docFile, present, subject) => {
+  const expectIn = (docFile, present, subject, { optional = false } = {}) => {
     const text = read(root, docFile);
     if (text === null) {
-      errors.push({ file: docFile, message: `missing, but it must document ${subject}` });
+      if (!optional) errors.push({ file: docFile, message: `missing, but it must document ${subject}` });
       return;
     }
     for (const { name, needle, what } of present) {
       if (!text.includes(needle)) errors.push({ file: docFile, message: `does not document ${what} ${name}` });
     }
   };
+  // The canonical page is required; each translation is checked when it exists.
+  const expectInEveryLanguage = (page, present, subject) => {
+    expectIn(`docs/en/${page}`, present, subject);
+    for (const directory of TRANSLATION_DIRS) expectIn(`${directory}/${page}`, present, subject, { optional: true });
+  };
 
-  expectIn(
-    'docs/en/reference/cli.md',
+  expectInEveryLanguage(
+    'reference/cli.md',
     commands.map((name) => ({ name, needle: `truss ${name}`, what: 'the command' })),
     'every CLI command',
   );
 
   const schemaText = read(root, '.truss/schema/config.schema.json');
   if (schemaText !== null) {
-    expectIn(
-      'docs/en/configuration/reference.md',
+    expectInEveryLanguage(
+      'configuration/reference.md',
       schemaOptions(JSON.parse(schemaText)).map((name) => ({ name, needle: `\`${name}\``, what: 'the option' })),
       'every configuration option',
     );
@@ -278,15 +288,15 @@ export function checkDrift(root, { commands = [] } = {}) {
 
   const doctorSource = read(root, 'lib/doctor.mjs');
   if (doctorSource !== null) {
-    expectIn(
-      'docs/en/reference/doctor.md',
+    expectInEveryLanguage(
+      'reference/doctor.md',
       doctorCheckNames(doctorSource).map((name) => ({ name, needle: `| ${name} |`, what: 'the doctor check' })),
       'every doctor check',
     );
   }
 
-  expectIn(
-    'docs/en/reference/environment.md',
+  expectInEveryLanguage(
+    'reference/environment.md',
     environmentVariables(root).map((name) => ({ name, needle: `\`${name}\``, what: 'the environment variable' })),
     'every environment variable',
   );

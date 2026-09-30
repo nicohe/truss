@@ -168,7 +168,7 @@ test('orphans: enforced directories error, others warn, README and non-docs file
       'docs/en/README.md': '# index',
       'docs/en/linked.md': '# linked',
       'docs/en/lonely.md': '# lonely',
-      'docs/es/lonely.md': '# solo',
+      'docs/fr/lonely.md': '# seul',
       'CHANGELOG.md': '# not under docs',
     },
     (root) => {
@@ -181,12 +181,12 @@ test('orphans: enforced directories error, others warn, README and non-docs file
       );
       assert.deepEqual(
         relaxed.warnings.map((e) => e.file),
-        ['docs/es/lonely.md'],
+        ['docs/fr/lonely.md'],
       );
       const strict = findOrphans(files, inbound, { strict: true });
       assert.deepEqual(
         strict.errors.map((e) => e.file),
-        ['docs/en/lonely.md', 'docs/es/lonely.md'],
+        ['docs/en/lonely.md', 'docs/fr/lonely.md'],
       );
       assert.deepEqual(strict.warnings, []);
     },
@@ -273,6 +273,30 @@ test('drift: undocumented commands, options, doctor checks and variables are eac
   );
 });
 
+test('drift: a translation is held to the same checks for the pages it has, and a missing translation is fine', () => {
+  const files = {
+    'docs/en/reference/cli.md': '`truss init` and `truss verify`',
+    'docs/en/reference/environment.md': '`TRUSS_HOME`',
+    'lib/x.mjs': 'const a = env.TRUSS_HOME;',
+  };
+  withTree(files, (root) => {
+    assert.deepEqual(messages(checkDrift(root, { commands: ['init', 'verify'] })), []);
+  });
+  withTree(
+    {
+      ...files,
+      'docs/es/reference/cli.md': 'Usa `truss init`.',
+      'docs/es/reference/environment.md': 'Sin variables.',
+    },
+    (root) => {
+      assert.deepEqual(messages(checkDrift(root, { commands: ['init', 'verify'] })), [
+        'docs/es/reference/cli.md does not document the command verify',
+        'docs/es/reference/environment.md does not document the environment variable TRUSS_HOME',
+      ]);
+    },
+  );
+});
+
 test('drift: a missing reference page is an error, and missing code files are simply not checked', () => {
   withTree({ 'docs/en/README.md': '# x' }, (root) => {
     const errors = messages(checkDrift(root, { commands: ['init'] }));
@@ -284,13 +308,13 @@ test('drift: a missing reference page is an error, and missing code files are si
 });
 
 test('checkDocs groups the results and keeps warnings apart from errors', () => {
-  withTree({ 'docs/es/x.md': '# x', 'docs/en/README.md': '[gone](nope.md)' }, (root) => {
+  withTree({ 'docs/fr/x.md': '# x', 'docs/en/README.md': '[gone](nope.md)' }, (root) => {
     const result = checkDocs(root, { commands: [] });
     assert.equal(result.files, 2);
     assert.equal(result.groups[0].errors.length, 1);
     assert.deepEqual(
       result.warnings.map((w) => w.file),
-      ['docs/es/x.md'],
+      ['docs/fr/x.md'],
     );
   });
 });

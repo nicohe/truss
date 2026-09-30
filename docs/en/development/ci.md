@@ -47,7 +47,7 @@ unit → integration → E2E   (separate steps, so one failing suite does not hi
 
 - **Broken links**: a relative link to a file that does not exist.
 - **Broken anchors**: a `#fragment` with no matching heading in the target page. Anchors follow GitHub's rules, including inline-code headings and repeated headings.
-- **Orphan pages**: a page under `docs/en/` that no other page links to. Other docs directories (currently `docs/es/`) only produce a warning; `--strict` enforces all of them.
+- **Orphan pages**: a page under `docs/en/` or `docs/es/` that no other page links to. Any other docs directory (a future translation, say) only produces a warning until it is added to `ENFORCED_ORPHAN_DIRS`; `--strict` enforces all of them.
 
 and, against the code they describe, that the documentation mentions:
 

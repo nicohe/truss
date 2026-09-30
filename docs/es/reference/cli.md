@@ -1,30 +1,64 @@
-# Referencia CLI
+# Referencia del CLI
 
-TRUSS v0.2 es principalmente un Harness declarativo/agent-driven. La tabla distingue los comandos que ejecutan comportamiento de los que preparan o exponen estado.
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/reference/cli.md).
 
-| Comando | Comportamiento v0.2 | Siguiente paso |
+TRUSS es un CLI de Node. Desde un proyecto, ejecútalo como `node .truss/bin/truss.mjs <comando>` (o mediante un alias; consulta [primeros pasos](../getting-started.md)). Los comandos actúan sobre el **directorio actual**, que debe ser la raíz del proyecto. No hay opciones globales: solo el nombre del comando, sus argumentos y las opciones que se listan abajo.
+
+TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra qué comandos ejecutan comprobaciones determinísticas y cuáles solo preparan o muestran estado; ninguno ejecuta un coding agent.
+
+| Comando | Qué hace | Detalle |
 |---|---|---|
-| `truss init` | Crea `.truss/config.yaml` si falta; no lo sobrescribe | `truss doctor` |
-| `truss doctor` | Comprueba Node, Git, config TRUSS, OpenSpec CLI/proyecto requeridos y disponibilidad opcional de Graphify | Resolver fallos requeridos |
-| `truss config` | Valida y muestra la configuración resuelta | Corregir errores si falla |
-| `truss openspec` | Inspecciona CLI/proyecto y compatibilidad de OpenSpec | Resolver incompatibilidades |
-| `truss graphify [status|update|bootstrap]` | Inspecciona o actualiza el grafo | Usar fallback si es opcional |
-| `truss components [name]` | Resuelve componentes configurados y su contexto | Usar el scope resuelto |
-| `truss new "Nombre" [--component name]` | Crea scaffold OpenSpec y marca el cambio activo | Discovery/refinar spec |
-| `truss status` | Muestra cambio y fase activos | Continuar fase actual |
-| `truss continue` | Muestra OpenSpec activo e indica al agente continuar la primera task incompleta | El agente sigue `execute-change` |
-| `truss verify [--trust]` | Ejecuta `verification.commands` en orden y se detiene en el primer fallo; antes pide aprobación si la lista es nueva o cambió | Review si pasa |
-| `truss handoff` | Escribe un handoff conciso del cambio activo | Solo ante transición de contexto |
-| `truss skills` | Lista las skills portables instaladas | Cargar solo la skill relevante |
+| `truss init` | Crea `.truss/config.yaml` si falta (nunca lo sobrescribe) e inicializa o adopta OpenSpec | [`init`](init.md) |
+| `truss doctor` | Comprobación de salud de solo lectura del entorno, la configuración, OpenSpec y Graphify (opcional) | [`doctor`](doctor.md) |
+| `truss config` | Valida e imprime la configuración resuelta, con los valores por defecto aplicados | [validación](../../en/configuration/validation.md) (en inglés) |
+| `truss openspec` | Inspecciona el CLI de OpenSpec, su versión y el proyecto | [detección de OpenSpec](../../en/integrations/openspec-detection.md) (en inglés) |
+| `truss graphify [status\|update\|bootstrap]` | Inspecciona o refresca el grafo de código opcional | [ciclo de vida de Graphify](../../en/integrations/graphify-lifecycle.md) (en inglés) |
+| `truss components [name]` | Resuelve los componentes configurados y su contexto | [componentes](../../en/reference/components.md) (en inglés) |
+| `truss new "Nombre del cambio" [--component name]` | Crea un cambio de OpenSpec y lo marca como activo | [comandos del ciclo de vida](../../en/workflows/lifecycle-commands.md) (en inglés) |
+| `truss status` | Muestra el cambio activo, su fase, sus artefactos y el progreso de tareas | [comandos del ciclo de vida](../../en/workflows/lifecycle-commands.md) (en inglés) |
+| `truss continue` | Imprime la siguiente acción para el agente y los archivos que debe cargar | [comandos del ciclo de vida](../../en/workflows/lifecycle-commands.md) (en inglés) |
+| `truss verify [--trust]` | Ejecuta `verification.commands` en orden y se detiene en el primer fallo; ejecuta antes las comprobaciones opcionales; pregunta antes de ejecutar una lista de comandos nueva o modificada | [`verify`](verify.md) |
+| `truss handoff` | Escribe una nota de handoff breve para el cambio activo | [gestión de contexto](../concepts/context-management.md) |
+| `truss skills` | Lista las skills portables que trae la instalación | [skills](../skills/overview.md) |
+| `truss help` | Imprime el uso. Ejecutar `truss` sin comando, o con uno desconocido, hace lo mismo | |
+
+## Opciones
+
+| Opción | En | Efecto |
+|---|---|---|
+| `--component <name>` | `new` | Crea el cambio en un componente declarado bajo `components`. Un nombre no declarado falla con `Unknown component`. |
+| `--trust` | `verify` | Aprueba sin preguntar la lista actual de `verification.commands`. Úsala después de leer la lista. |
+
+## Códigos de salida
+
+Se usan los mismos tres valores en todos los comandos:
+
+| Código | Significado |
+|---|---|
+| `0` | El comando hizo lo que se le pidió. |
+| `1` | Falló una comprobación o una precondición: falló la verificación, no se aprobó una lista de comandos, OpenSpec falta o es incompatible, o una capacidad requerida no está disponible. |
+| `2` | La configuración es inválida o el comando se usó mal (por ejemplo, `new` sin título, o un componente o una acción desconocidos). |
+
+Por comando:
+
+- `init`: `1` cuando OpenSpec falta, es incompatible, está parcial o falló al inicializarse; `2` para una configuración inválida o una instalación incompleta.
+- `doctor`: `1` cuando falla un check requerido; `2` cuando la configuración es inválida.
+- `verify`: `1` cuando un comando falla, no hay ninguno configurado, la lista no está aprobada, o un gate en modo `block` se niega; `2` para una configuración inválida.
+- `graphify update` / `bootstrap`: un fallo es `1` solo cuando Graphify es `required: true`; en otro caso es `0`.
+- `status`, `continue`, `handoff`: `2` cuando `.truss/state.json` no se puede leer.
+
+## Salida
+
+La salida es texto plano, con color solo cuando va a una terminal interactiva. `NO_COLOR` y `FORCE_COLOR` lo modifican; consulta las [variables de entorno](environment.md), que también lista las demás variables que lee TRUSS.
 
 ## Review
 
-`code-review` existe como skill/workflow en v0.2, pero el CLI starter **no implementa actualmente** un comando ejecutable `truss review`. El review dirigido por runtime pertenece a la orquestación posterior. La documentación no debe insinuar lo contrario.
+`code-review` existe como skill y workflow en v0.2, pero **no** hay un comando ejecutable `truss review`. El review dirigido por el runtime pertenece a la orquestación posterior.
 
 ## Orden canónico
 
-Ver [Ciclo de vida](../workflows/lifecycle.md) para el orden conjunto de CLI + OpenSpec + workflows + skills.
+Consulta el [ciclo de vida del cambio](../workflows/lifecycle.md) para ver el orden de comandos, workflows y skills.
 
-### Evidencia de Verification
+## Evidencia de verificación
 
-`truss verify` ejecuta los gates secuencialmente y con fail-fast. Exit `0` significa que todos pasaron; `1` significa que Verification falló, no hay gates configurados o la lista de comandos no fue aprobada; `2` significa configuración TRUSS inválida. El último resultado legible por máquina se guarda en `.truss/verification/latest.json`.
+`truss verify` ejecuta los comandos de verificación de forma secuencial y se detiene en el primer fallo. Escribe el último resultado legible por máquina en `.truss/verification/latest.json`: los comandos ejecutados, su estado, código de salida y duración, además de los resultados de `testsRequired` y `tasksComplete` cuando esas comprobaciones están activadas. Consulta [`truss verify`](verify.md#evidencia).

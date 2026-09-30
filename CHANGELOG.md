@@ -7,6 +7,9 @@ All notable changes to TRUSS are documented here.
 ### Added
 - **`npm run check:docs`**, run by `npm run ci` and by a CI step. It fails on broken links, broken anchors and orphan pages under `docs/en/`, and on drift between the docs and the code: an undocumented CLI command, configuration option, `truss doctor` check or environment variable. Tested with real trees and by mutating a copy of the repository with the problems found during the documentation analysis.
 
+### Changed
+- **`npm run check:docs` now covers the Spanish docs.** Orphan pages under `docs/es/` fail the check, like those under `docs/en/`, and the Spanish CLI, configuration, `doctor` and environment references are held to the same drift checks as the English ones (a page that is not translated yet is not an error, an out-of-date one is).
+
 ### Documentation
 - **Reference pages brought up to date with the code.** `doctor.md` now has a table of every check (required or not, and when it passes), including `Trust`, `Tests required` and `Tasks complete`. `init.md` says that `init` approves the default command list it writes and documents its exit codes. `cli.md` no longer calls verification commands "gates" (the word now means the two opt-in checks) or the CLI a "starter", and gains an options table and an exit-code section with per-command exceptions.
 - **New page: [environment variables](docs/en/reference/environment.md)** covering `TRUSS_TRUST`, `TRUSS_HOME` / `XDG_CONFIG_HOME`, `TRUSS_OPENSPEC_PATH`, `NO_COLOR` / `FORCE_COLOR` / `TERM` and `PATH`. `FORCE_COLOR` was not documented anywhere.
@@ -14,6 +17,7 @@ All notable changes to TRUSS are documented here.
 - **The documentation index is organized by what you want to do** (understand, do the work, commands, configuration, integrations, guarantees, contribute) and links every page; previously the four concept pages, the glossary and the project structure were not linked from anywhere.
 - **ADR 0001** records that the project configuration is local to each checkout (the quick start ignores all of `.truss/`), what a team can do about it today, and the versionable-configuration-file option to revisit later. It resolves the old contradiction with "commit shared TRUSS configuration".
 - The four concept pages were 3 to 5 lines each and are now real pages (spec-driven development, BDD and TDD, context management, durable vs ephemeral state); the glossary defines the terms used across the docs.
+- **Spanish documentation: the essentials are translated.** Getting started (now in neutral Spanish instead of voseo), `truss verify`, `doctor`, `init`, the CLI reference, environment variables, the five concept pages, the glossary and the project structure. The six legacy-named pages (`FLUJO`, `SKILLS`, `USO`, `BDD_TDD`, `ARQUITECTURA`, `CONFIGURACION`) were merged into the pages of the current structure and removed; the two facts only they held (when turning `bdd` off makes sense, and when to use each skill) were added to the English pages too. Links to pages that are not translated yet point to the English version and say so. The remaining pages are translated in a later batch.
 
 ## [0.2.1] - 2026-09-30
 
