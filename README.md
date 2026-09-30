@@ -21,7 +21,7 @@ TRUSS is agent-agnostic. [OpenSpec](docs/en/integrations/openspec.md) is a requi
 Requires Node.js 20+ and a compatible OpenSpec CLI (`>=1.0.0 <2.0.0`). Clone a TRUSS release into the project and keep it ignored by the host repository:
 
 ```bash
-git clone --depth 1 --branch v0.2.11 https://github.com/nicohe/truss.git .truss
+git clone --depth 1 --branch v0.2.12 https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
 node .truss/bin/truss.mjs init
 node .truss/bin/truss.mjs doctor
