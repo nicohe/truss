@@ -70,7 +70,8 @@ export function fakeGraphify(root,{withIndex=false}={}) {
 }
 
 export function run(root,args,{binDirs=[],env={}}={}) {
-  const pathValue=[...binDirs,process.env.PATH].filter(Boolean).join(path.delimiter);
+  // An explicit env.PATH replaces the inherited one, so a test can hide host-installed CLIs.
+  const pathValue=[...binDirs,env.PATH??process.env.PATH].filter(Boolean).join(path.delimiter);
   return spawnSync(process.execPath,[cli,...args],{cwd:root,encoding:'utf8',env:{...process.env,TRUSS_HOME:path.join(root,'.truss-home'),TRUSS_TRUST:'',...env,PATH:pathValue}});
 }
 
