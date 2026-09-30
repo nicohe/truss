@@ -4,6 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.17] - 2026-09-30
+
+Patch release. `truss continue` lists `.truss/config.yaml` under "Context to load", and CI no longer runs the Ubuntu / Node 22 and Windows / Node 24 cells for now.
+
+### Upgrade notes
+- No exit code changes.
+- `truss continue` prints one more line under "Context to load" while the agent implements: `.truss/config.yaml`. Nothing else in the output changes.
+- The CI change affects this repository only, not the package. Nothing is tested on Windows while its cell is off.
+- Nothing else changes for an existing project.
+
 ### Changed
 - **`truss continue` lists `.truss/config.yaml` under "Context to load".** The project's settings (the verification gates, the verification commands, the policies) were never on the list, so an agent only learned of them from the loops `continue` says are off. It is one more line while the agent implements, after the change. Nothing else in the output changes, and TRUSS still does not make the agent read it.
 
