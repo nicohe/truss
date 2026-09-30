@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import test from 'node:test';
 import { diagnoseProject } from '../../lib/doctor.mjs';
-import { fakeOpenSpec, posix, validConfig, workspace } from '../integration/helpers.mjs';
+import { fakeOpenSpec, validConfig, workspace } from '../integration/helpers.mjs';
 import { cleanup } from './helpers.mjs';
 
 function withEnv(vars, fn) {
@@ -25,7 +25,7 @@ const diagnose = (root, bin) =>
     () => diagnoseProject(root),
   );
 
-test('doctor is healthy for a valid project with a compatible OpenSpec', posix, () => {
+test('doctor is healthy for a valid project with a compatible OpenSpec', () => {
   const root = workspace({ config: validConfig });
   try {
     const r = diagnose(root, fakeOpenSpec(root));
@@ -39,7 +39,7 @@ test('doctor is healthy for a valid project with a compatible OpenSpec', posix, 
   }
 });
 
-test('doctor exits 2 and skips config-dependent checks when the config is invalid', posix, () => {
+test('doctor exits 2 and skips config-dependent checks when the config is invalid', () => {
   const root = workspace({ config: 'version: 1\nunknown: true\n' });
   try {
     const r = diagnose(root, fakeOpenSpec(root));
@@ -76,7 +76,7 @@ test('doctor fails when OpenSpec is not installed', () => {
   }
 });
 
-test('doctor fails outside a git work tree', posix, () => {
+test('doctor fails outside a git work tree', () => {
   const root = workspace({ config: validConfig, git: false });
   try {
     const r = diagnose(root, fakeOpenSpec(root));
@@ -87,7 +87,7 @@ test('doctor fails outside a git work tree', posix, () => {
   }
 });
 
-test('doctor only warns when .truss/ is not ignored', posix, () => {
+test('doctor only warns when .truss/ is not ignored', () => {
   const root = workspace({ config: validConfig, ignore: false });
   try {
     const r = diagnose(root, fakeOpenSpec(root));
@@ -99,7 +99,7 @@ test('doctor only warns when .truss/ is not ignored', posix, () => {
   }
 });
 
-test('doctor warns when no verification commands are configured', posix, () => {
+test('doctor warns when no verification commands are configured', () => {
   const root = workspace({
     config: validConfig.replace('  commands:\n    - node -e "process.exit(0)"\n', '  commands: []\n'),
   });
@@ -113,7 +113,7 @@ test('doctor warns when no verification commands are configured', posix, () => {
   }
 });
 
-test('doctor reports an invalid component definition without crashing', posix, () => {
+test('doctor reports an invalid component definition without crashing', () => {
   const root = workspace({
     config: validConfig.replace('components: {}', 'components:\n  bad:\n    path: ../outside'),
   });

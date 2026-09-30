@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
-import { fakeGraphify, fakeOpenSpec, hasAnsi, plain, posix, run, validConfig, workspace } from './helpers.mjs';
+import { fakeGraphify, fakeOpenSpec, hasAnsi, plain, run, validConfig, workspace } from './helpers.mjs';
 
 test('config: valid workspace exits 0 and prints resolved config', () => {
   const root = workspace({ config: validConfig });
@@ -42,7 +42,7 @@ test('verify: failing command exits 1 and does not run later command', () => {
   assert.match(result.stdout, /Remaining commands were not executed/);
 });
 
-test('doctor: healthy required setup exits 0 with optional Graphify fallback', posix, () => {
+test('doctor: healthy required setup exits 0 with optional Graphify fallback', () => {
   const root = workspace({ config: validConfig });
   const osBin = fakeOpenSpec(root);
   const result = run(root, ['doctor'], { binDirs: [osBin] });
@@ -52,7 +52,7 @@ test('doctor: healthy required setup exits 0 with optional Graphify fallback', p
   assert.match(result.stdout, /optional/);
 });
 
-test('doctor: incompatible OpenSpec exits 1', posix, () => {
+test('doctor: incompatible OpenSpec exits 1', () => {
   const root = workspace({ config: validConfig });
   const osBin = fakeOpenSpec(root, { version: '2.0.0' });
   const result = run(root, ['doctor'], { binDirs: [osBin] });
@@ -69,7 +69,7 @@ test('doctor: required Graphify missing exits 1', () => {
   assert.match(result.stdout, /missing \(required; blocks\)/);
 });
 
-test('doctor: required Graphify with fresh index exits 0', posix, () => {
+test('doctor: required Graphify with fresh index exits 0', () => {
   const config = validConfig.replace('required: false', 'required: true');
   const root = workspace({ config });
   const osBin = fakeOpenSpec(root);
@@ -79,7 +79,7 @@ test('doctor: required Graphify with fresh index exits 0', posix, () => {
   assert.match(result.stdout, /ready v0\.1\.0/);
 });
 
-test('init: adopts existing config and OpenSpec without changing either', posix, () => {
+test('init: adopts existing config and OpenSpec without changing either', () => {
   const root = workspace({ config: validConfig });
   const osBin = fakeOpenSpec(root);
   const configBefore = fs.readFileSync(path.join(root, '.truss', 'config.yaml'), 'utf8');
@@ -91,7 +91,7 @@ test('init: adopts existing config and OpenSpec without changing either', posix,
   assert.equal(fs.readFileSync(path.join(root, 'openspec', 'config.yaml'), 'utf8'), specBefore);
 });
 
-test('init: initializes missing OpenSpec once and second run is idempotent', posix, () => {
+test('init: initializes missing OpenSpec once and second run is idempotent', () => {
   const root = workspace({ config: validConfig });
   const osBin = fakeOpenSpec(root, { initialized: false });
   const first = run(root, ['init'], { binDirs: [osBin] });
@@ -178,7 +178,7 @@ test('verify trust: changing the command list requires approval again', () => {
   assert.match(plain(result.stdout), /not trusted/i);
 });
 
-test('verify trust: config created by init starts trusted', posix, () => {
+test('verify trust: config created by init starts trusted', () => {
   const root = workspace({ config: null });
   const osBin = fakeOpenSpec(root);
   assert.equal(run(root, ['init'], { binDirs: [osBin] }).status, 0);
