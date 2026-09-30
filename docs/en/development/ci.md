@@ -39,7 +39,7 @@ unit → integration → E2E   (separate steps, so one failing suite does not hi
 
 ## Coverage floor
 
-The `ubuntu-latest` / Node 22 job runs the whole suite through `npm run test:coverage` instead, which fails when coverage drops below the floor defined in `package.json` (lines 80%, branches 60%, functions 85%). Locally:
+The `ubuntu-latest` / Node 22 job runs the whole suite through `npm run test:coverage` instead, which fails when coverage drops below the floor defined in `package.json` (lines 90%, branches 75%, functions 95%). Locally:
 
 ```bash
 npm run test:coverage

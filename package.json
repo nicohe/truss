@@ -18,7 +18,7 @@
     "test:unit": "node scripts/run-tests.mjs unit",
     "test:integration": "node scripts/run-tests.mjs integration",
     "test:e2e": "node scripts/run-tests.mjs e2e",
-    "test:coverage": "node scripts/run-tests.mjs all --experimental-test-coverage --test-coverage-lines=80 --test-coverage-branches=60 --test-coverage-functions=85",
+    "test:coverage": "node scripts/run-tests.mjs all --experimental-test-coverage --test-coverage-lines=90 --test-coverage-branches=75 --test-coverage-functions=95",
     "check": "node ./scripts/check-syntax.mjs",
     "ci": "npm run check && npm test"
   },
