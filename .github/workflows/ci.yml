@@ -47,6 +47,11 @@ jobs:
       - name: Syntax check
         run: npm run check
 
+      # Lint and format are OS-independent, so one cell is enough.
+      - name: Lint and format check
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.node-version == 22 }}
+        run: npm run lint
+
       # Separate steps so one failing suite does not hide failures in the others.
       - name: Unit tests
         if: ${{ !(matrix.os == 'ubuntu-latest' && matrix.node-version == 22) }}

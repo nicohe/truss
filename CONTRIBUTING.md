@@ -14,10 +14,18 @@ Thanks for contributing to TRUSS.
 
 1. Keep the change focused and explain the problem it solves.
 2. Update tests when behavior changes.
-3. Run the repository's available verification commands.
+3. Run `npm run ci` (syntax check, Biome lint and format check, and all test suites). `npm run lint:fix` fixes formatting and safe lint findings.
 4. Update documentation when configuration, CLI behavior, workflows, or compatibility changes.
 5. Do not include confidential, proprietary, employer, customer, or otherwise unauthorized material.
 6. Do not copy third-party code, prompts, skills, documentation, or assets unless their license permits it and all required notices are preserved. See `THIRD_PARTY.md`.
+
+## Formatting
+
+The code is formatted and linted with [Biome](https://biomejs.dev) (`biome.jsonc`). To keep `git blame` useful after the one-time reformat, run:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
 
 ## Contributions and license
 
