@@ -1,30 +1,62 @@
 # CLI reference
 
-TRUSS v0.2 is primarily an agent-driven/declarative harness. The table below distinguishes commands that execute behavior from commands that only prepare or expose state.
+TRUSS is a Node CLI. From a project, run it as `node .truss/bin/truss.mjs <command>` (or through an alias; see [getting started](../getting-started.md)). Commands act on the **current directory**, which must be the project root. There are no global flags: a command name, its arguments, and the options listed below.
 
-| Command | v0.2 behavior | Next step |
+TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands run deterministic checks and which only prepare or show state; none of them runs a coding agent.
+
+| Command | What it does | Details |
 |---|---|---|
-| `truss init` | Creates `.truss/config.yaml` if missing; does not overwrite it | `truss doctor` |
-| `truss doctor` | Checks Node, Git, TRUSS config, required OpenSpec CLI/project, and optional Graphify availability | Resolve required failures |
-| `truss config` | Validates and prints resolved configuration | Fix configuration errors if any |
-| `truss openspec` | Inspects OpenSpec CLI/project and compatibility | Resolve incompatibility if any |
-| `truss graphify [status|update|bootstrap]` | Inspects or refreshes the code graph | Use fallback when optional |
-| `truss components [name]` | Resolves configured components and context | Use resolved scope |
-| `truss new "Change name" [--component name]` | Creates an OpenSpec change scaffold and marks it active | Discovery/refine spec |
-| `truss status` | Displays active change and phase | Continue current phase |
-| `truss continue` | Prints the active OpenSpec and instructs the agent to continue the first incomplete task | Agent follows `execute-change` |
-| `truss verify [--trust]` | Executes `verification.commands` in order and stops on first failure; asks for approval of a new or changed command list first | Review if green |
-| `truss handoff` | Writes a concise handoff file for the active change | Use only on context transition |
-| `truss skills` | Lists installed portable TRUSS skills | Load only relevant skill |
+| `truss init` | Creates `.truss/config.yaml` if missing (never overwrites it) and initializes or adopts OpenSpec | [`init`](init.md) |
+| `truss doctor` | Read-only health check of the environment, config, OpenSpec and optional Graphify | [`doctor`](doctor.md) |
+| `truss config` | Validates and prints the resolved configuration, with defaults applied | [validation](../configuration/validation.md) |
+| `truss openspec` | Inspects the OpenSpec CLI, its version and the project | [OpenSpec detection](../integrations/openspec-detection.md) |
+| `truss graphify [status\|update\|bootstrap]` | Inspects or refreshes the optional code graph | [Graphify lifecycle](../integrations/graphify-lifecycle.md) |
+| `truss components [name]` | Resolves the configured components and their context | [components](components.md) |
+| `truss new "Change name" [--component name]` | Creates an OpenSpec change and marks it active | [lifecycle](../workflows/lifecycle-commands.md) |
+| `truss status` | Shows the active change, its phase, artifacts and task progress | [lifecycle](../workflows/lifecycle-commands.md) |
+| `truss continue` | Prints the next action for the agent and the files to load | [lifecycle](../workflows/lifecycle-commands.md) |
+| `truss verify [--trust]` | Runs `verification.commands` in order, stopping at the first failure; runs the opt-in checks first; asks before running a new or changed command list | [`verify`](verify.md) |
+| `truss handoff` | Writes a short handoff note for the active change | [context management](../concepts/context-management.md) |
+| `truss skills` | Lists the portable skills shipped with the installation | [skills](../skills/overview.md) |
+| `truss help` | Prints usage. Running `truss` with no command, or with an unknown one, does the same | |
+
+## Options
+
+| Option | On | Effect |
+|---|---|---|
+| `--component <name>` | `new` | Creates the change in a component declared under `components`. An undeclared name fails with `Unknown component`. |
+| `--trust` | `verify` | Approves the current `verification.commands` list without asking. Use it after reading the list. |
+
+## Exit codes
+
+The same three values are used everywhere:
+
+| Code | Meaning |
+|---|---|
+| `0` | The command did what it was asked. |
+| `1` | A check or precondition failed: verification failed, a command list was not approved, OpenSpec is missing or incompatible, or a required capability is unavailable. |
+| `2` | The configuration is invalid, or the command was used wrongly (for example, `new` without a title, or an unknown component or action). |
+
+Per command:
+
+- `init`: `1` when OpenSpec is missing, incompatible, partial or failed to initialize; `2` for an invalid config or an incomplete installation.
+- `doctor`: `1` when a required check fails; `2` when the config is invalid.
+- `verify`: `1` when a command fails, none are configured, the list is not approved, or a gate set to `block` refuses; `2` for an invalid config.
+- `graphify update` / `bootstrap`: a failure is `1` only when Graphify is `required: true`, otherwise `0`.
+- `status`, `continue`, `handoff`: `2` when `.truss/state.json` is unreadable.
+
+## Output
+
+Output is plain text, colored only when it is going to an interactive terminal. `NO_COLOR` and `FORCE_COLOR` override that; see [environment variables](environment.md), which also lists the other variables TRUSS reads.
 
 ## Review
 
-`code-review` exists as a skill/workflow in v0.2, but the starter CLI does **not** currently implement an executable `truss review` command. Runtime-driven review is part of later orchestration work. Documentation must not imply otherwise.
+`code-review` exists as a skill and workflow in v0.2, but there is **no** executable `truss review` command. Runtime-driven review is part of later orchestration work.
 
 ## Canonical order
 
-See [Change lifecycle](../workflows/lifecycle.md) for CLI + OpenSpec + workflow + skill ordering.
+See the [change lifecycle](../workflows/lifecycle.md) for the order of commands, workflows and skills.
 
-### Verification evidence
+## Verification evidence
 
-`truss verify` runs gates sequentially and fail-fast. Exit `0` means every configured gate passed; `1` means verification failed, no gates are configured, or the command list was not trusted; `2` means invalid TRUSS configuration. The latest machine-readable result is written to `.truss/verification/latest.json`.
+`truss verify` runs the verification commands sequentially and stops at the first failure. It writes the latest machine-readable result to `.truss/verification/latest.json`: the commands run, their status, exit code and duration, plus `testsRequired` and `tasksComplete` results when those checks are enabled. See [`truss verify`](verify.md#evidence).

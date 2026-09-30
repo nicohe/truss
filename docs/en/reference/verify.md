@@ -1,6 +1,6 @@
 # `truss verify`
 
-`truss verify` is TRUSS's deterministic quality-gate runner.
+`truss verify` is TRUSS's deterministic verification runner: it runs your verification commands in order and, when enabled, two opt-in checks before them.
 
 ## Guarantees
 
@@ -32,7 +32,7 @@
 - `truss init` trusts the default list it writes; adopted or edited configs need approval.
 - `truss doctor` reports the current trust state.
 
-See the trust model in [`SECURITY.md`](../../../SECURITY.md).
+See the trust model in [`SECURITY.md`](../../../SECURITY.md), and [environment variables](environment.md) for `TRUSS_TRUST` and `TRUSS_HOME`.
 
 ## Tests-required gate
 

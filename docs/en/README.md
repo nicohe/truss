@@ -28,7 +28,8 @@ How a change moves through TRUSS.
 
 ## Commands
 
-- [CLI reference](reference/cli.md): every command, and exit codes.
+- [CLI reference](reference/cli.md): every command, its options and exit codes.
+- [Environment variables](reference/environment.md): `TRUSS_TRUST`, `TRUSS_HOME`, `TRUSS_OPENSPEC_PATH`, color and `PATH`.
 - [`truss init`](reference/init.md)
 - [`truss doctor`](reference/doctor.md)
 - [`truss verify`](reference/verify.md): commands, approval, and the two opt-in gates.

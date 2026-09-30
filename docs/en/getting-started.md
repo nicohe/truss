@@ -159,7 +159,7 @@ Because those commands run through your shell, TRUSS asks before running a list 
 Review .truss/config.yaml, then re-run with --trust (or TRUSS_TRUST=1).
 ```
 
-In a terminal it asks `Run and trust these commands? [y/N]` instead. In CI or from an agent, read the list, then pass `--trust` or set `TRUSS_TRUST=1`. See the [trust model](../../SECURITY.md#trust-model).
+In a terminal it asks `Run and trust these commands? [y/N]` instead. In CI or from an agent, read the list, then pass `--trust` or set `TRUSS_TRUST=1` (see [environment variables](reference/environment.md)). See the [trust model](../../SECURITY.md#trust-model).
 
 `verify` can also check that a change touched tests and has no open tasks. Both are off by default; try them in `warn` mode first:
 
