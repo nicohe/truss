@@ -72,6 +72,7 @@ Cada opción, su valor por defecto y qué cambia al cambiarla.
 ## Contribuir y mantener
 
 - [Pruebas](development/testing.md), [pruebas end-to-end](development/e2e.md) e [integración continua](development/ci.md)
+- [Publicar una release](development/releasing.md): la lista de pasos para una versión, un tag y una release en GitHub.
 - [Decisiones de diseño](development/decisions/0001-local-project-configuration.md): ADR 0001, dónde vive la configuración del proyecto.
 - [Marca y uso del logo](reference/brand.md)
 - Consulta también [CONTRIBUTING](../../CONTRIBUTING.md), [SECURITY](../../SECURITY.md) y el [changelog](../../CHANGELOG.md) *(en inglés)*.
