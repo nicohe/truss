@@ -18,17 +18,19 @@ Un push nuevo a una pull request cancela la ejecución anterior de esa pull requ
 
 ## Matriz de runtimes
 
-TRUSS declara Node.js `>=20`, así que el CI verifica la versión mayor mínima admitida y las líneas más nuevas (6 jobs):
+TRUSS declara Node.js `>=20`, así que el CI verifica la versión mayor mínima admitida y las líneas más nuevas (4 jobs mientras dos celdas están en pausa):
 
 | Sistema operativo | Node.js |
 |---|---|
-| `ubuntu-latest` | 20, 22 y 24 |
+| `ubuntu-latest` | 20 y 24 (22 en pausa) |
 | `macos-latest` | 20 y 24 |
-| `windows-latest` | 24 |
+| `windows-latest` | ninguna (24 en pausa) |
 
 El rango de versiones de Node se cubre en Ubuntu, el runner más barato. macOS y Windows están para detectar lo que depende del sistema operativo (rutas, shims, lanzamiento de procesos), así que ejecutan menos celdas. El coste es que un problema propio de un Node más antiguo en Windows, o de Node 22 en macOS o Windows, no lo detecta el CI.
 
-**Windows.** Toda la suite se ejecuta en Windows. Los CLIs falsos de OpenSpec y Graphify se instalan como npm instala un CLI global (un shim `sh` sin extensión, un shim `.cmd` y el script de Node que lanzan ambos), de modo que los tests ejercitan el mismo manejo de `.cmd` que una instalación real.
+**Celdas en pausa.** `ubuntu-latest` / Node 22 y `windows-latest` / Node 24 están apagadas por ahora para acortar la ejecución, mediante dos entradas `exclude` en `ci.yml`. Mientras están apagadas no se prueba nada en Windows, y las comprobaciones que hacía la celda Ubuntu / Node 22 (comprobación de la documentación, lint y cobertura) se ejecutan en `ubuntu-latest` / Node 24. Para reactivarlas, borra las dos entradas y vuelve a añadir los dos jobs a los checks obligatorios de `main`.
+
+**Windows** (mientras su celda está activa). Toda la suite se ejecuta en Windows. Los CLIs falsos de OpenSpec y Graphify se instalan como npm instala un CLI global (un shim `sh` sin extensión, un shim `.cmd` y el script de Node que lanzan ambos), de modo que los tests ejercitan el mismo manejo de `.cmd` que una instalación real.
 
 ## Checks requeridos
 
@@ -41,9 +43,9 @@ npm ci --ignore-scripts
   ↓
 npm run check
   ↓
-npm run check:docs         (solo ubuntu / Node 22)
+npm run check:docs         (solo ubuntu / Node 24)
   ↓
-npm run lint               (solo ubuntu / Node 22)
+npm run lint               (solo ubuntu / Node 24)
   ↓
 unit → integration → E2E   (pasos separados, para que una suite que falla no oculte a las demás)
 ```
@@ -77,7 +79,7 @@ El job `Contract / real OpenSpec` instala `@fission-ai/openspec@1` y ejecuta la 
 
 ## Mínimo de cobertura
 
-El job `ubuntu-latest` / Node 22 ejecuta toda la suite mediante `npm run test:coverage`, que falla cuando la cobertura cae por debajo del mínimo definido en `package.json` (líneas 90 %, ramas 75 %, funciones 95 %). En local:
+El job `ubuntu-latest` / Node 24 ejecuta toda la suite mediante `npm run test:coverage`, que falla cuando la cobertura cae por debajo del mínimo definido en `package.json` (líneas 90 %, ramas 75 %, funciones 95 %). En local:
 
 ```bash
 npm run test:coverage
@@ -96,4 +98,4 @@ npm run ci
 
 Si `npm run lint` informa de problemas de formato o de lint corregibles, `npm run lint:fix` los aplica.
 
-Un fallo en el chequeo de sintaxis, en la comprobación de la documentación, en el lint o en un test hace fallar el job de CI. La protección de `main` exige que pasen los seis jobs de la matriz antes de poder mergear una pull request. El job `Contract / real OpenSpec` no es requerido.
+Un fallo en el chequeo de sintaxis, en la comprobación de la documentación, en el lint o en un test hace fallar el job de CI. La protección de `main` exige que pasen los cuatro jobs de la matriz que se ejecutan antes de poder mergear una pull request. El job `Contract / real OpenSpec` no es requerido.

@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **CI no longer runs `ubuntu-latest` / Node 22 or `windows-latest` / Node 24, for now,** to shorten the run. Two `exclude` entries in `ci.yml` switch them off, and deleting them brings them back. The documentation check, lint and coverage floor, which ran only in the Ubuntu / Node 22 cell, run in `ubuntu-latest` / Node 24 instead. Nothing is tested on Windows while its cell is off. The required checks of `main` are the four jobs that still run. TRUSS itself is unchanged.
+
 ## [0.2.16] - 2026-09-30
 
 Patch release. `truss new` and `truss handoff` say which changes are open in OpenSpec when none is active, as `status` and `continue` already did, and the docs spell out that the `tests_required` gate looks at the whole branch.

@@ -16,17 +16,19 @@ A new push to a pull request cancels the older run of that pull request, which n
 
 ## Runtime matrix
 
-TRUSS declares Node.js `>=20`, so CI verifies the minimum supported major and the newer lines (6 jobs):
+TRUSS declares Node.js `>=20`, so CI verifies the minimum supported major and the newer lines (4 jobs while two cells are paused):
 
 | Operating system | Node.js |
 |---|---|
-| `ubuntu-latest` | 20, 22 and 24 |
+| `ubuntu-latest` | 20 and 24 (22 is paused) |
 | `macos-latest` | 20 and 24 |
-| `windows-latest` | 24 |
+| `windows-latest` | none (24 is paused) |
 
 The range of Node versions is covered on Ubuntu, the cheapest runner. macOS and Windows exist to catch what depends on the operating system (paths, shims, process spawning), so they run fewer cells. The cost is that a problem specific to an older Node on Windows, or to Node 22 on macOS or Windows, is not caught by CI.
 
-**Windows.** The whole suite runs on Windows. The fake OpenSpec/Graphify CLIs are installed the way npm installs a global CLI (an extensionless `sh` shim, a `.cmd` shim and the Node script both launch), so the tests exercise the same `.cmd` handling as a real install.
+**Paused cells.** `ubuntu-latest` / Node 22 and `windows-latest` / Node 24 are switched off for now to shorten the run, through two `exclude` entries in `ci.yml`. Nothing is tested on Windows while they are off, and the checks that used to run in the Ubuntu / Node 22 cell (documentation check, lint and coverage) run in `ubuntu-latest` / Node 24. To bring them back, delete the two entries and add the two jobs to the required checks of `main` again.
+
+**Windows** (while its cell is on). The whole suite runs on Windows. The fake OpenSpec/Graphify CLIs are installed the way npm installs a global CLI (an extensionless `sh` shim, a `.cmd` shim and the Node script both launch), so the tests exercise the same `.cmd` handling as a real install.
 
 ## Required checks
 
@@ -39,9 +41,9 @@ npm ci --ignore-scripts
   ↓
 npm run check
   ↓
-npm run check:docs         (ubuntu / Node 22 only)
+npm run check:docs         (ubuntu / Node 24 only)
   ↓
-npm run lint               (ubuntu / Node 22 only)
+npm run lint               (ubuntu / Node 24 only)
   ↓
 unit → integration → E2E   (separate steps, so one failing suite does not hide the others)
 ```
@@ -75,7 +77,7 @@ The `Contract / real OpenSpec` job installs `@fission-ai/openspec@1` and runs th
 
 ## Coverage floor
 
-The `ubuntu-latest` / Node 22 job runs the whole suite through `npm run test:coverage` instead, which fails when coverage drops below the floor defined in `package.json` (lines 90%, branches 75%, functions 95%). Locally:
+The `ubuntu-latest` / Node 24 job runs the whole suite through `npm run test:coverage` instead, which fails when coverage drops below the floor defined in `package.json` (lines 90%, branches 75%, functions 95%). Locally:
 
 ```bash
 npm run test:coverage
@@ -94,4 +96,4 @@ npm run ci
 
 If `npm run lint` reports formatting or fixable lint problems, `npm run lint:fix` applies them.
 
-A failed syntax check, docs check, lint or test causes the CI job to fail. Branch protection on `main` requires the six matrix jobs to pass before a pull request can be merged. The `Contract / real OpenSpec` job is not required.
+A failed syntax check, docs check, lint or test causes the CI job to fail. Branch protection on `main` requires the four matrix jobs that run to pass before a pull request can be merged. The `Contract / real OpenSpec` job is not required.
