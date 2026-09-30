@@ -37,9 +37,18 @@
 
 Rellenar las secciones es tarea del agente. La skill `handoff` dice qué contiene una buena nota: la primera tarea sin completar, el trabajo hecho, las decisiones que aún no están en un artefacto durable, el estado de la verificación, los bloqueos y la siguiente acción exacta.
 
-## Volver a ejecutarlo reemplaza el archivo
+## Volver a ejecutarlo conserva tu nota
 
-Si ya existe una nota para el cambio, `truss handoff` la sobrescribe con la plantilla vacía y lo que había escrito en ella se pierde. Copia o renombra una nota que hayas rellenado antes de volver a ejecutar el comando.
+Si ya existe una nota para el cambio, `truss handoff` la deja exactamente como está y lo dice:
+
+```text
+△ TRUSS · handoff
+
+○ .truss/handoffs/add-retry-policy.md already exists and was not changed.
+  Edit it, or delete it to start a new note.
+```
+
+El código de salida es `0`, igual que cuando se escribe una nota. Para empezar de nuevo, borra antes el archivo. Las releases hasta la 0.2.2 reemplazaban una nota existente por la plantilla vacía y perdían lo que se había escrito en ella.
 
 ## Dónde vive la nota
 
@@ -49,5 +58,5 @@ En `.truss/handoffs/`, que es estado local que Git ignora. Un handoff es efímer
 
 | Código | Significado |
 |---|---|
-| `0` | Se escribió la nota, o no hay cambio activo. |
+| `0` | Se escribió la nota, se conservó tal cual una nota existente, o no hay cambio activo. |
 | `2` | `.truss/state.json` no se puede leer. |
