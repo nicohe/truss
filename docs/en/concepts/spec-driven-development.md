@@ -28,6 +28,6 @@ In both, code and specification never diverge silently. `anchored` suits most wo
 TRUSS checks the mechanical parts and asks the agent for the rest:
 
 - **TRUSS checks:** that OpenSpec is installed and compatible, the phase of the active change, and, if you enable `verification.tasks_complete`, that no task is left open.
-- **The agent is asked to:** follow the mode, reconcile discoveries, and keep the spec honest. Nothing in v0.2 stops an agent from ignoring the spec. `spec.zone_guard` only *declares* the intent to keep spec and code work apart.
+- **The agent is asked to:** follow the mode, reconcile discoveries, and keep the spec honest. `truss continue` tells it which mode it is in while it implements, but nothing in v0.2 stops an agent from ignoring the spec. `spec.zone_guard` only *declares* the intent to keep spec and code work apart.
 
 See the [enforcement model](../reference/enforcement.md) for the exact boundary.

@@ -10,9 +10,11 @@ All notable changes to TRUSS are documented here.
 
 ### Changed
 - **`truss graphify update` and `bootstrap` do not run Graphify over a damaged graph.** Graphify cannot update or rebuild over it and answers with a Python traceback; TRUSS now says so first, in one sentence, and leaves the file for you to delete.
+- **`truss continue` tells the agent what `spec.mode: source` and `spec.zone_guard: true` ask of it.** Both settings were agent policy with no effect on anything TRUSS prints: `continue` said the same in `anchored` and in `source` mode, so the agent only knew the mode if it read the configuration. While the agent implements, the next action now adds, in `source` mode, that the spec is authoritative and read-only and that behavior which has to change goes back to the spec first, and, with the zone guard on, that spec work and code work are kept in separate steps. A project with the default settings sees no change. TRUSS still does not check it: a change to the code that never touches the spec passes `truss verify`, and the docs say so.
 
 ### Documentation
 - **The Graphify lifecycle page says two things it left out:** any commit makes the graph `stale`, because freshness follows Git HEAD (and `update` is incremental), and `graphify-out/` is generated output that TRUSS neither ignores nor checks, so committing it moves HEAD.
+- **The configuration reference, the effects table, the specification modes page, the enforcement model and the spec-driven development page say what TRUSS does about these two settings in v0.2:** it states them to the agent, and does not enforce them.
 
 ### Quality
 - **The docs check makes heading anchors the way GitHub does when a heading has `<…>` in code.** It removed `<change>` from ``## `truss use <change> [--component name]` `` as if it were HTML, even inside a code span, and computed `truss-use----component-name` where GitHub makes `truss-use-change---component-name`. A link to such a heading would have passed the check and been broken on GitHub, and a correct one would have been reported as broken. Code spans now keep their text, only real HTML tags are dropped (`a < b > c` has none), and a link with code as its label keeps it. The expected anchors in the tests were taken from GitHub's own renderer. No heading in the repository changes its anchor: all 657 were compared.

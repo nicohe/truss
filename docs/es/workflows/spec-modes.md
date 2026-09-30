@@ -89,6 +89,8 @@ execute-change
 
 Con `spec.zone_guard: true`, los runtimes con controles de escritura deberían aplicar la separación Spec Zone / Code Zone. En v0.2 es una policy para el agente; el enforcement automático corresponde a adapters/orquestación posteriores.
 
+Lo que TRUSS hace en v0.2 es decírselo al agente. Mientras el agente implementa, `truss continue` añade a su acción siguiente que la spec es la autoridad y es de solo lectura, y que el comportamiento que tenga que cambiar vuelve primero a la spec (en modo `source`), y que el zone guard está activo (cuando lo está). Un proyecto con los ajustes por defecto no ve ninguna diferencia. TRUSS no comprueba que el agente obedezca: un cambio en el código que nunca toca la spec sigue pasando `truss verify`.
+
 ## Elección del modo
 
 | Aspecto | `anchored` | `source` |

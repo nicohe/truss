@@ -12,13 +12,13 @@ Tipo: enum. Por defecto: `anchored`. Valores: `anchored`, `source`.
 - `anchored`: OpenSpec sigue siendo el ancla permanente; una reconciliación explícita puede hacer evolucionar juntos la spec, los tests y el código.
 - `source`: OpenSpec es la autoridad; los cambios de comportamiento vuelven primero a la fase de spec.
 
-Enforcement en v0.2: **policy del AGENT**. Objetivo en v0.3: **TRUSS + AGENT**.
+Enforcement en v0.2: **policy del AGENT**. Mientras el agente implementa, `truss continue` la indica en la acción siguiente (en modo `source`: la spec es de solo lectura, y el comportamiento que tenga que cambiar vuelve primero a la spec); TRUSS no lo comprueba. Objetivo en v0.3: **TRUSS + AGENT**.
 
 ## `spec.gherkin`
 Tipo: booleano. Por defecto: `true`. Con `true`, el comportamiento de aceptación observable debería expresarse como escenarios Gherkin cuando corresponda. Con `false` se admiten criterios de aceptación estructurados sin Gherkin. Enforcement en v0.2: **AGENT**.
 
 ## `spec.zone_guard`
-Tipo: booleano. Por defecto: `false`. Con `true` se espera una separación de comportamiento entre Spec Zone y Code Zone. Se recomienda sobre todo con `mode: source`. Enforcement en v0.2: **AGENT/DECLARATIVE**; el enforcement por runtime es trabajo futuro.
+Tipo: booleano. Por defecto: `false`. Con `true` se espera una separación de comportamiento entre Spec Zone y Code Zone. Se recomienda sobre todo con `mode: source`. Enforcement en v0.2: **AGENT/DECLARATIVE**; `truss continue` se lo recuerda al agente mientras implementa, y el enforcement por runtime es trabajo futuro.
 
 ## `development.bdd`
 Tipo: booleano. Por defecto: `true`. Activa el macro-loop BDD en `execute-change`: comportamiento de aceptación RED → implementación → aceptación GREEN. Enforcement en v0.2: **AGENT**.
