@@ -1,7 +1,7 @@
 # Primeros pasos
 
 ```bash
-git clone <truss-repository> .truss
+git clone https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
 node .truss/bin/truss.mjs init
 node .truss/bin/truss.mjs doctor

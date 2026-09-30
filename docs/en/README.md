@@ -28,3 +28,27 @@ Start with [Getting Started](getting-started.md). Documentation is organized by 
 ## Enforcement
 
 - [v0.1 enforcement model](reference/enforcement.md)
+
+## Command details
+
+- [`truss init`](reference/init.md)
+- [`truss verify`](reference/verify.md)
+- [`truss doctor`](reference/doctor.md)
+- [Component resolution](reference/components.md)
+- [Lifecycle commands](workflows/lifecycle-commands.md)
+- [Configuration validation](configuration/validation.md)
+
+## Integrations
+
+- [OpenSpec detection](integrations/openspec-detection.md)
+- [OpenSpec compatibility](integrations/openspec-compatibility.md)
+- [Graphify](integrations/graphify.md) and [Graphify lifecycle](integrations/graphify-lifecycle.md)
+
+## Development and release
+
+- [Testing](development/testing.md)
+- [End-to-end tests](development/e2e.md)
+- [Continuous integration](development/ci.md)
+- [v0.1.0 release contract](reference/release-v0.1.md)
+- [Documentation audit](reference/documentation-audit.md)
+- [Brand and logo usage](reference/brand.md)

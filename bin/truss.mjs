@@ -30,7 +30,7 @@ function header(label='') { p(`${mark} ${PURPLE}TRUSS${RESET}${label?` · ${labe
 function help(){
   header('engineering harness');
   p(`\nUsage: truss <command>\n\n  init                         initialize .truss\n  new "Change name" [--component name]\n  status                       show active change\n  continue                     show next action\n  verify                       run configured verification\n  doctor                       check local setup
-  config                       validate and show resolved config\n  openspec                     inspect OpenSpec CLI/project compatibility\n  graphify [status|update|bootstrap]\n                               inspect or refresh code graph\n  components [name]            resolve configured project components\n  handoff                      write a concise handoff\n  skills                       list portable TRUSS skills\n\nDocs: docs/GETTING_STARTED.md`);
+  config                       validate and show resolved config\n  openspec                     inspect OpenSpec CLI/project compatibility\n  graphify [status|update|bootstrap]\n                               inspect or refresh code graph\n  components [name]            resolve configured project components\n  handoff                      write a concise handoff\n  skills                       list portable TRUSS skills\n\nDocs: docs/en/getting-started.md`);
 }
 function init(){
   header('init');
@@ -272,7 +272,7 @@ function skills(){
   if(!fs.existsSync(dir)){p('\nNo TRUSS skills installed.');return;}
   const files=fs.readdirSync(dir).filter(f=>f.endsWith('.SKILL.md')).sort();
   p(''); for(const f of files)p(`${GREEN}●${RESET} ${f.replace('.SKILL.md','')}`);
-  p('\nDocs: docs/es/skills/SKILLS.md');
+  p('\nDocs: docs/en/skills/overview.md');
 }
 function handoff(){
   const s=readState(); if(!s.change){p('No active change.');return;}

@@ -48,7 +48,7 @@ It covers a new project lifecycle, adoption of an existing OpenSpec project with
 
 ## CI
 
-The same permanent suite runs in GitHub Actions on Node.js 20 and 22. See [`CI.md`](CI.md).
+The same permanent suite runs in GitHub Actions on Node.js 20 and 22. See [`ci.md`](ci.md).
 
 Local equivalent:
 

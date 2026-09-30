@@ -4,7 +4,7 @@ Version audited: **0.1.0 stable**.
 
 Purpose: prevent documentation from presenting agent policy or future runtime orchestration as an executable v0.1 guarantee.
 
-Canonical enforcement definitions: [`docs/en/reference/enforcement.md`](en/reference/enforcement.md).
+Canonical enforcement definitions: [`enforcement.md`](enforcement.md).
 
 ## Audit result
 

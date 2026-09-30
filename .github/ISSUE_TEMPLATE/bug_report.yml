@@ -1,0 +1,32 @@
+name: Bug report
+description: Something in TRUSS does not behave as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Describe the actual behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The exact `truss` commands you ran and the relevant part of `.truss/config.yaml`.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `truss doctor`
+      render: text
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: TRUSS version or commit, Node.js, OpenSpec CLI, OS.
+      placeholder: "truss 0.1.0, node 22.x, openspec 1.x, macOS"
+    validations:
+      required: true
