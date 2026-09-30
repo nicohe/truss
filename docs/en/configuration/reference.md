@@ -40,6 +40,8 @@ If it cannot decide (not a Git work tree, no commits, no base branch, a shallow 
 
 Limits: it proves that test files changed, not that tests were written first (TDD), that they exercise the change, or that they pass. Passing tests remain the job of `verification.commands`. Enforcement: **TRUSS** for the presence check; **AGENT** for BDD/TDD discipline itself.
 
+It compares the whole branch with the base, not each commit. So a test file changed in an earlier commit of the same branch also satisfies a later commit that only changes code, and any test file of the component counts, related to the change or not. It checks the change as a whole (the pull request, which is what a reviewer sees), not every step. To check that the tests exercise the code, add a coverage threshold from your test runner to `verification.commands` (for example `pytest --cov --cov-fail-under=90`, or `c8 --check-coverage --lines 90 npm test`): it measures the whole project, not only what changed, so `truss verify` fails when a change leaves code untested and drags coverage under the floor, whatever the order of the commits.
+
 ## `verification.tasks_complete`
 Type: enum. Default: `off`. Values: `off`, `warn`, `block`. Controls the **tasks-complete gate** of `truss verify`: are all the tasks of the active OpenSpec change checked off?
 - `off`: the gate does not run.

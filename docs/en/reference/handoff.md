@@ -10,7 +10,15 @@
 
 ## What it does
 
-- It needs an active change (see [`truss new`](../workflows/lifecycle-commands.md)). Without one it prints `No active change.`, writes nothing and exits `0`. The same holds when the active change was archived with `openspec archive`: it says so, points to `truss new`, and writes nothing, because a finished change has nothing to hand off.
+- It needs an active change (see [`truss new`](../workflows/lifecycle-commands.md)). Without one it prints `No active change.`, writes nothing and exits `0`. If changes are open in OpenSpec (a fresh clone has none active, since `.truss/state.json` is local to each checkout) it lists them and points to `truss use`, as [`truss status`](../workflows/lifecycle-commands.md#truss-status) does:
+
+  ```text
+  No active change.
+  Open changes    add-retry-policy
+  Next: truss use add-retry-policy, or truss new "Change name" for a new one
+  ```
+
+  With nothing open it stays the one line. The same holds when the active change was archived with `openspec archive`: it says so, lists what is still open (or points to `truss new`), and writes nothing, because a finished change has nothing to hand off.
 - It writes `.truss/handoffs/<change>.md` and prints the path.
 - It fills in what TRUSS knows (the change, the component, the phase, the OpenSpec path and the current Git branch, or `unknown`) and leaves the rest empty:
 

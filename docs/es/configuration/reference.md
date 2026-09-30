@@ -41,6 +41,8 @@ Si no puede decidir (no es un work tree de Git, no hay commits, no hay rama base
 
 Límites: demuestra que cambiaron archivos de test, no que los tests se escribieron primero (TDD), que ejercitan el cambio ni que pasan. Que los tests pasen sigue siendo trabajo de `verification.commands`. Enforcement: **TRUSS** para la comprobación de presencia; **AGENT** para la disciplina BDD/TDD en sí.
 
+Compara toda la rama con la base, no cada commit. Por eso un archivo de test cambiado en un commit anterior de la misma rama también satisface a un commit posterior que solo cambia código, y cuenta cualquier archivo de test del componente, tenga relación con el cambio o no. Comprueba el cambio en su conjunto (la pull request, que es lo que ve quien revisa), no cada paso. Para comprobar que los tests ejercitan el código, añade a `verification.commands` un umbral de cobertura de tu ejecutor de tests (por ejemplo `pytest --cov --cov-fail-under=90` o `c8 --check-coverage --lines 90 npm test`): mide todo el proyecto, no solo lo que cambió, así que `truss verify` falla cuando un cambio deja código sin probar y baja la cobertura del mínimo, sea cual sea el orden de los commits.
+
 ## `verification.tasks_complete`
 Tipo: enum. Por defecto: `off`. Valores: `off`, `warn`, `block`. Controla el **gate tasks-complete** de `truss verify`: ¿están marcadas todas las tareas del cambio OpenSpec activo?
 - `off`: el gate no se ejecuta.

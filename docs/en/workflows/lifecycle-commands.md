@@ -16,7 +16,7 @@ A change is always in one phase, and `status` and `continue` show it:
 
 The phase is recomputed from OpenSpec each time you ask, so it cannot go stale. `complete` means *every task is checked off*, nothing more: it says nothing about whether the tasks were done well. That is what [`truss verify`](../reference/verify.md) and the review are for.
 
-Archiving a change with `openspec archive` does not tell TRUSS, which finds out the next time you ask: `status` and `continue` say the active change was archived (and list the changes that are still open), and exit `0`; `handoff` writes no note for it, and the [`tasks_complete`](../reference/verify.md) gate reports it as archived instead of failing to read its tasks. Start the next one with `truss new`, or go back to one that is still open with [`truss use`](#truss-use).
+Archiving a change with `openspec archive` does not tell TRUSS, which finds out the next time you ask: `status` and `continue` say the active change was archived (and list the changes that are still open), and exit `0`; `handoff` writes no note for it and lists the open ones too, and the [`tasks_complete`](../reference/verify.md) gate reports it as archived instead of failing to read its tasks. Start the next one with `truss new`, or go back to one that is still open with [`truss use`](#truss-use).
 
 ## `truss new "Change name" [--component name]`
 
@@ -43,6 +43,14 @@ If another change is still open in OpenSpec, `new` creates the new one and makes
 ```
 
 Nothing is lost: the first change stays in OpenSpec exactly as it was, and `openspec list` still shows it. [`truss use`](#truss-use) makes it the active change again. There is no warning when the previous change was archived or is gone from OpenSpec, since nothing is left behind.
+
+When no change is active at all (a fresh clone, for instance, since `.truss/state.json` is local to each checkout) and some are open in OpenSpec, `new` still creates the new one, and says which ones it walks past:
+
+```text
+○ Also open in OpenSpec: add-retry-policy. None was the active change, and "second-change" is now: TRUSS follows one change at a time. Go back to one with: truss use add-retry-policy
+```
+
+With several open the command reads `truss use <change>`, and a change in a component is named with it (`add-retry-policy (component api)`). This line and the one above never appear together: `new` says the first when it replaces an active change that is still open, and this one when there was none to replace. A first change in a project with nothing open prints neither.
 
 It needs an initialized project. Without `.truss/config.yaml` it stops with `× invalid config` and `TRUSS config not found: .truss/config.yaml. Run truss init to create it.`, and exit code `2`: run [`truss init`](../reference/init.md) first.
 

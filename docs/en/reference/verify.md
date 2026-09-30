@@ -55,6 +55,7 @@ Verification failed: tests are required. No command was executed.
 - `warn` reports and continues. `block` exits `1` before running any command.
 - The comparison is the working tree against the merge-base of `HEAD` and the base branch (`verification.base_ref`, auto-detected when unset). Committed, staged, unstaged and untracked files count; pure deletions do not require tests.
 - It is evaluated per component, so a monorepo needs tests in each component it changed.
+- It looks at the whole branch, not at each commit: a test changed in an earlier commit of the branch also satisfies a later commit that only changes code, and any test file of the component counts. For tests that exercise the code, add a coverage threshold to `verification.commands` (see the [configuration reference](../configuration/reference.md#verificationtests_required)).
 - If it cannot decide (no Git work tree, no commits, no base branch, shallow clone), it says so and never blocks.
 - It does **not** prove tests were written first, that they cover the change, or that they pass; `verification.commands` do the latter.
 

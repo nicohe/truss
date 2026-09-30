@@ -1073,6 +1073,95 @@ test('status: a component that does not resolve, or a changes folder that is not
   assert.match(out(broken), /Next: truss new "Change name"/);
 });
 
+test('new: with no active change, says what else is open in OpenSpec and how to go back', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  forgetActiveChange(root);
+  const second = run(root, ['new', 'Second change'], { binDirs: [bin] });
+  assert.equal(second.status, 0, 'a hint, not a failure');
+  assert.match(out(second), /Change\s+second-change/);
+  assert.match(
+    out(second),
+    /○ Also open in OpenSpec: add-retry\. None was the active change, and "second-change" is now: TRUSS follows one change at a time\. Go back to one with: truss use add-retry\n/,
+  );
+  assert.doesNotMatch(out(second), /still open/, 'nothing was replaced, so it is not the replaced-change line');
+  assert.match(out(second), /Next: truss continue/);
+
+  forgetActiveChange(root);
+  const third = run(root, ['new', 'Third change'], { binDirs: [bin] });
+  assert.match(
+    out(third),
+    /Also open in OpenSpec: add-retry, second-change\. None was the active change, and "third-change" is now: .* Go back to one with: truss use <change>\n/,
+    'the new change is never among the others, and with several the command has a placeholder',
+  );
+  assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Change\s+third-change/);
+});
+
+test('new: with no active change, a change that lives in a component is named with its component', () => {
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  fs.mkdirSync(path.join(root, 'apps', 'api', 'openspec'), { recursive: true });
+  assert.equal(run(root, ['new', 'Add retry', '--component', 'api'], { binDirs: [bin] }).status, 0);
+  forgetActiveChange(root);
+  const second = run(root, ['new', 'Second change'], { binDirs: [bin] });
+  assert.equal(second.status, 0);
+  assert.match(out(second), /Also open in OpenSpec: add-retry \(component api\)\./);
+  assert.match(out(second), /Go back to one with: truss use add-retry --component api\n/);
+});
+
+test('new: no "also open" line when a first change is created, or when it replaces the open active one', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  assert.doesNotMatch(out(run(root, ['new', 'Add retry'], { binDirs: [bin] })), /Also open/);
+  const replacing = run(root, ['new', 'Second change'], { binDirs: [bin] });
+  assert.match(out(replacing), /"add-retry" is still open in OpenSpec/, 'the replaced change is already said');
+  assert.doesNotMatch(out(replacing), /Also open/, 'and is not said twice');
+});
+
+test('handoff: with no active change, lists what is open and points to truss use, as status does', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  forgetActiveChange(root);
+  const r = run(root, ['handoff'], { binDirs: [bin] });
+  assert.equal(r.status, 0, out(r));
+  assert.match(
+    out(r),
+    /No active change\.\nOpen changes\s+add-retry\nNext: truss use add-retry, or truss new "Change name" for a new one/,
+  );
+  assert.equal(fs.existsSync(path.join(root, '.truss', 'handoffs')), false, 'no note is written');
+  assert.equal(run(root, ['use', 'add-retry'], { binDirs: [bin] }).status, 0, 'what it points to works');
+  assert.equal(run(root, ['handoff'], { binDirs: [bin] }).status, 0);
+  assert.ok(fs.existsSync(path.join(root, '.truss', 'handoffs', 'add-retry.md')));
+});
+
+test('handoff: with no active change and nothing open it stays one line, and a bad configuration does not stop it', () => {
+  const empty = workspace({ config: validConfig });
+  const none = run(empty, ['handoff']);
+  assert.equal(none.status, 0);
+  assert.match(out(none), /No active change\./);
+  assert.doesNotMatch(out(none), /Open changes|Next:/);
+
+  const invalid = workspace({ config: 'version: 1\nbogus: true\n' });
+  fs.mkdirSync(path.join(invalid, 'openspec', 'changes', 'add-retry'), { recursive: true });
+  const r = run(invalid, ['handoff']);
+  assert.equal(r.status, 0, 'handoff has never needed a valid configuration');
+  assert.match(out(r), /No active change\./);
+  assert.doesNotMatch(out(r), /Open changes|invalid config/);
+});
+
+test('handoff: an archived change with another still open says which, and how to pick it up', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  assert.equal(run(root, ['new', 'Second change'], { binDirs: [bin] }).status, 0);
+  archiveChange(root, 'second-change');
+  const r = run(root, ['handoff'], { binDirs: [bin] });
+  assert.equal(r.status, 0);
+  assert.match(
+    out(r),
+    /there is nothing to hand off\.\nOpen changes\s+add-retry\nNext: truss use add-retry, or truss new "Change name" for a new one/,
+  );
+  assert.equal(fs.existsSync(path.join(root, '.truss', 'handoffs', 'second-change.md')), false);
+});
+
 test('status: an active change that OpenSpec lost without archiving it fails with a clear message', () => {
   const { root, bin } = tasksWorkspace('off', '- [x] one\n');
   fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
