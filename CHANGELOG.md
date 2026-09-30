@@ -2,6 +2,17 @@
 
 All notable changes to TRUSS are documented here.
 
+## [Unreleased]
+
+### Changed
+- `bin/truss.mjs` is now a thin dispatcher; command logic lives in `lib/commands.mjs` and terminal output in `lib/ui.mjs`. CLI behavior and output are unchanged.
+- `handoff` reads the active change through the shared lifecycle state reader, so a corrupt `state.json` is reported instead of crashing.
+- `.truss/state.json` is written atomically (temp file + rename).
+
+### Added
+- Color output honors `NO_COLOR` and `FORCE_COLOR`, and is disabled when stdout is not a TTY.
+- `SECURITY.md` documents the trust model for `verification.commands`.
+
 ## [0.1.0] - 2026-09-29
 
 First stable TRUSS baseline.
