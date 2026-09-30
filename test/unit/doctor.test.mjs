@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import path from 'node:path';
 import { diagnoseProject } from '../../lib/doctor.mjs';
 import { workspace, fakeOpenSpec, validConfig, posix } from '../integration/helpers.mjs';

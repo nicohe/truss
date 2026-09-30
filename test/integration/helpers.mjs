@@ -9,6 +9,10 @@ export const trussRoot=path.resolve(here,'../..');
 export const cli=path.join(trussRoot,'bin','truss.mjs');
 
 // The fake OpenSpec/Graphify CLIs are POSIX shell scripts, so tests that rely on them cannot run on Windows.
+// ANSI escapes are matched through a RegExp built from the ESC character (control characters in regex literals are linted).
+export const ESC=String.fromCharCode(27);
+export const plain=s=>s.replace(new RegExp(`${ESC}\\[[0-9;]*m`,'g'),'');
+export const hasAnsi=s=>s.includes(`${ESC}[`);
 export const posix={skip:process.platform==='win32'&&'needs POSIX shell fake CLIs'};
 
 export function workspace({config=null, git=true, ignore=true}={}) {
@@ -67,7 +71,7 @@ export function fakeGraphify(root,{withIndex=false}={}) {
     fs.mkdirSync(path.join(root,'graphify-out'),{recursive:true});
     fs.writeFileSync(path.join(root,'graphify-out','graph.json'),'{}\n');
     const head=spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim();
-    fs.writeFileSync(path.join(root,'graphify-out','.truss-graphify.json'),JSON.stringify({gitHead:head,updatedAt:new Date().toISOString()},null,2)+'\n');
+    fs.writeFileSync(path.join(root,'graphify-out','.truss-graphify.json'),`${JSON.stringify({gitHead:head,updatedAt:new Date().toISOString()},null,2)}\n`);
   }
   return dir;
 }

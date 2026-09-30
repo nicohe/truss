@@ -67,7 +67,7 @@ export function fakeGraphify(root,{withIndex=false}={}) {
     fs.mkdirSync(path.join(root,'graphify-out'),{recursive:true});
     fs.writeFileSync(path.join(root,'graphify-out','graph.json'),'{}\n');
     const head=spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim();
-    fs.writeFileSync(path.join(root,'graphify-out','.truss-graphify.json'),JSON.stringify({gitHead:head,updatedAt:new Date().toISOString()},null,2)+'\n');
+    fs.writeFileSync(path.join(root,'graphify-out','.truss-graphify.json'),`${JSON.stringify({gitHead:head,updatedAt:new Date().toISOString()},null,2)}\n`);
   }
   return dir;
 }

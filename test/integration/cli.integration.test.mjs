@@ -2,9 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { workspace, fakeOpenSpec, fakeGraphify, fakeBin, executable, run, validConfig, posix } from './helpers.mjs';
+import { workspace, fakeOpenSpec, fakeGraphify, run, validConfig, posix, plain, hasAnsi } from './helpers.mjs';
 
-const plain=s=>s.replace(/\x1b\[[0-9;]*m/g,'');
 
 test('config: valid workspace exits 0 and prints resolved config',()=>{
   const root=workspace({config:validConfig});
@@ -109,15 +108,15 @@ test('output: piped stdout has no ANSI escapes by default',()=>{
   const root=workspace({config:validConfig});
   const result=run(root,['config'],{env:{FORCE_COLOR:'',NO_COLOR:''}});
   assert.equal(result.status,0,result.stderr||result.stdout);
-  assert.equal(/\x1b\[/.test(result.stdout),false);
+  assert.equal(hasAnsi(result.stdout),false);
 });
 
 test('output: FORCE_COLOR enables color and NO_COLOR overrides it',()=>{
   const root=workspace({config:validConfig});
   const forced=run(root,['config'],{env:{FORCE_COLOR:'1',NO_COLOR:''}});
-  assert.equal(/\x1b\[/.test(forced.stdout),true);
+  assert.equal(hasAnsi(forced.stdout),true);
   const disabled=run(root,['config'],{env:{FORCE_COLOR:'1',NO_COLOR:'1'}});
-  assert.equal(/\x1b\[/.test(disabled.stdout),false);
+  assert.equal(hasAnsi(disabled.stdout),false);
 });
 
 test('handoff: reports a corrupt state file instead of crashing',()=>{

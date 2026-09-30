@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { colorEnabled, createUi } from '../../lib/ui.mjs';
+import { ESC } from '../integration/helpers.mjs';
 
 const tty = { isTTY: true };
 const pipe = { isTTY: false };
@@ -13,5 +14,5 @@ test('FORCE_COLOR enables color without a TTY, but 0 does not',()=>{assert.equal
 test('painters emit ANSI only when enabled',()=>{
   assert.equal(createUi({env:{},stream:pipe}).c.green('ok'),'ok');
   const on=createUi({env:{FORCE_COLOR:'1'},stream:pipe}).c.green('ok');
-  assert.match(on,/^\x1b\[[0-9;]+mok\x1b\[0m$/);
+  assert.match(on,new RegExp(`^${ESC}\\[[0-9;]+mok${ESC}\\[0m$`));
 });
