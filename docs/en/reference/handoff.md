@@ -35,9 +35,18 @@
 
 Filling in the sections is the agent's job. The `handoff` skill says what a good note contains: the first incomplete task, completed work, decisions not yet in a durable artifact, the verification status, blockers and the exact next action.
 
-## Running it again replaces the file
+## Running it again keeps your note
 
-If a note for the change already exists, `truss handoff` overwrites it with the empty template, and what was written in it is lost. Copy or rename a note you have filled in before running the command again.
+If a note for the change already exists, `truss handoff` leaves it exactly as it is and says so:
+
+```text
+△ TRUSS · handoff
+
+○ .truss/handoffs/add-retry-policy.md already exists and was not changed.
+  Edit it, or delete it to start a new note.
+```
+
+The exit code is `0`, as for a note that was written. To start over, delete the file first. Releases up to 0.2.2 replaced an existing note with the empty template instead, and lost what was written in it.
 
 ## Where the note lives
 
@@ -47,5 +56,5 @@ In `.truss/handoffs/`, which is local state that Git ignores. A handoff is ephem
 
 | Code | Meaning |
 |---|---|
-| `0` | The note was written, or there is no active change. |
+| `0` | The note was written, an existing note was kept as it is, or there is no active change. |
 | `2` | `.truss/state.json` is unreadable. |

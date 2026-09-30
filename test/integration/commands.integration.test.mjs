@@ -201,6 +201,29 @@ test('handoff: with no active change says so; with one writes a file', () => {
   assert.match(text, /Branch: (main|master)/);
 });
 
+test('handoff: an existing note is never overwritten, and a new one starts by deleting it', () => {
+  const root = workspace({ config: validConfig });
+  fs.writeFileSync(
+    path.join(root, '.truss', 'state.json'),
+    JSON.stringify({ change: 'add-retry', component: 'api', phase: 'spec', path: 'openspec/changes/add-retry' }),
+  );
+  const file = path.join(root, '.truss', 'handoffs', 'add-retry.md');
+  assert.equal(run(root, ['handoff']).status, 0);
+  const template = fs.readFileSync(file, 'utf8');
+  const filled = `${template}NOTES WRITTEN BY THE AGENT\n`;
+  fs.writeFileSync(file, filled);
+
+  const again = run(root, ['handoff']);
+  assert.equal(again.status, 0, 'keeping a note is not a failure');
+  assert.match(out(again), /already exists and was not changed/);
+  assert.match(out(again), /delete it to start a new note/);
+  assert.equal(fs.readFileSync(file, 'utf8'), filled, 'the filled-in note was replaced by the template');
+
+  fs.rmSync(file);
+  assert.equal(run(root, ['handoff']).status, 0);
+  assert.equal(fs.readFileSync(file, 'utf8'), template, 'deleting the note lets a new one be written');
+});
+
 test('init: exit codes for missing, incompatible and partial OpenSpec', () => {
   const missing = workspace({ config: validConfig });
   const m = run(missing, ['init'], { env: { PATH: fakeBin(missing), TRUSS_OPENSPEC_PATH: '' } });
