@@ -27,7 +27,7 @@ TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands 
 node .truss/bin/truss.mjs help             # the command list (same as running truss with no command)
 node .truss/bin/truss.mjs verify --help    # usage, options and exit codes of one command; it is not run
 node .truss/bin/truss.mjs help verify      # the same
-node .truss/bin/truss.mjs --version        # truss 0.2.7
+node .truss/bin/truss.mjs --version        # truss 0.2.8
 ```
 
 `--help` never runs the command it is next to, so `truss verify --help` is always safe. A mistyped command fails with exit code `2`, so a script does not carry on as if it had worked, and suggests the closest name:
