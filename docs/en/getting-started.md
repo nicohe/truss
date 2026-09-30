@@ -97,7 +97,7 @@ Agents read a project guidance file, usually `AGENTS.md`, at the repository root
 - Write a handoff (`node .truss/bin/truss.mjs handoff`) only when work moves to another agent, runtime or session.
 ```
 
-Copy these lines rather than this repository's own [`AGENTS.md`](../../AGENTS.md), which guides work on TRUSS itself: the paths it mentions (such as `.truss/skills/`) are `.truss/.truss/skills/` in your project, and `truss continue` always prints the real ones.
+Copy these lines rather than this repository's own [`AGENTS.md`](../../AGENTS.md), which guides work on TRUSS itself: the paths it mentions (such as `.truss/skills/`) are `.truss/.truss/skills/` in your project, and `truss continue` always prints the real ones. [Use TRUSS with a coding agent](guides/agents.md) says where each agent reads its guidance.
 
 ## 5. Take one change through the workflow
 
@@ -236,4 +236,5 @@ Component paths must exist and stay inside the project. See [component resolutio
 - [Workflows](workflows/overview.md) and the [`execute-change`](workflows/execute-change.md) workflow your agent follows.
 - [Configuration](configuration/reference.md): every option and what it changes.
 - [Enforcement model](reference/enforcement.md): what TRUSS checks itself and what it only asks the agent to do.
+- [Guides](guides/agents.md): use TRUSS with your agent, in [CI](guides/ci.md), and [update or remove it](guides/update-and-remove.md).
 - [CLI reference](reference/cli.md).

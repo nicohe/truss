@@ -50,6 +50,7 @@ unit → integration → E2E   (pasos separados, para que una suite que falla no
 - **Enlaces rotos**: un enlace relativo a un archivo que no existe.
 - **Anclas rotas**: un `#fragmento` sin un encabezado que coincida en la página de destino. Las anclas siguen las reglas de GitHub, incluidos los encabezados con código en línea y los encabezados repetidos.
 - **Páginas huérfanas**: una página bajo `docs/en/` o `docs/es/` a la que no enlaza ninguna otra página. Cualquier otro directorio de documentación (una futura traducción, por ejemplo) solo produce una advertencia hasta que se añada a `ENFORCED_ORPHAN_DIRS`; `--strict` los exige todos.
+- **Traducciones desajustadas**: una página bajo `docs/es/` cuya estructura difiere de su original en inglés (encabezados, bloques de código, filas de tabla, viñetas o enlaces relativos), o que no lleva exactamente una nota de traducción. Informa de qué difiere y en cuánto.
 
 y, frente al código que describen, que la documentación mencione:
 

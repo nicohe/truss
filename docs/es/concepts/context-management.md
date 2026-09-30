@@ -21,7 +21,7 @@ No tienes que recordar esta lista. `truss continue` la imprime, con las rutas re
 - **Las skills se cargan bajo demanda.** `truss skills` las lista; usa una skill cuando surja su situación (una sesión de Grill para requisitos poco claros, un prototype para una duda técnica sin resolver) y no cargues las siete de antemano.
 - **Graphify** es un mapa opcional de relaciones e impacto del código. Úsalo cuando un cambio cruza módulos. Cuando no está disponible, la búsqueda nativa, grep y el language server del editor son el fallback. Ninguno es obligatorio.
 - **`writing-for-agents`** es una skill para mantener pequeños, fiables y basados en punteros los archivos pensados para agentes.
-- **`truss handoff`** escribe una nota breve cuando el trabajo pasa a otro agente, runtime, sesión o persona. Úsalo solo ante un límite real; no hagas handoff en cada paso.
+- **[`truss handoff`](../reference/handoff.md)** escribe una nota breve cuando el trabajo pasa a otro agente, runtime, sesión o persona. Úsalo solo ante un límite real; no hagas handoff en cada paso.
 
 ## Reglas prácticas
 

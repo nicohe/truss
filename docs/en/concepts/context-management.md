@@ -19,7 +19,7 @@ You do not have to remember this list. `truss continue` prints it, with the real
 - **Skills load on demand.** `truss skills` lists them; use a skill when its situation arises (a Grill session for unclear requirements, a prototype for an unresolved technical question) and do not preload all seven.
 - **Graphify** is an optional code-relationship and impact map. Use it when a change crosses modules. When it is not available, native search, grep and the editor's language server are the fallback. Neither is required.
 - **`writing-for-agents`** is a skill for keeping agent-facing files small, reliable and pointer-based.
-- **`truss handoff`** writes a short note when work moves to another agent, runtime, session or person. Use it only at a real boundary; do not hand off every step.
+- **[`truss handoff`](../reference/handoff.md)** writes a short note when work moves to another agent, runtime, session or person. Use it only at a real boundary; do not hand off every step.
 
 ## Rules of thumb
 

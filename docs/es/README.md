@@ -26,6 +26,14 @@ Cómo avanza un cambio por TRUSS.
 - [Comandos del ciclo de vida](workflows/lifecycle-commands.md): `new`, `status`, `continue` y las fases.
 - [Skills](skills/overview.md): las skills portables para agentes.
 
+## Guías
+
+Respuestas paso a paso a una tarea.
+
+- [Usar TRUSS con un coding agent](guides/agents.md): el bucle, dónde lee cada agente su guía y aprobar la verificación una vez.
+- [Usar TRUSS en CI](guides/ci.md): una instalación fijada, la configuración, la aprobación y un workflow de ejemplo.
+- [Actualizar o desinstalar TRUSS](guides/update-and-remove.md): fijar una release y qué no borrar.
+
 ## Comandos
 
 - [Referencia del CLI](reference/cli.md): cada comando, sus opciones y códigos de salida.
@@ -33,6 +41,7 @@ Cómo avanza un cambio por TRUSS.
 - [`truss init`](reference/init.md)
 - [`truss doctor`](reference/doctor.md)
 - [`truss verify`](reference/verify.md): comandos, aprobación y los dos gates opcionales.
+- [`truss handoff`](reference/handoff.md): la nota de transición y lo que no protege.
 - [Resolución de componentes](reference/components.md): monorepos y `--component`.
 
 ## Configuración

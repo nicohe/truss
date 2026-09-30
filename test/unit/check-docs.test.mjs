@@ -8,6 +8,7 @@ import {
   checkDocs,
   checkDrift,
   checkLinks,
+  checkTranslations,
   doctorCheckNames,
   environmentVariables,
   findMissingTranslations,
@@ -19,6 +20,7 @@ import {
   schemaOptions,
   slugify,
   stripCode,
+  structureOf,
 } from '../../scripts/check-docs.mjs';
 import { trussRoot } from '../integration/helpers.mjs';
 import { cleanup } from './helpers.mjs';
@@ -213,6 +215,124 @@ test('missing translations: every English page needs a counterpart in each trans
       result.groups.every((group) => group.errors.every((e) => !/translation/.test(e.message))),
       true,
     );
+  });
+});
+
+const NOTE = /^> Traducción al español\./;
+const page = [
+  '# Title',
+  '',
+  '## One',
+  '',
+  '| a | b |',
+  '|---|---|',
+  '| 1 | 2 |',
+  '',
+  '- item',
+  '1. step',
+  '',
+  '[x](y.md)',
+].join('\n');
+
+test('structureOf counts headings, code blocks, table rows, list items and relative links outside code', () => {
+  const text = [
+    '# Title',
+    '## Section',
+    '| h1 | h2 |',
+    '|---|---|',
+    '| a | b |',
+    '| c | d |',
+    '- one',
+    '* two',
+    '1. three',
+    'A [link](other.md), an [anchor](#here), a [site](https://example.com).',
+    '```bash',
+    '# a comment, not a heading',
+    '- not an item',
+    '| not | a row |',
+    '```',
+    '```text',
+    'second block',
+    '```',
+  ].join('\n');
+  assert.deepEqual(structureOf(text), {
+    headings: 2,
+    'code blocks': 2,
+    'table rows': 3,
+    'list items': 3,
+    links: 2,
+  });
+});
+
+test('structureOf leaves out the translation note and the links into another language', () => {
+  const text =
+    '# T\n\n> Traducción al español. Ver [el original](../en/t.md).\n\n[to Spanish](../es/README.md) and [local](a.md)';
+  assert.equal(structureOf(text, { note: NOTE, skipLinks: /(^|\/)es\// }).links, 1);
+  assert.equal(structureOf(text).links, 3);
+});
+
+test('checkTranslations: a page with the same structure and one note passes, and pages without an original only need the note', () => {
+  withTree(
+    {
+      'docs/en/a.md': page,
+      'docs/es/a.md': `${page}\n\n> Traducción al español. [original](../en/a.md).`,
+      'docs/es/only-here.md': '# Solo\n\n> Traducción al español. Sin original.',
+    },
+    (root) => assert.deepEqual(checkTranslations(root), []),
+  );
+});
+
+test('checkTranslations reports what a translation lost or gained, naming both counts', () => {
+  withTree(
+    {
+      'docs/en/a.md': page,
+      'docs/es/a.md': [
+        '# Title',
+        '',
+        '> Traducción al español. [original](../en/a.md).',
+        '',
+        '## One',
+        '',
+        '- item',
+        '1. step',
+        '',
+        '[x](y.md)',
+        '[z](z.md)',
+      ].join('\n'),
+    },
+    (root) =>
+      assert.deepEqual(messages(checkTranslations(root)), [
+        'docs/es/a.md differs from docs/en/a.md: 0 table rows (English 2), 2 links (English 1)',
+      ]),
+  );
+});
+
+test('checkTranslations needs exactly one translation note', () => {
+  withTree(
+    {
+      'docs/en/a.md': page,
+      'docs/es/a.md': `> Traducción al español. Uno.\n\n> Traducción al español. Dos.\n\n${page}`,
+      'docs/es/b.md': '# Sin nota',
+    },
+    (root) =>
+      assert.deepEqual(messages(checkTranslations(root)), [
+        'docs/es/a.md has 2 translation notes; it needs exactly one',
+        'docs/es/b.md has no translation note',
+      ]),
+  );
+});
+
+test('checkTranslations ignores directories that are not translations, and checkDocs reports it as its own group', () => {
+  withTree({ 'docs/en/a.md': page, 'docs/fr/a.md': '# tout autre' }, (root) => {
+    assert.deepEqual(checkTranslations(root), []);
+    assert.equal(
+      checkDocs(root, { commands: [] }).groups.at(-1).title,
+      'Translations out of step with the English pages',
+    );
+  });
+  withTree({ 'docs/en/a.md': page, 'docs/es/a.md': '# Sin nota ni estructura' }, (root) => {
+    const group = checkDocs(root, { commands: [] }).groups.at(-1);
+    assert.equal(group.errors.length, 2);
   });
 });
 
