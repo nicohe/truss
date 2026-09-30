@@ -71,7 +71,7 @@ export function fakeGraphify(root,{withIndex=false}={}) {
 
 export function run(root,args,{binDirs=[],env={}}={}) {
   const pathValue=[...binDirs,process.env.PATH].filter(Boolean).join(path.delimiter);
-  return spawnSync(process.execPath,[cli,...args],{cwd:root,encoding:'utf8',env:{...process.env,...env,PATH:pathValue}});
+  return spawnSync(process.execPath,[cli,...args],{cwd:root,encoding:'utf8',env:{...process.env,TRUSS_HOME:path.join(root,'.truss-home'),TRUSS_TRUST:'',...env,PATH:pathValue}});
 }
 
 export const validConfig=`version: 1

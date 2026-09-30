@@ -88,7 +88,8 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   fs.mkdirSync(path.join(root,'tests'),{recursive:true});
   fs.writeFileSync(path.join(root,'tests','retry.test.js'),'// simulated product test\n');
 
-  result=run(root,['verify']);
+  // The test replaced init's default command list with its own, so it needs explicit approval.
+  result=run(root,['verify','--trust']);
   assert.equal(result.status,0,result.stderr||result.stdout);
   assert.ok(fs.existsSync(path.join(root,'verified.marker')));
   const evidence=JSON.parse(fs.readFileSync(path.join(root,'.truss','verification','latest.json'),'utf8'));

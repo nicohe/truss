@@ -13,7 +13,7 @@ TRUSS v0.1 es principalmente un Harness declarativo/agent-driven. La tabla disti
 | `truss new "Nombre" [--component name]` | Crea scaffold OpenSpec y marca el cambio activo | Discovery/refinar spec |
 | `truss status` | Muestra cambio y fase activos | Continuar fase actual |
 | `truss continue` | Muestra OpenSpec activo e indica al agente continuar la primera task incompleta | El agente sigue `execute-change` |
-| `truss verify` | Ejecuta realmente `verification.commands` en orden y se detiene en el primer fallo | Review si pasa |
+| `truss verify [--trust]` | Ejecuta `verification.commands` en orden y se detiene en el primer fallo; antes pide aprobación si la lista es nueva o cambió | Review si pasa |
 | `truss handoff` | Escribe un handoff conciso del cambio activo | Solo ante transición de contexto |
 | `truss skills` | Lista las skills portables instaladas | Cargar solo la skill relevante |
 
@@ -27,4 +27,4 @@ Ver [Ciclo de vida](../workflows/lifecycle.md) para el orden conjunto de CLI + O
 
 ### Evidencia de Verification
 
-`truss verify` ejecuta los gates secuencialmente y con fail-fast. Exit `0` significa que todos pasaron; `1` significa que Verification falló o no hay gates configurados; `2` significa configuración TRUSS inválida. El último resultado legible por máquina se guarda en `.truss/verification/latest.json`.
+`truss verify` ejecuta los gates secuencialmente y con fail-fast. Exit `0` significa que todos pasaron; `1` significa que Verification falló, no hay gates configurados o la lista de comandos no fue aprobada; `2` significa configuración TRUSS inválida. El último resultado legible por máquina se guarda en `.truss/verification/latest.json`.

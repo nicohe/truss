@@ -10,6 +10,7 @@ All notable changes to TRUSS are documented here.
 - `.truss/state.json` is written atomically (temp file + rename).
 
 ### Added
+- `truss verify` asks for approval before running a new or changed `verification.commands` list, remembers it per project outside the repository, and refuses without a terminal unless `--trust` or `TRUSS_TRUST=1` is given. `truss init` trusts the default list it writes; `truss doctor` reports trust state.
 - Color output honors `NO_COLOR` and `FORCE_COLOR`, and is disabled when stdout is not a TTY.
 - `SECURITY.md` documents the trust model for `verification.commands`.
 
