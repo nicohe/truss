@@ -20,9 +20,10 @@
     "test:e2e": "node scripts/run-tests.mjs e2e",
     "test:coverage": "node scripts/run-tests.mjs all --experimental-test-coverage --test-coverage-lines=90 --test-coverage-branches=75 --test-coverage-functions=95",
     "check": "node ./scripts/check-syntax.mjs",
+    "check:docs": "node ./scripts/check-docs.mjs",
     "lint": "biome check",
     "lint:fix": "biome check --write",
-    "ci": "npm run check && npm run lint && npm test"
+    "ci": "npm run check && npm run check:docs && npm run lint && npm test"
   },
   "engines": {
     "node": ">=20"
