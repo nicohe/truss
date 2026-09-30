@@ -125,6 +125,8 @@ Si OpenSpec ha perdido el cambio activo sin archivarlo (por ejemplo, se borró s
 | planificado, con tareas abiertas | seguir el workflow [`execute-change`](execute-change.md), empezando por la primera tarea sin marcar |
 | con todas las tareas marcadas | ejecutar `truss verify`, después el code review y la verificación y el archivado de OpenSpec |
 
+Cuando `spec.mode` es `source`, o `spec.zone_guard` está activo, la acción siguiente de un cambio que se está implementando dice además qué le pide eso al agente: la spec es de solo lectura mientras implementa, y el trabajo de spec y el de código se mantienen en pasos separados. Consulta los [modos de especificación](spec-modes.md).
+
 Para un cambio que sigue en planificación:
 
 ```text

@@ -31,7 +31,7 @@ TRUSS v0.2 separa garantías implementadas de instrucciones para agentes y compo
 
 **[AGENT]** Siguen siendo instrucciones y no garantías técnicas:
 
-- disciplina Spec-Anchored / Spec-as-Source;
+- disciplina Spec-Anchored / Spec-as-Source (`truss continue` le indica el modo al agente mientras implementa; nada comprueba que se cumpla);
 - uso de Gherkin;
 - loops BDD/TDD (TRUSS solo puede comprobar que cambiaron tests, con `verification.tests_required`);
 - reconciliar descubrimientos de implementación con la spec;

@@ -86,6 +86,8 @@ Need to change specified behavior?
 
 When `spec.zone_guard: true`, runtimes that support write controls should enforce the Spec Zone / Code Zone separation. In v0.2 this is an agent policy; runtime enforcement is planned for adapters/orchestration.
 
+What TRUSS does in v0.2 is tell the agent. While the agent implements, `truss continue` adds to its next action that the spec is authoritative and read-only, and that behavior which has to change goes back to the spec first (in `source` mode), and that the zone guard is on (when it is). A project with the default settings sees no difference. TRUSS does not check that the agent obeys: a change to the code that never touches the spec still passes `truss verify`.
+
 ## Choosing a mode
 
 | Concern | `anchored` | `source` |

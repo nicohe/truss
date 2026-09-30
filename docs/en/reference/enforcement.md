@@ -31,7 +31,7 @@ TRUSS v0.2 separates implemented guarantees from agent instructions and future a
 
 **[AGENT]** These remain instructions, not technical guarantees:
 
-- Spec-Anchored / Spec-as-Source workflow discipline;
+- Spec-Anchored / Spec-as-Source workflow discipline (`truss continue` states the mode to the agent while it implements; nothing checks that it is followed);
 - Gherkin usage;
 - BDD and TDD loops (TRUSS can only check that tests changed, via `verification.tests_required`);
 - reconciling implementation discoveries with the spec;

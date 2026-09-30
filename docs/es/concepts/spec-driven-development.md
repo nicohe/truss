@@ -30,6 +30,6 @@ En ambos, el código y la especificación nunca divergen en silencio. `anchored`
 TRUSS comprueba las partes mecánicas y le pide el resto al agente:
 
 - **TRUSS comprueba:** que OpenSpec esté instalado y sea compatible, la fase del cambio activo y, si activas `verification.tasks_complete`, que no quede ninguna tarea abierta.
-- **Al agente se le pide:** seguir el modo, reconciliar los descubrimientos y mantener honesta la spec. Nada en v0.2 impide que un agente ignore la spec. `spec.zone_guard` solo *declara* la intención de mantener separado el trabajo de spec y el de código.
+- **Al agente se le pide:** seguir el modo, reconciliar los descubrimientos y mantener honesta la spec. `truss continue` le dice en qué modo está mientras implementa, pero nada en v0.2 impide que un agente ignore la spec. `spec.zone_guard` solo *declara* la intención de mantener separado el trabajo de spec y el de código.
 
 Consulta el [modelo de enforcement](../reference/enforcement.md) para ver el límite exacto.

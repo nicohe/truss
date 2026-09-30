@@ -5,10 +5,10 @@
 | Cambio | Comportamiento efectivo | Enforcement en v0.2 |
 |---|---|---|
 | `spec.mode: anchored` | La spec sigue siendo el ancla permanente; una reconciliación explícita puede hacer evolucionar spec, tests y código | AGENT |
-| `spec.mode: source` | Los cambios de comportamiento vuelven a la spec antes de seguir implementando | AGENT |
+| `spec.mode: source` | Los cambios de comportamiento vuelven a la spec antes de seguir implementando; `truss continue` lo dice mientras el agente implementa | AGENT |
 | `spec.gherkin: true` | Se prefieren o esperan escenarios de aceptación en Gherkin | AGENT |
 | `spec.gherkin: false` | Se permiten criterios de aceptación estructurados sin Gherkin | AGENT |
-| `spec.zone_guard: true` | Se espera separación entre Spec Zone y Code Zone | AGENT / DECLARATIVE |
+| `spec.zone_guard: true` | Se espera separación entre Spec Zone y Code Zone; `truss continue` se lo recuerda al agente mientras implementa | AGENT / DECLARATIVE |
 | `development.bdd: true` | `execute-change` aplica el macro-loop de aceptación RED → GREEN | AGENT |
 | `development.bdd: false` | El macro-loop BDD deja de ser obligatorio | AGENT |
 | `development.tdd: true` | `execute-change` aplica RED → GREEN mínimo → refactor | AGENT |

@@ -123,6 +123,8 @@ Use it to get the next instruction for your agent. It computes the step from the
 | planned, tasks open | follow the [`execute-change`](execute-change.md) workflow, starting with the first task that is not checked off |
 | every task checked off | run `truss verify`, then code review and OpenSpec verification and archiving |
 
+When `spec.mode` is `source`, or `spec.zone_guard` is on, the next action of a change that is being implemented also says what that asks of the agent: the spec is read-only while it implements, and spec work and code work are kept in separate steps. See [specification modes](spec-modes.md).
+
 For a change that is still planning:
 
 ```text

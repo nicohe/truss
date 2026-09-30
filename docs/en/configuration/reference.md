@@ -11,13 +11,13 @@ Type: integer. Default: `1`. Selects the TRUSS configuration schema version. Uns
 Type: enum. Default: `anchored`. Values: `anchored`, `source`.
 - `anchored`: OpenSpec remains the permanent anchor; explicit reconciliation may evolve spec, tests and code together.
 - `source`: OpenSpec is authoritative; behavioral changes return to the spec phase first.
-Enforcement v0.2: **AGENT policy**. Target v0.3: **TRUSS + AGENT**.
+Enforcement v0.2: **AGENT policy**. While the agent implements, `truss continue` states it in the next action (in `source` mode: the spec is read-only, and behavior that has to change goes back to the spec first); TRUSS does not check it. Target v0.3: **TRUSS + AGENT**.
 
 ## `spec.gherkin`
 Type: boolean. Default: `true`. When true, observable acceptance behavior should be expressed as Gherkin scenarios where appropriate. When false, structured non-Gherkin acceptance criteria are allowed. Enforcement v0.2: **AGENT**.
 
 ## `spec.zone_guard`
-Type: boolean. Default: `false`. When true, separate Spec Zone and Code Zone behavior is expected. Recommended mainly with `mode: source`. Enforcement v0.2: **AGENT/DECLARATIVE**; runtime enforcement is future work.
+Type: boolean. Default: `false`. When true, separate Spec Zone and Code Zone behavior is expected. Recommended mainly with `mode: source`. Enforcement v0.2: **AGENT/DECLARATIVE**; `truss continue` reminds the agent while it implements, and runtime enforcement is future work.
 
 ## `development.bdd`
 Type: boolean. Default: `true`. Enables the BDD macro-loop in `execute-change`: acceptance behavior RED → implementation → acceptance GREEN. Enforcement v0.2: **AGENT**.

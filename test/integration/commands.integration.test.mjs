@@ -971,6 +971,62 @@ test('status: an active change that OpenSpec lost without archiving it fails wit
   assert.doesNotMatch(out(result), /Could not read OpenSpec status/);
 });
 
+// `continue` for a project in the implementation phase whose spec settings are changed from the defaults.
+function continueWithSpec(settings, tasks = '- [ ] one\n') {
+  const { root, bin } = tasksWorkspace('off', tasks);
+  let config = tasksConfig('off');
+  for (const [from, to] of Object.entries(settings)) config = config.replace(from, to);
+  fs.writeFileSync(path.join(root, '.truss', 'config.yaml'), config);
+  const r = run(root, ['continue'], { binDirs: [bin] });
+  assert.equal(r.status, 0, out(r));
+  return out(r);
+}
+const SOURCE =
+  /The spec is authoritative \(spec\.mode: source\): treat it as read-only while you implement\. If the behavior has to change, stop, go back to the spec \(update its specs and tasks\) and only then resume\./;
+const ZONES =
+  /Zone guard is on \(spec\.zone_guard\): keep spec work and code work in separate steps\. TRUSS does not enforce it\./;
+
+test('continue: the default spec settings add nothing to what the agent is told', () => {
+  const text = continueWithSpec({});
+  assert.match(text, /Next action\nImplement add-retry using/);
+  assert.doesNotMatch(text, /spec\.mode|spec\.zone_guard|authoritative|Zone guard/);
+});
+
+test('continue: in spec.mode source the agent is told the spec is read-only and where to go when behavior must change', () => {
+  const text = continueWithSpec({ 'mode: anchored': 'mode: source' });
+  const action = text.slice(text.indexOf('Next action'), text.indexOf('Context to load'));
+  assert.match(
+    action,
+    /then run truss verify\.\nThe spec is authoritative/,
+    'it is part of the next action, after the instruction',
+  );
+  assert.match(action, SOURCE);
+  assert.doesNotMatch(action, ZONES);
+});
+
+test('continue: a zone guard is stated on its own, and together with source mode', () => {
+  const guardOnly = continueWithSpec({ 'zone_guard: false': 'zone_guard: true' });
+  assert.match(guardOnly, ZONES);
+  assert.doesNotMatch(guardOnly, SOURCE);
+
+  const both = continueWithSpec({ 'mode: anchored': 'mode: source', 'zone_guard: false': 'zone_guard: true' });
+  assert.match(both, /authoritative[\s\S]*\nZone guard is on/, 'one line each, the mode first');
+});
+
+test('continue: the spec policy is only restated while the agent implements', () => {
+  const settings = { 'mode: anchored': 'mode: source', 'zone_guard: false': 'zone_guard: true' };
+  const complete = continueWithSpec(settings, '- [x] one\n');
+  assert.match(complete, /Phase\s+complete/);
+  assert.doesNotMatch(complete, /authoritative|Zone guard/);
+
+  const planning = workspace({ config: validConfig.replace('mode: anchored', 'mode: source') });
+  const bin = fakeStatefulOpenSpec(planning, { initialized: true });
+  assert.equal(run(planning, ['new', 'Add retry'], { binDirs: [bin] }).status, 0);
+  const text = out(run(planning, ['continue'], { binDirs: [bin] }));
+  assert.match(text, /Phase\s+spec/);
+  assert.doesNotMatch(text, /authoritative|Zone guard/);
+});
+
 test('continue: names the openspec command to write the next artifact, and the ones that close the change', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeStatefulOpenSpec(root, { initialized: true });
