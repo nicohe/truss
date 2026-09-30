@@ -30,7 +30,7 @@ Start with `truss doctor`. It changes nothing, and it reports the environment, t
 
 | You see | What it means | What to do |
 |---|---|---|
-| `The active change "x" was archived (openspec/changes/archive/…)` | you archived the change with `openspec archive`, and TRUSS noticed | nothing is wrong: start the next one with `truss new "Change name"` |
+| `The active change "x" was archived (openspec/changes/archive/…)`, from `status`, `continue` or `handoff`, or `the active change "x" was archived (…); nothing to check` under `Tasks complete` | you archived the change with `openspec archive`, and TRUSS noticed | nothing is wrong: start the next one with `truss new "Change name"` |
 | `The active change "x" is not in OpenSpec (openspec/changes/x is missing)` | the change's folder was deleted or moved without being archived | restore the folder, or start over with `truss new` |
 | `Unknown component "x". No components are configured.`, or `Available: …` (exit code `2`) | that name is not declared under `components` | declare it in `.truss/config.yaml`, or leave out `--component` |
 | `Unknown command "stauts".` and `Did you mean "status"?` (exit code `2`) | a typo | see `truss help` |

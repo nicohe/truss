@@ -32,7 +32,7 @@ Empieza por `truss doctor`. No cambia nada, e informa del entorno, la configurac
 
 | Ves | Qué significa | Qué hacer |
 |---|---|---|
-| `The active change "x" was archived (openspec/changes/archive/…)` | archivaste el cambio con `openspec archive`, y TRUSS se dio cuenta | no pasa nada: empieza el siguiente con `truss new "Change name"` |
+| `The active change "x" was archived (openspec/changes/archive/…)`, de `status`, `continue` o `handoff`, o `the active change "x" was archived (…); nothing to check` bajo `Tasks complete` | archivaste el cambio con `openspec archive`, y TRUSS se dio cuenta | no pasa nada: empieza el siguiente con `truss new "Change name"` |
 | `The active change "x" is not in OpenSpec (openspec/changes/x is missing)` | la carpeta del cambio se borró o se movió sin archivarlo | restaura la carpeta, o empieza de nuevo con `truss new` |
 | `Unknown component "x". No components are configured.`, o `Available: …` (código de salida `2`) | ese nombre no está declarado en `components` | decláralo en `.truss/config.yaml`, o quita `--component` |
 | `Unknown command "stauts".` y `Did you mean "status"?` (código de salida `2`) | una errata | consulta `truss help` |

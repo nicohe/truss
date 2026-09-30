@@ -46,7 +46,7 @@ Type: enum. Default: `off`. Values: `off`, `warn`, `block`. Controls the **tasks
 - `warn`: `truss verify` lists the open tasks and continues.
 - `block`: the same report, but `truss verify` stops with exit `1` **before running any command** and records the result in `.truss/verification/latest.json`.
 
-The active change is the one in `.truss/state.json` (created by `truss new`). Progress is what OpenSpec reports through `openspec instructions apply` (the checkboxes of `tasks.md`). If there is no active change, OpenSpec is unavailable or incompatible, or `tasks.md` has no tasks, the gate says so and does **not** block.
+The active change is the one in `.truss/state.json` (created by `truss new`). Progress is what OpenSpec reports through `openspec instructions apply` (the checkboxes of `tasks.md`). If there is no active change, OpenSpec is unavailable or incompatible, the active change was archived, or `tasks.md` has no tasks, the gate says so and does **not** block.
 
 Use `warn` while working (verification often runs mid-implementation) and `block` where a finished change is required. It checks that tasks are *checked off*, not that they were really done. Enforcement: **TRUSS** for the check; **AGENT** for actually doing and checking off the work.
 

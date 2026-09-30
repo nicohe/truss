@@ -12,7 +12,7 @@
 
 ## Qué hace
 
-- Necesita un cambio activo (consulta [`truss new`](../workflows/lifecycle-commands.md)). Sin él imprime `No active change.`, no escribe nada y sale con `0`.
+- Necesita un cambio activo (consulta [`truss new`](../workflows/lifecycle-commands.md)). Sin él imprime `No active change.`, no escribe nada y sale con `0`. Lo mismo ocurre cuando el cambio activo se archivó con `openspec archive`: lo dice, señala `truss new` y no escribe nada, porque un cambio terminado no tiene nada que traspasar.
 - Escribe `.truss/handoffs/<change>.md` e imprime la ruta.
 - Rellena lo que TRUSS sabe (el cambio, el componente, la fase, la ruta de OpenSpec y la rama actual de Git, o `unknown`) y deja vacío el resto:
 
@@ -58,5 +58,5 @@ En `.truss/handoffs/`, que es estado local que Git ignora. Un handoff es efímer
 
 | Código | Significado |
 |---|---|
-| `0` | Se escribió la nota, se conservó tal cual una nota existente, o no hay cambio activo. |
+| `0` | Se escribió la nota, se conservó tal cual una nota existente, o no hay cambio activo (o se archivó). |
 | `2` | `.truss/state.json` no se puede leer. |

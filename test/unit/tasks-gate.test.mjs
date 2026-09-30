@@ -84,6 +84,25 @@ test('no active change means there is nothing to check', () => {
   });
 });
 
+test('a change closed with openspec archive is reported as archived and never blocks, even with tasks left', () => {
+  withProject('- [ ] one\n', {}, (root) => {
+    const changes = path.join(root, 'openspec', 'changes');
+    fs.writeFileSync(
+      path.join(root, '.truss', 'state.json'),
+      JSON.stringify({ change: 'add-retry', component: null, path: 'openspec/changes/add-retry' }),
+    );
+    assert.equal(evaluateTasksGate(root, cfg()).status, 'violation', 'open, the change is judged as before');
+
+    fs.mkdirSync(path.join(changes, 'archive'), { recursive: true });
+    fs.renameSync(path.join(changes, 'add-retry'), path.join(changes, 'archive', '2026-09-30-add-retry'));
+    const gate = evaluateTasksGate(root, cfg('block'));
+    assert.equal(gate.status, 'archived');
+    assert.equal(gate.blocking, false);
+    assert.equal(gate.change, 'add-retry');
+    assert.match(gate.path, /^openspec[\\/]changes[\\/]archive[\\/]2026-09-30-add-retry$/);
+  });
+});
+
 test('unknown progress never blocks: no tasks, no tasks.md, missing OpenSpec, corrupt state', () => {
   withProject('# no checkboxes here\n', undefined, (root) => {
     const empty = evaluateTasksGate(root, cfg());

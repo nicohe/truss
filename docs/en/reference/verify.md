@@ -76,7 +76,7 @@ Verification failed: the active change still has open tasks. No command was exec
 
 - The active change comes from `.truss/state.json`; progress comes from `openspec instructions apply` (the checkboxes of `tasks.md`).
 - `warn` reports and continues; `block` exits `1` before running any command.
-- With no active change, an unavailable or incompatible OpenSpec, or a `tasks.md` without tasks, it says so and never blocks.
+- With no active change, an unavailable or incompatible OpenSpec, or a `tasks.md` without tasks, it says so and never blocks. An active change that was archived with `openspec archive` is reported as such (`archived`, with where it went) and never blocks either: a finished change has no task progress to read.
 - When both gates are enabled, both are reported and both are recorded; the first blocking one (tests, then tasks) names the reason.
 
 The result is stored under `tasksComplete` in the evidence file.
