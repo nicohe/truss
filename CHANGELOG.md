@@ -9,6 +9,10 @@ All notable changes to TRUSS are documented here.
 - `handoff` reads the active change through the shared lifecycle state reader, so a corrupt `state.json` is reported instead of crashing.
 - `.truss/state.json` is written atomically (temp file + rename).
 
+### Fixed
+- The config parser now rejects what it documents as unsupported (anchors, aliases, tags, block and flow values, lists of objects, unterminated quotes, and keys nested under a scalar) instead of silently keeping it as a string or mis-nesting it. Quote a value that starts with one of `& * ! | > [ {`.
+- Change names keep their letters when they contain accents (`Añadir política` becomes `anadir-politica`, not `a-adir-pol-tica`).
+
 ### Added
 - `truss verify` asks for approval before running a new or changed `verification.commands` list, remembers it per project outside the repository, and refuses without a terminal unless `--trust` or `TRUSS_TRUST=1` is given. `truss init` trusts the default list it writes; `truss doctor` reports trust state.
 - Color output honors `NO_COLOR` and `FORCE_COLOR`, and is disabled when stdout is not a TTY.

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { workspace, fakeOpenSpec, fakeGraphify, run, validConfig } from './helpers.mjs';
+import { workspace, fakeOpenSpec, fakeGraphify, fakeBin, executable, run, validConfig } from './helpers.mjs';
 
 const plain=s=>s.replace(/\x1b\[[0-9;]*m/g,'');
 
