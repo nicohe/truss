@@ -28,7 +28,7 @@ TRUSS nunca instala ni actualiza OpenSpec por ti. Funciona en Windows, macOS y L
 Desde la raíz de tu proyecto:
 
 ```bash
-git clone --depth 1 --branch v0.2.9 https://github.com/nicohe/truss.git .truss
+git clone --depth 1 --branch v0.2.10 https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
 ```
 
