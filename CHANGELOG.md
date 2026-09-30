@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss new` says which open changes it walks past when no change was active, and `truss handoff` with no active change lists what is open.** `.truss/state.json` is local to each checkout, so on a fresh clone `truss new` created a second change next to ones already open in OpenSpec without a word: it only warned about the change it replaced, and there was none. It now adds `○ Also open in OpenSpec: a, b. None was the active change, and "x" is now: ...` with `truss use <change>` (the exact command when one is open, `--component` for a change in a component), and never together with the existing line about a replaced change. `handoff` with no active change, or with an archived one, lists the open changes and points to `truss use`, as `status` does; with nothing open it still prints the one line it did. `handoff` still does not need a valid configuration: one that cannot be read lists nothing. No exit code changes.
+
+### Documentation
+- **The `tests_required` gate now says that it compares the whole branch with the base, not each commit,** in the configuration reference and the `verify` reference (EN/ES): a test changed in an earlier commit of the branch also satisfies a later commit that only changes code, and any test file of the component counts. It recommends a coverage threshold in `verification.commands` for tests that exercise the code. The gate itself is unchanged.
+- **The lifecycle commands page and the `handoff` reference (EN/ES) describe the new `new` and `handoff` output.**
+
 ## [0.2.15] - 2026-09-30
 
 Patch release, from testing TRUSS in `spec.mode: anchored` with the real Graphify and OpenSpec. `truss status` and `truss continue` list the changes that are open when no change is active, and `truss continue` tells the agent when a development loop is off and lists `AGENTS.md` only when the project has one.

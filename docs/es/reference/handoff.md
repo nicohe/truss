@@ -12,7 +12,15 @@
 
 ## Qué hace
 
-- Necesita un cambio activo (consulta [`truss new`](../workflows/lifecycle-commands.md)). Sin él imprime `No active change.`, no escribe nada y sale con `0`. Lo mismo ocurre cuando el cambio activo se archivó con `openspec archive`: lo dice, señala `truss new` y no escribe nada, porque un cambio terminado no tiene nada que traspasar.
+- Necesita un cambio activo (consulta [`truss new`](../workflows/lifecycle-commands.md)). Sin él imprime `No active change.`, no escribe nada y sale con `0`. Si hay cambios abiertos en OpenSpec (un clon nuevo no tiene ninguno activo, porque `.truss/state.json` es local de cada checkout) los lista y señala `truss use`, igual que [`truss status`](../workflows/lifecycle-commands.md#truss-status):
+
+  ```text
+  No active change.
+  Open changes    add-retry-policy
+  Next: truss use add-retry-policy, or truss new "Change name" for a new one
+  ```
+
+  Sin nada abierto se queda en esa única línea. Lo mismo ocurre cuando el cambio activo se archivó con `openspec archive`: lo dice, lista lo que sigue abierto (o señala `truss new`) y no escribe nada, porque un cambio terminado no tiene nada que traspasar.
 - Escribe `.truss/handoffs/<change>.md` e imprime la ruta.
 - Rellena lo que TRUSS sabe (el cambio, el componente, la fase, la ruta de OpenSpec y la rama actual de Git, o `unknown`) y deja vacío el resto:
 

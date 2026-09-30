@@ -57,6 +57,7 @@ Verification failed: tests are required. No command was executed.
 - `warn` informa y continúa. `block` sale con `1` antes de ejecutar ningún comando.
 - La comparación es el árbol de trabajo contra el merge-base de `HEAD` y la rama base (`verification.base_ref`, detectada automáticamente si no se define). Cuentan los archivos confirmados, en staging, modificados sin staging y sin seguimiento; las eliminaciones puras no exigen tests.
 - Se evalúa por componente, así que un monorepo necesita tests en cada componente que cambió.
+- Mira toda la rama, no cada commit: un test cambiado en un commit anterior de la rama también satisface a un commit posterior que solo cambia código, y cuenta cualquier archivo de test del componente. Para tests que ejerciten el código, añade un umbral de cobertura a `verification.commands` (consulta la [referencia de configuración](../configuration/reference.md#verificationtests_required)).
 - Si no puede decidir (no hay work tree de Git, no hay commits, no hay rama base, clon superficial), lo dice y nunca bloquea.
 - **No** demuestra que los tests se escribieron primero, que cubren el cambio ni que pasan; de esto último se encargan los `verification.commands`.
 
