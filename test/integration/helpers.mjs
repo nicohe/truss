@@ -102,7 +102,8 @@ else if (cmd === 'init' && ${initCreatesProject}) {
 // A stateful OpenSpec that mirrors the real CLI (checked against @fission-ai/openspec 1.12):
 // - `status`: an artifact is done when its file exists; `isPlanningComplete` and `isComplete` both mean "all
 //   artifacts exist" (NOT "all tasks are checked off");
-// - `instructions apply`: task progress is read from the checkboxes of tasks.md.
+// - `instructions apply`: task progress is read from the checkboxes of tasks.md;
+// - `status` for a change that does not exist fails with exit 1.
 export function fakeStatefulOpenSpec(root, { initialized = false } = {}) {
   fakeCli(
     fakeBin(root),
@@ -139,6 +140,10 @@ else if (args[0] === 'init') {
 } else if (args[0] === 'status') {
   const name = changeArg();
   const dir = dirOf(name);
+  if (!fs.existsSync(dir)) {
+    console.log(JSON.stringify({ status: [{ severity: 'error', code: 'change_error', message: "Change '" + name + "' not found." }] }));
+    process.exit(1);
+  }
   const done = present(dir);
   const artifacts = Object.keys(DEPENDS).map((id) => ({
     id,
