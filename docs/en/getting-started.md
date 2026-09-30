@@ -39,6 +39,8 @@ function truss { node .truss/bin/truss.mjs @args }            # PowerShell
 
 The examples below use the long form. See [project structure](reference/project-structure.md) for what lives where.
 
+One thing to know early: `.truss/` is ignored by Git, so your `.truss/config.yaml` is **local to this checkout**. If several people or a CI machine work on the project, each needs its own copy of the configuration; see [ADR 0001](development/decisions/0001-local-project-configuration.md).
+
 ## 3. Initialize and check the setup
 
 ```bash

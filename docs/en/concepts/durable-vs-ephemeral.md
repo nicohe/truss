@@ -28,6 +28,8 @@ These describe *this checkout, right now*. If one becomes worth keeping, such as
 
 ## What the quick start does with `.truss/`
 
-The [quick start](../getting-started.md) clones TRUSS into `.truss/` and ignores the whole directory. That keeps TRUSS out of your history, and it also means `.truss/config.yaml` is **local to each checkout**: it is not committed with the project. If your team needs one shared configuration, that is a manual arrangement today; TRUSS does not provide a mechanism for it yet.
+The [quick start](../getting-started.md) clones TRUSS into `.truss/` and ignores the whole directory. That keeps TRUSS out of your history, and it also means `.truss/config.yaml` is **local to each checkout**: it is not committed with the project, so a fresh clone (or a CI machine) starts with the default configuration, not your team's.
+
+This is a deliberate choice for now, recorded in [ADR 0001](../development/decisions/0001-local-project-configuration.md). The ADR also explains a manual way for a team to share its configuration today, and describes the versionable configuration file we would add if a team needs it.
 
 Git ignores are also why nothing in this table should reach a commit by accident. `truss doctor` warns when `.truss/` is not ignored.
