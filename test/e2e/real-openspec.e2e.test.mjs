@@ -83,3 +83,18 @@ test('contract: truss use goes back to a change that truss new left behind', opt
     /There is no open change "nope" in openspec[\\/]changes\. Open there: add-retry-policy, second-change\./,
   );
 });
+
+test('contract: with no active change, status lists what the real OpenSpec has open', options, () => {
+  const root = workspace({ config: validConfig });
+  assert.equal(run(root, ['init']).status, 0);
+  assert.equal(run(root, ['new', 'Add retry policy']).status, 0);
+  assert.equal(run(root, ['new', 'Second change']).status, 0);
+  // A fresh clone or CI checkout has no state file, while OpenSpec still has both changes (and its archive/ folder).
+  fs.rmSync(path.join(root, '.truss', 'state.json'));
+
+  const status = run(root, ['status']);
+  assert.equal(status.status, 0, status.stdout);
+  assert.match(out(status), /No active change\.\nOpen changes\s+add-retry-policy, second-change\n/);
+  assert.doesNotMatch(out(status), /archive/);
+  assert.match(out(run(root, ['continue'])), /Open in OpenSpec: add-retry-policy, second-change\./);
+});

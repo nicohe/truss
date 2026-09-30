@@ -2,7 +2,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
-import { LifecycleError, readLifecycleState, slugifyChange, writeLifecycleState } from '../../lib/lifecycle.mjs';
+import {
+  describeOpenChange,
+  LifecycleError,
+  openChanges,
+  pickUpCommand,
+  readLifecycleState,
+  slugifyChange,
+  useCommand,
+  writeLifecycleState,
+} from '../../lib/lifecycle.mjs';
 import { cleanup, tempDir } from './helpers.mjs';
 
 test('slugifyChange creates OpenSpec-safe change names', () =>
@@ -65,4 +74,68 @@ test('slugifyChange collapses separators and trims dashes', () => {
   assert.equal(slugifyChange('  --Add   retry__policy--  '), 'add-retry-policy');
   assert.equal(slugifyChange('Añadir política de reintentos'), 'anadir-politica-de-reintentos');
   assert.equal(slugifyChange('Über café'), 'uber-cafe');
+});
+
+const makeChange = (root, ...segments) => fs.mkdirSync(path.join(root, ...segments), { recursive: true });
+
+test('openChanges lists the project, then each component with its own openspec/, and leaves out the archive', () => {
+  const d = tempDir();
+  try {
+    for (const change of ['b-change', 'a-change', 'archive/2026-09-30-old', '.hidden']) {
+      makeChange(d, 'openspec', 'changes', ...change.split('/'));
+    }
+    fs.writeFileSync(path.join(d, 'openspec', 'changes', 'notes.md'), 'not a change');
+    makeChange(d, 'apps', 'api', 'openspec', 'changes', 'api-change');
+    makeChange(d, 'apps', 'web');
+    const config = { components: { api: { path: './apps/api' }, web: { path: './apps/web' } } };
+    assert.deepEqual(openChanges(d, config), [
+      { change: 'a-change', component: null },
+      { change: 'b-change', component: null },
+      { change: 'api-change', component: 'api' },
+    ]);
+  } finally {
+    cleanup(d);
+  }
+});
+
+test('openChanges lists a folder once, even when a component is the project root', () => {
+  const d = tempDir();
+  try {
+    makeChange(d, 'openspec', 'changes', 'add-retry');
+    assert.deepEqual(openChanges(d, { components: { root: { path: '.' } } }), [
+      { change: 'add-retry', component: null },
+    ]);
+  } finally {
+    cleanup(d);
+  }
+});
+
+test('openChanges is empty without an openspec/ folder, and skips what it cannot read', () => {
+  const d = tempDir();
+  try {
+    assert.deepEqual(openChanges(d, {}), []);
+    assert.deepEqual(openChanges(d, { components: {} }), []);
+    makeChange(d, 'openspec', 'changes', 'add-retry');
+    makeChange(d, 'apps', 'broken', 'openspec');
+    fs.writeFileSync(path.join(d, 'apps', 'broken', 'openspec', 'changes'), 'not a folder');
+    const config = { components: { ghost: { path: './apps/ghost' }, broken: { path: './apps/broken' } } };
+    assert.deepEqual(openChanges(d, config), [{ change: 'add-retry', component: null }]);
+  } finally {
+    cleanup(d);
+  }
+});
+
+test('the open-change wording: the command to run, and how a change is named', () => {
+  assert.equal(useCommand('add-retry'), 'truss use add-retry');
+  assert.equal(useCommand('add-retry', 'api'), 'truss use add-retry --component api');
+  assert.equal(describeOpenChange({ change: 'add-retry', component: null }), 'add-retry');
+  assert.equal(describeOpenChange({ change: 'add-retry', component: 'api' }), 'add-retry (component api)');
+  assert.equal(pickUpCommand([{ change: 'add-retry', component: 'api' }]), 'truss use add-retry --component api');
+  assert.equal(
+    pickUpCommand([
+      { change: 'a', component: null },
+      { change: 'b', component: null },
+    ]),
+    'truss use <change>',
+  );
 });

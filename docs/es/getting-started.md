@@ -41,7 +41,7 @@ function truss { node .truss/bin/truss.mjs @args }            # PowerShell
 
 Los ejemplos de abajo usan la forma larga. Consulta la [estructura del proyecto](reference/project-structure.md) para saber qué vive dónde.
 
-Conviene saber pronto una cosa: Git ignora `.truss/`, así que tu `.truss/config.yaml` es **local a esta copia del repositorio**. Si trabajan varias personas o una máquina de CI, cada una necesita su propia copia de la configuración; consulta el [ADR 0001](development/decisions/0001-local-project-configuration.md).
+Conviene saber pronto una cosa: Git ignora `.truss/`, así que tu `.truss/config.yaml` es **local a esta copia del repositorio**. Si trabajan varias personas o una máquina de CI, cada una necesita su propia copia de la configuración; consulta el [ADR 0001](development/decisions/0001-local-project-configuration.md). Lo mismo ocurre con el registro del cambio activo: un clon nuevo no tiene ninguno, así que `truss status` lista los cambios abiertos en OpenSpec y `truss use <change>` retoma uno.
 
 ## 3. Inicializa y comprueba la instalación
 
@@ -220,7 +220,7 @@ Que `verify` pase no cierra el cambio: `truss continue` pide entonces un code re
 2. **Validar.** `openspec validate add-retry-policy` comprueba que las specs del cambio están bien formadas.
 3. **Archivar.** `openspec archive add-retry-policy` mueve el cambio a `openspec/changes/archive/`, con fecha, y fusiona sus deltas de spec en `openspec/specs/`. Pide confirmación (`-y` la omite); añade `--skip-specs` para un cambio que no altera comportamiento, como herramientas o documentación.
 
-Haz commit de `openspec/` junto con el código: las specs y los cambios archivados son durables (consulta [durable frente a efímero](concepts/durable-vs-ephemeral.md)). TRUSS se da cuenta del archivado: `truss status` y `truss continue` dicen que el cambio activo fue archivado y señalan `truss new` para el siguiente.
+Haz commit de `openspec/` junto con el código: las specs y los cambios archivados son durables (consulta [durable frente a efímero](concepts/durable-vs-ephemeral.md)). TRUSS se da cuenta del archivado: `truss status` y `truss continue` dicen que el cambio activo fue archivado y señalan `truss new` para el siguiente (o `truss use` cuando otro cambio sigue abierto).
 
 ## 7. Monorepos
 

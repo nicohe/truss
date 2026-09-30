@@ -4,6 +4,12 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss status` and `truss continue` list the changes that are open in OpenSpec when no change is active.** `.truss/state.json` is local to each checkout, so a fresh clone or a CI machine has no active change even when OpenSpec has changes in flight, and both commands answered `No active change` and pointed only to `truss new`: the one step that starts a duplicate and never mentions `truss use`. `status` now adds an `Open changes` line and puts `truss use <change>` first, with `truss new "Change name"` as the alternative; `continue` says the same in its one instruction. When a single change is open the command names it, and a change in a component's own `openspec/` is listed as `add-retry (component api)` with `--component api` in the command. The same list follows the message that the active change was archived. It reads the `openspec/changes` folders, as `truss use` does, so it does not need the OpenSpec CLI, and a component that does not resolve or a folder that cannot be read is left out instead of failing. With nothing open the output is exactly what it was, and no exit code changes.
+
+### Documentation
+- **The lifecycle commands page, the troubleshooting guide, the quick start and the CLI reference say what a fresh clone shows,** and that `truss use` is how it picks up a change that is already in flight.
+
 ## [0.2.14] - 2026-09-30
 
 Patch release, from testing TRUSS in `spec.mode: source` with the real Graphify. `truss continue` now tells the agent about the Graphify code graph and about what `spec.mode: source` and `spec.zone_guard` ask of it, a damaged `graphify-out/graph.json` is reported instead of reading as `ready`, and the docs check makes heading anchors the way GitHub does.
