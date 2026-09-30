@@ -15,7 +15,7 @@ The clone of this repository (in the quick start, a clone inside the project's `
 | `.truss/policies/` | BDD, TDD, spec, verification and review policies. |
 | `.truss/workflows/` | Workflows such as `execute-change`. |
 
-When the installation is a clone in the project's `.truss/`, that content is at `.truss/.truss/…`, and `truss continue` prints the real path to read. Update TRUSS by updating the clone (for example `git pull` inside it).
+When the installation is a clone in the project's `.truss/`, that content is at `.truss/.truss/…`, and `truss continue` prints the real path to read. Update TRUSS by moving the clone to another release (see [Update or remove TRUSS](../guides/update-and-remove.md)).
 
 ## The project
 

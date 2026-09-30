@@ -18,10 +18,10 @@ TRUSS is agent-agnostic. [OpenSpec](docs/en/integrations/openspec.md) is a requi
 
 ## Quick start
 
-Requires Node.js 20+ and a compatible OpenSpec CLI (`>=1.0.0 <2.0.0`). Clone TRUSS into the project and keep it ignored by the host repository:
+Requires Node.js 20+ and a compatible OpenSpec CLI (`>=1.0.0 <2.0.0`). Clone a TRUSS release into the project and keep it ignored by the host repository:
 
 ```bash
-git clone https://github.com/nicohe/truss.git .truss
+git clone --depth 1 --branch v0.2.4 https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
 node .truss/bin/truss.mjs init
 node .truss/bin/truss.mjs doctor
@@ -29,7 +29,7 @@ node .truss/bin/truss.mjs new "Add retry policy"
 node .truss/bin/truss.mjs status
 ```
 
-In a monorepo, declare `components` in `.truss/config.yaml` first and then pass `--component <name>` to `truss new`. A shell alias/wrapper may expose `truss`; a global install is not required. TRUSS keeps its schema, skills, policies and workflows in its own installation; your project only gets `.truss/config.yaml` and local state (see [project structure](docs/en/reference/project-structure.md)). Then hand the work to your coding agent. Add a few lines to your project's `AGENTS.md` (the snippet is in [Getting started](docs/en/getting-started.md#4-give-your-agent-some-guidance)) so the agent runs `truss continue` before implementing and `truss verify` when it finishes. The agent writes the OpenSpec artifacts and the code; TRUSS tells it what is next and checks the result. When a change is verified, review it and archive it with `openspec archive`. [Getting started](docs/en/getting-started.md) walks through the whole loop.
+`--branch` pins the clone to a release, so what you install is what was published and tested (`truss --version` says which). To move to another release, or to follow `main`, see [update or remove TRUSS](docs/en/guides/update-and-remove.md). In a monorepo, declare `components` in `.truss/config.yaml` first and then pass `--component <name>` to `truss new`. A shell alias/wrapper may expose `truss`; a global install is not required. TRUSS keeps its schema, skills, policies and workflows in its own installation; your project only gets `.truss/config.yaml` and local state (see [project structure](docs/en/reference/project-structure.md)). Then hand the work to your coding agent. Add a few lines to your project's `AGENTS.md` (the snippet is in [Getting started](docs/en/getting-started.md#4-give-your-agent-some-guidance)) so the agent runs `truss continue` before implementing and `truss verify` when it finishes. The agent writes the OpenSpec artifacts and the code; TRUSS tells it what is next and checks the result. When a change is verified, review it and archive it with `openspec archive`. [Getting started](docs/en/getting-started.md) walks through the whole loop.
 
 ## Commands
 

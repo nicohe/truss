@@ -14,7 +14,7 @@ A release is a pull request that raises the version, followed by a tag and a Git
    This updates `package.json` and `package-lock.json`.
 3. In `CHANGELOG.md`, turn the entries under `[Unreleased]` into a `[X.Y.Z] - date` section: a one-paragraph summary, **Upgrade notes** (say so when there are none), then what was added, changed and fixed.
 4. Update the places that spell out the version. `npm run check:docs` fails until they match `package.json`:
-   - the pinned install in [Use TRUSS in CI](../guides/ci.md) (`--branch vX.Y.Z`) and the `git checkout vX.Y.Z` in [Update or remove TRUSS](../guides/update-and-remove.md);
+   - the pinned clone (`--branch vX.Y.Z`) in the README, in [Getting started](../getting-started.md) and in [Use TRUSS in CI](../guides/ci.md), and the `git checkout vX.Y.Z` in [Update or remove TRUSS](../guides/update-and-remove.md);
    - the example output of `--version` in the [CLI reference](../reference/cli.md);
    - the placeholder in `.github/ISSUE_TEMPLATE/bug_report.yml`;
    - the same lines in the Spanish pages under `docs/es/`.

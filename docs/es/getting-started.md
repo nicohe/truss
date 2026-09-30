@@ -28,11 +28,11 @@ TRUSS nunca instala ni actualiza OpenSpec por ti. Funciona en Windows, macOS y L
 Desde la raíz de tu proyecto:
 
 ```bash
-git clone https://github.com/nicohe/truss.git .truss
+git clone --depth 1 --branch v0.2.4 https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
 ```
 
-TRUSS vive en `.truss/` y queda fuera del historial de tu repositorio. Para actualizarlo más adelante, ejecuta `git pull` dentro de `.truss/`. Si no quieres escribir el comando largo, define un alias:
+TRUSS vive en `.truss/` y queda fuera del historial de tu repositorio. El clon está fijado a una release, así que Git dice que está en estado «detached HEAD»: es lo esperado, estás en una release y no en una rama. Para pasar a una release más nueva más adelante, consulta [actualizar o desinstalar TRUSS](guides/update-and-remove.md). Si no quieres escribir el comando largo, define un alias:
 
 ```bash
 alias truss='node .truss/bin/truss.mjs'                       # bash / zsh

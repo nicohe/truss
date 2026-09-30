@@ -522,3 +522,18 @@ test('version references: without a package.json there is nothing to compare wit
     assert.deepEqual(checkVersionReferences(root), []);
   });
 });
+
+test('version references: the pinned clone in the README and in getting started is checked too', () => {
+  const files = {
+    'package.json': JSON.stringify({ version: '1.2.3' }),
+    'README.md': 'git clone --depth 1 --branch v1.2.3 https://example.invalid/truss.git .truss',
+    'docs/en/getting-started.md': 'git clone --depth 1 --branch v1.2.2 https://example.invalid/truss.git .truss',
+    'docs/es/getting-started.md': 'git clone https://example.invalid/truss.git .truss',
+  };
+  withTree(files, (root) => {
+    assert.deepEqual(messages(checkVersionReferences(root)), [
+      'docs/en/getting-started.md names 1.2.2, but package.json says 1.2.3',
+      'docs/es/getting-started.md does not name the current version 1.2.3',
+    ]);
+  });
+});

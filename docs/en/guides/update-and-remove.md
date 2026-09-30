@@ -1,6 +1,6 @@
 # Update or remove TRUSS
 
-With the [quick start](../getting-started.md) layout, TRUSS is a Git clone inside your project's `.truss/`. Updating and removing it are Git operations.
+With the [quick start](../getting-started.md) layout, TRUSS is a Git clone inside your project's `.truss/`, pinned to a release. Updating and removing it are Git operations.
 
 ## Check what you have
 
@@ -10,25 +10,33 @@ node .truss/bin/truss.mjs --version
 
 That prints `truss 0.2.2` or later. A release older than 0.2.2 has no `--version`; run `git describe --tags` inside `.truss/` instead. The [changelog](../../../CHANGELOG.md) lists what each release changes, with upgrade notes.
 
-## Update to the latest release
+## Update to a newer release, or go back to one
 
-```bash
-cd .truss
-git pull
-cd ..
-node .truss/bin/truss.mjs doctor
-```
-
-## Pin a release, or go back to one
+The quick start pins the clone to a release. To move to another one, fetch the tags and check out the one you want:
 
 ```bash
 cd .truss
 git fetch --tags
 git checkout v0.2.4      # a detached HEAD, on purpose: nothing moves until you say so
 cd ..
+node .truss/bin/truss.mjs doctor
 ```
 
-To follow the latest release again, run `git checkout main && git pull` inside `.truss/`.
+The [changelog](../../../CHANGELOG.md) and the [releases page](https://github.com/nicohe/truss/releases) list the releases. An older tag takes you back the same way.
+
+## Follow `main` instead
+
+What has been merged and not yet released is on `main`. The pinned clone only knows its release tag, so tell it about `main` first:
+
+```bash
+cd .truss
+git remote set-branches --add origin main
+git fetch --depth 1 origin main
+git checkout main
+cd ..
+```
+
+From then on `git pull` inside `.truss/` keeps it up to date. `truss --version` still prints the number of the last release, so say that you are on `main` when you report a problem. Go back to a release with the section above.
 
 ## Keep your files safe while you do it
 

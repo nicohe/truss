@@ -2,7 +2,7 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/guides/update-and-remove.md).
 
-Con la disposición del [inicio rápido](../getting-started.md), TRUSS es un clon de Git dentro del `.truss/` de tu proyecto. Actualizarlo y quitarlo son operaciones de Git.
+Con la disposición del [inicio rápido](../getting-started.md), TRUSS es un clon de Git dentro del `.truss/` de tu proyecto, fijado a una release. Actualizarlo y quitarlo son operaciones de Git.
 
 ## Comprueba qué tienes
 
@@ -12,25 +12,33 @@ node .truss/bin/truss.mjs --version
 
 Imprime `truss 0.2.2` o posterior. Una release anterior a la 0.2.2 no tiene `--version`; ejecuta en su lugar `git describe --tags` dentro de `.truss/`. El [changelog](../../../CHANGELOG.md) (en inglés) lista qué cambia cada release, con notas de actualización.
 
-## Actualizar a la última release
+## Actualizar a una release más nueva, o volver a una
 
-```bash
-cd .truss
-git pull
-cd ..
-node .truss/bin/truss.mjs doctor
-```
-
-## Fijar una release, o volver a una
+El inicio rápido fija el clon a una release. Para pasar a otra, descarga los tags y haz checkout del que quieras:
 
 ```bash
 cd .truss
 git fetch --tags
 git checkout v0.2.4      # un HEAD desacoplado, a propósito: nada se mueve hasta que tú lo digas
 cd ..
+node .truss/bin/truss.mjs doctor
 ```
 
-Para volver a seguir la última release, ejecuta `git checkout main && git pull` dentro de `.truss/`.
+El [changelog](../../../CHANGELOG.md) y la [página de releases](https://github.com/nicohe/truss/releases) listan las releases. Un tag más antiguo te lleva atrás del mismo modo.
+
+## Seguir `main` en su lugar
+
+Lo que se ha mergeado y aún no se ha publicado está en `main`. El clon fijado solo conoce el tag de su release, así que primero hay que hablarle de `main`:
+
+```bash
+cd .truss
+git remote set-branches --add origin main
+git fetch --depth 1 origin main
+git checkout main
+cd ..
+```
+
+Desde entonces, `git pull` dentro de `.truss/` lo mantiene al día. `truss --version` sigue imprimiendo el número de la última release, así que indica que estás en `main` cuando reportes un problema. Vuelve a una release con la sección anterior.
 
 ## Protege tus archivos mientras lo haces
 
