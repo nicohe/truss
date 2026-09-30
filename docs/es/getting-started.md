@@ -1,21 +1,216 @@
 # Primeros pasos
 
+> Traducción al español. La referencia canónica es [la versión en inglés](../en/getting-started.md). Los mensajes que imprime TRUSS están en inglés, y por eso los ejemplos de salida también.
+
+Esta guía te lleva desde un proyecto sin TRUSS hasta un cambio verificado. Son unos diez minutos. Todas las salidas de abajo se copiaron de una ejecución real.
+
+TRUSS es un harness, no un agente: reúne en un solo lugar tus specs, policies y verificación, y le dice al coding agent qué hacer a continuación. Nunca ejecuta un agente por sí mismo.
+
+## 1. Requisitos
+
+| Necesitas | Para qué | Comprobación |
+|---|---|---|
+| Node.js 20 o superior | TRUSS es un CLI de Node sin otras dependencias | `node --version` |
+| Git | el proyecto debe ser un work tree de Git | `git --version` |
+| El CLI de OpenSpec, `>=1.0.0 <2.0.0` | OpenSpec guarda las specs; TRUSS lo exige | `openspec --version` |
+| Un coding agent (Claude Code, Codex, Devin u otro) | hace el trabajo de implementación | — |
+
+Instala OpenSpec si no lo tienes:
+
+```bash
+npm install --global @fission-ai/openspec@1
+```
+
+TRUSS nunca instala ni actualiza OpenSpec por ti. Funciona en Windows, macOS y Linux; en Windows sirve un OpenSpec instalado con npm (un shim `.cmd`).
+
+## 2. Añade TRUSS a tu proyecto
+
+Desde la raíz de tu proyecto:
+
 ```bash
 git clone https://github.com/nicohe/truss.git .truss
 echo ".truss/" >> .gitignore
+```
+
+TRUSS vive en `.truss/` y queda fuera del historial de tu repositorio. Para actualizarlo más adelante, ejecuta `git pull` dentro de `.truss/`. Si no quieres escribir el comando largo, define un alias:
+
+```bash
+alias truss='node .truss/bin/truss.mjs'                       # bash / zsh
+function truss { node .truss/bin/truss.mjs @args }            # PowerShell
+```
+
+Los ejemplos de abajo usan la forma larga. Consulta la [estructura del proyecto](reference/project-structure.md) para saber qué vive dónde.
+
+Conviene saber pronto una cosa: Git ignora `.truss/`, así que tu `.truss/config.yaml` es **local a esta copia del repositorio**. Si trabajan varias personas o una máquina de CI, cada una necesita su propia copia de la configuración; consulta el [ADR 0001](../en/development/decisions/0001-local-project-configuration.md) (en inglés).
+
+## 3. Inicializa y comprueba la instalación
+
+```bash
 node .truss/bin/truss.mjs init
+```
+
+```text
+△ TRUSS · init
+
+Config          ● created .truss/config.yaml
+OpenSpec       ● initialized with --tools none
+Git ignore      ● .truss/ ignored
+
+TRUSS initialization verified.
+Run again safely at any time: truss init
+Next: truss doctor
+```
+
+`init` crea `.truss/config.yaml` e inicializa OpenSpec, sin sobrescribir nada que ya exista, así que puedes volver a ejecutarlo sin riesgo. Después comprueba el entorno:
+
+```bash
 node .truss/bin/truss.mjs doctor
+```
+
+```text
+Core
+  ● Node                   v24.12.0 (>=20 required)
+  ● Git CLI                installed
+  ● Git repository         work tree detected
+  ● .truss ignore          .truss/ ignored
+  ● Config                 .truss/config.yaml valid
+  ...
+OpenSpec
+  ● CLI                    v1.13.2
+  ● Compatibility          compatible (>=1.0.0 <2.0.0)
+  ● Project                openspec/config.yaml
+  ...
+TRUSS doctor passed. 1 optional warning(s).
+```
+
+`●` significa que todo está bien, `○` es una advertencia opcional (por ejemplo, Graphify no está instalado y TRUSS recurre a la búsqueda normal) y `×` es un problema que debes resolver. Consulta [`truss doctor`](reference/doctor.md).
+
+## 4. Da algo de guía a tu agente
+
+Los agentes leen un archivo de guía del proyecto, normalmente `AGENTS.md`, en la raíz del repositorio. TRUSS no crea ninguno. Empieza con unas pocas líneas sobre cómo se trabaja en tu proyecto; el [`AGENTS.md`](../../AGENTS.md) de este repositorio es un ejemplo pequeño.
+
+## 5. Lleva un cambio por el workflow
+
+Empieza un cambio:
+
+```bash
 node .truss/bin/truss.mjs new "Add retry policy"
 ```
 
-Luego, con Claude Code, Codex, Devin u otro coding agent:
-
 ```text
-Implement the active TRUSS change.
-Read AGENTS.md, .truss/config.yaml, .truss/policies/,
-.truss/workflows/ and the active spec before changing code.
-Follow configured BDD/TDD policies and run `truss verify`
-before considering the change complete.
+● OpenSpec change created
+Change          add-retry-policy
+Planning        0/4 artifacts complete
+
+Next: truss continue
 ```
 
-En v0.2 el agente sigue el workflow; TRUSS todavía no controla automáticamente el runtime. Para monorepos declarás `components` y podés usar `--component`. Para cambiar de agente/runtime/sesión, `truss handoff`.
+Por defecto un cambio tiene cuatro artefactos de planificación (proposal, specs, design y tasks), que OpenSpec registra. Pregunta a TRUSS qué toca hacer:
+
+```bash
+node .truss/bin/truss.mjs continue
+```
+
+```text
+Change          add-retry-policy
+Phase           spec
+
+Next action
+Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
+```
+
+Pásale eso a tu agente. Un prompt que sirve con cualquier agente:
+
+> Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists.
+
+`continue` nunca ejecuta el agente: calcula el siguiente paso a partir del estado de OpenSpec y lo imprime. Cuando existen los cuatro artefactos, la fase pasa a `implementation` y la instrucción cambia:
+
+```text
+Change          add-retry-policy
+Phase           implementation
+Tasks           1/2 complete
+
+Next action
+Implement add-retry-policy using .truss/.truss/workflows/execute-change.md. Read the active OpenSpec, start with the first incomplete task ("1.2 Add tests"), follow configured BDD/TDD policies, then run truss verify.
+
+Context to load
+- AGENTS.md (effective component/workspace guidance)
+- openspec/changes/add-retry-policy
+- .truss/.truss/workflows/execute-change.md
+- .truss/.truss/policies/ (configured BDD/TDD/spec policies)
+```
+
+Las rutas que ves son las reales para tu disposición de archivos. `truss status` muestra el mismo progreso, y un cambio está `complete` solo cuando todas las tareas de `tasks.md` están marcadas. Las fases y los comandos están en los [comandos del ciclo de vida](../en/workflows/lifecycle-commands.md) (en inglés).
+
+## 6. Verifica
+
+```bash
+node .truss/bin/truss.mjs verify
+```
+
+`verify` ejecuta, en orden, los comandos de `verification.commands` en `.truss/config.yaml` y se detiene en el primer fallo. Registra lo ocurrido en `.truss/verification/latest.json`. La lista por defecto ejecuta tus scripts `npm test`, `lint`, `typecheck` y `build` cuando existen.
+
+Como esos comandos se ejecutan a través de tu shell, TRUSS pregunta antes de ejecutar una lista que no ha visto para este proyecto. `init` aprueba la lista por defecto que escribe; si editas la lista, la siguiente ejecución se detiene:
+
+```text
+○ These verification commands are not trusted for this project yet.
+  They run through your shell with your permissions. Review them first:
+    npm test --if-present
+    ...
+× Not trusted; nothing was executed.
+Review .truss/config.yaml, then re-run with --trust (or TRUSS_TRUST=1).
+```
+
+En una terminal pregunta `Run and trust these commands? [y/N]`. En CI o desde un agente, lee la lista y luego pasa `--trust` o define `TRUSS_TRUST=1` (consulta las [variables de entorno](reference/environment.md)). Consulta también el [modelo de confianza](../../SECURITY.md#trust-model) (en inglés).
+
+`verify` también puede comprobar que un cambio tocó tests y que no quedan tareas abiertas. Ambas comprobaciones vienen desactivadas; pruébalas primero en modo `warn`:
+
+```yaml
+verification:
+  tests_required: warn   # source changed without any test change
+  tasks_complete: warn   # open tasks in the active OpenSpec change
+```
+
+Consulta [`truss verify`](reference/verify.md) para ver qué hace cada comprobación y qué no demuestra.
+
+## 7. Monorepos
+
+Declara cada unidad bajo `components` en `.truss/config.yaml` y nómbrala al crear un cambio:
+
+```yaml
+components:
+  api:
+    path: ./apps/api
+  worker:
+    path: ./apps/worker
+```
+
+```bash
+node .truss/bin/truss.mjs components            # check they resolve
+node .truss/bin/truss.mjs new "Add retry policy" --component worker
+```
+
+Las rutas de los componentes deben existir y quedar dentro del proyecto. Consulta la [resolución de componentes](../en/reference/components.md) (en inglés).
+
+## Si algo sale mal
+
+| Ves | Qué significa | Qué hacer |
+|---|---|---|
+| `Install a compatible OpenSpec CLI (>=1.0.0 <2.0.0)` u `OpenSpec CLI is not installed` | falta OpenSpec | `npm install --global @fission-ai/openspec@1` y vuelve a ejecutar `init` |
+| `OpenSpec … is not compatible (>=1.0.0 <2.0.0)` | OpenSpec tiene una versión que TRUSS no admite | instala una versión 1.x; TRUSS nunca lo actualiza por ti |
+| `TRUSS config not found: .truss/config.yaml` | el proyecto no está inicializado | ejecuta `truss init` |
+| `invalid config` (código de salida 2) | `config.yaml` incumple el schema | ejecuta `truss config` para ver los errores exactos |
+| `TRUSS installation is incomplete: config schema not found` | el clon de `.truss/` está dañado | vuelve a clonar TRUSS |
+| `Not trusted; nothing was executed.` | la lista de comandos cambió | revísala y luego usa `--trust` |
+| `Unknown component "x"` | ese nombre no está declarado en `components` | decláralo u omite `--component` |
+| `OpenSpec project is not initialized` | no existe el directorio `openspec/` | ejecuta `truss init` |
+
+`truss doctor` diagnostica casi todo esto sin cambiar nada.
+
+## Siguientes pasos
+
+- [Conceptos](concepts/spec-driven-development.md): por qué TRUSS funciona así.
+- [Workflows](workflows/overview.md) y el workflow [`execute-change`](workflows/execute-change.md) que sigue tu agente.
+- [Configuración](configuration/reference.md): cada opción y qué cambia.
+- [Modelo de enforcement](reference/enforcement.md): qué comprueba TRUSS por sí mismo y qué solo le pide al agente.
+- [Referencia del CLI](reference/cli.md).

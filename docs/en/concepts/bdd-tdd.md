@@ -9,7 +9,7 @@ TRUSS asks agents to work in two nested loops. Both are *policies*, not commands
 
 Work is cut into **vertical slices**: the smallest piece that demonstrates behavior on its own. "The database", "the API" and "the tests" are horizontal layers; a slice that lets a user retry a failed request is vertical.
 
-`development.bdd` and `development.tdd` (both `true` by default) turn the loops on. They are instructions to the agent; TRUSS does not orchestrate them in v0.2.
+`development.bdd` and `development.tdd` (both `true` by default) turn the loops on. They are instructions to the agent; TRUSS does not orchestrate them in v0.2. Turning `bdd` off can be reasonable for refactors or tooling with no new observable behavior; it does not disable existing tests or `truss verify`.
 
 ## What TRUSS can check, and what it cannot
 
