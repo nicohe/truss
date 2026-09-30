@@ -4,6 +4,14 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.10] - 2026-09-30
+
+Patch release: three rough edges found by trying TRUSS end to end on a small todo-list project. `truss new` now shows what OpenSpec said instead of its JSON, two errors say how to get out of them, and the documentation explains the warning Git prints when you clone a release.
+
+### Upgrade notes
+- No exit code changes. Only the text of three errors changes: `truss new` when OpenSpec refuses the change, `TRUSS config not found` and `Invalid TRUSS state file`.
+- Nothing else changes for an existing project.
+
 ### Changed
 - **`truss new` shows what OpenSpec said, not its JSON.** When OpenSpec refuses a change (the id already exists, the name is too long), `truss new` printed OpenSpec's whole JSON reply, and a long id twice over. It now prints the message, `OpenSpec could not create change "x": Change 'x' already exists at …`, and shortens a very long id in it. The exit code is still `1`.
 - **Two errors now say how to get out of them.** `TRUSS config not found: .truss/config.yaml` adds `Run truss init to create it.`, and `Invalid TRUSS state file` adds that the file only remembers the active change, so you delete it and start again with `truss new`. Exit codes do not change.
