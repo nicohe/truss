@@ -67,9 +67,14 @@ Every option, its default, and what changes when you change it.
 ## What is guaranteed
 
 - [Enforcement model](reference/enforcement.md): what TRUSS checks itself, what it asks the agent to do, and what needs a runtime adapter.
-- [v0.2.0 release contract](reference/release-v0.2.md)
-- [v0.1.0 release contract](reference/release-v0.1.md) (historical)
-- [Documentation audit](reference/documentation-audit.md) (historical)
+- [v0.2 release contract](reference/release-v0.2.md): the scope, compatibility and release gate of the v0.2 line.
+
+## Archive
+
+Kept for the record. These describe an earlier release, not how TRUSS behaves today.
+
+- [v0.1.0 release contract](reference/release-v0.1.md)
+- [v0.1 documentation audit](reference/documentation-audit.md)
 
 ## Contribute and maintain
 

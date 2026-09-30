@@ -2,6 +2,8 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/reference/documentation-audit.md).
 
+> Documento histórico. Describe la documentación de v0.1.0 de TRUSS y se conserva como registro. Para lo que vale hoy, consulta el [contrato de la versión v0.2](release-v0.2.md) y el [modelo de enforcement](enforcement.md).
+
 Versión auditada: **0.1.0 estable**.
 
 Propósito: evitar que la documentación presente una policy del agente o una futura orquestación de runtime como una garantía ejecutable de v0.1.

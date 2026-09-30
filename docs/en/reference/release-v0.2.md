@@ -1,6 +1,6 @@
-# TRUSS v0.2.0 release contract
+# TRUSS v0.2 release contract
 
-TRUSS v0.2.0 keeps the agent-driven model of [v0.1.0](release-v0.1.md) and adds the first **TRUSS-side enforcement** of engineering policy: opt-in gates in `truss verify` that check deterministic facts about a change. TRUSS still runs no coding agent itself.
+This is the contract of the v0.2 line (0.2.0 and its patch releases). TRUSS v0.2 keeps the agent-driven model of [v0.1.0](release-v0.1.md) and adds the first **TRUSS-side enforcement** of engineering policy: opt-in gates in `truss verify` that check deterministic facts about a change. TRUSS still runs no coding agent itself.
 
 ## Stable scope
 
@@ -35,13 +35,13 @@ They check that test files changed and that tasks are checked off. They do **not
 Unchanged from v0.1: clone TRUSS into the host project's `.truss/` directory and ignore that directory in the host repository. TRUSS is updated explicitly with Git.
 
 ## Release gate
-A v0.2.0 release is ready only when:
+A v0.2.x release is ready only when:
 1. `npm ci` succeeds.
 2. `npm run ci` succeeds (syntax check, Biome lint and format check, and every test suite).
 3. The coverage floor holds (`npm run test:coverage`).
 4. All required CI jobs are green and the `Contract / real OpenSpec` job passes.
 5. Documentation does not claim runtime orchestration that v0.2 does not provide.
-6. Package/version metadata is `0.2.0`.
+6. Package/version metadata matches the release, everywhere it is written (see [Releasing](../development/releasing.md)).
 
 ## v0.3 boundary
 Orchestration-driven TRUSS remains future work: runtime adapters, context resolution, automatic task execution/routing, isolated review, handoff automation and capability-aware execution. Those are not v0.2 guarantees.

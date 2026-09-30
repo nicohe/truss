@@ -1,5 +1,7 @@
 # TRUSS v0.1.0 release contract
 
+> Historical document. It describes TRUSS v0.1.0 and is kept for the record. For what holds today, see the [v0.2 release contract](release-v0.2.md) and the [enforcement model](enforcement.md).
+
 TRUSS v0.1.0 is the first stable baseline of the agent-driven harness.
 
 ## Stable scope
@@ -39,4 +41,4 @@ A v0.1.0 release is ready only when:
 
 ## Later releases
 
-This document is the historical v0.1.0 contract. It expected runtime orchestration in v0.2; that has moved. v0.2.0 kept the agent-driven model and added opt-in TRUSS-side gates (see the [v0.2.0 contract](release-v0.2.md)), and orchestration-driven TRUSS (runtime adapters, context resolution, automatic task execution/routing, isolated review, handoff automation, capability-aware execution) is now planned for v0.3. None of that was a v0.1 guarantee.
+This document is the historical v0.1.0 contract. It expected runtime orchestration in v0.2; that has moved. v0.2.0 kept the agent-driven model and added opt-in TRUSS-side gates (see the [v0.2 contract](release-v0.2.md)), and orchestration-driven TRUSS (runtime adapters, context resolution, automatic task execution/routing, isolated review, handoff automation, capability-aware execution) is now planned for v0.3. None of that was a v0.1 guarantee.

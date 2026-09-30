@@ -1,8 +1,8 @@
-# Contrato de la versión v0.2.0 de TRUSS
+# Contrato de la versión v0.2 de TRUSS
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/reference/release-v0.2.md).
 
-TRUSS v0.2.0 mantiene el modelo dirigido por el agente de [v0.1.0](release-v0.1.md) y añade el primer **enforcement de la policy de ingeniería por parte de TRUSS**: gates opcionales en `truss verify` que comprueban hechos determinísticos de un cambio. TRUSS sigue sin ejecutar ningún coding agent por sí mismo.
+Este es el contrato de la línea v0.2 (0.2.0 y sus releases de parche). TRUSS v0.2 mantiene el modelo dirigido por el agente de [v0.1.0](release-v0.1.md) y añade el primer **enforcement de la policy de ingeniería por parte de TRUSS**: gates opcionales en `truss verify` que comprueban hechos determinísticos de un cambio. TRUSS sigue sin ejecutar ningún coding agent por sí mismo.
 
 ## Alcance estable
 
@@ -37,13 +37,13 @@ Comprueban que cambiaron archivos de test y que las tareas están marcadas. **No
 Sin cambios respecto a v0.1: clona TRUSS en el directorio `.truss/` del proyecto anfitrión e ignora ese directorio en el repositorio anfitrión. TRUSS se actualiza de forma explícita con Git.
 
 ## Gate de release
-Un release v0.2.0 está listo solo cuando:
+Una release v0.2.x está lista solo cuando:
 1. `npm ci` tiene éxito.
 2. `npm run ci` tiene éxito (chequeo de sintaxis, lint y formato con Biome, y todas las suites de tests).
 3. Se cumple el mínimo de cobertura (`npm run test:coverage`).
 4. Todos los jobs de CI requeridos están en verde y el job `Contract / real OpenSpec` pasa.
 5. La documentación no afirma una orquestación de runtime que v0.2 no ofrece.
-6. Los metadatos de paquete y versión son `0.2.0`.
+6. Los metadatos de paquete y versión coinciden con la release, en todos los sitios donde se escriben (consulta [Publicar una release](../development/releasing.md)).
 
 ## Límite de v0.3
 El TRUSS dirigido por orquestación sigue siendo trabajo futuro: runtime adapters, resolución de contexto, ejecución y enrutado automáticos de tareas, review aislado, automatización del handoff y ejecución consciente de capacidades. Nada de eso es una garantía de v0.2.
