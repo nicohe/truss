@@ -2,7 +2,7 @@
 
 > Canonical TRUSS documentation.
 
-OpenSpec is a **required foundation of TRUSS**, not an optional integration. TRUSS does not implement a second specification format or silently fall back to another specification system.
+OpenSpec is a **required foundation of TRUSS**, not an optional integration. It is developed at [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec), where the format of a change is documented. TRUSS does not implement a second specification format or silently fall back to another specification system.
 
 ## Ownership and lifecycle
 

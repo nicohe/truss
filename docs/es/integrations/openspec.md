@@ -2,7 +2,7 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/integrations/openspec.md).
 
-OpenSpec es una **base obligatoria de TRUSS**, no una integración opcional. TRUSS no implementa un segundo formato de especificación ni hace fallback silencioso hacia otro sistema de specs.
+OpenSpec es una **base obligatoria de TRUSS**, no una integración opcional. Se desarrolla en [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec), donde está documentado el formato de un cambio. TRUSS no implementa un segundo formato de especificación ni hace fallback silencioso hacia otro sistema de specs.
 
 ## Propiedad y ciclo de vida
 

@@ -157,7 +157,12 @@ export function checkLinks(root, files = listMarkdown(root)) {
   const inbound = new Map(files.map((file) => [file, new Set()]));
 
   for (const from of files) {
-    for (const { target, line } of linksOf(fs.readFileSync(path.join(root, from), 'utf8'))) {
+    const text = fs.readFileSync(path.join(root, from), 'utf8');
+    const lines = text.split('\n');
+    // The note that opens a translated page links to its original. That link is not a reference to the page from the
+    // documentation, so it must not make the original look linked (it would hide every orphan that has a translation).
+    const note = TRANSLATIONS.find(({ directory }) => from.startsWith(`${directory}/`))?.note;
+    for (const { target, line } of linksOf(text)) {
       let resolved;
       try {
         resolved = resolveTarget(from, target);
@@ -171,7 +176,7 @@ export function checkLinks(root, files = listMarkdown(root)) {
         errors.push({ file: from, line, message: `${target}  (no such file: ${resolved.file})` });
         continue;
       }
-      if (resolved.file !== from) inbound.get(resolved.file)?.add(from);
+      if (resolved.file !== from && !note?.test(lines[line - 1] ?? '')) inbound.get(resolved.file)?.add(from);
       if (resolved.fragment && resolved.file.toLowerCase().endsWith('.md')) {
         const known = [...anchorsOf(resolved.file)];
         if (!known.includes(resolved.fragment.toLowerCase())) {

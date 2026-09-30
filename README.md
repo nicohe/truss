@@ -10,6 +10,8 @@ TRUSS coordinates specs, engineering policies, verification and runtime adapters
 
 **Intent → Spec → Behavior → Implementation → Evidence → Verification**
 
+**In plain words:** your project keeps its specs and rules; your coding agent, whichever you use, does the work; TRUSS tells the agent what to do next and checks the result. TRUSS runs no agent and picks no model, so you can use a different one for each phase. See [who does what](docs/en/concepts/who-does-what.md).
+
 TRUSS is agent-agnostic. [OpenSpec](docs/en/integrations/openspec.md) is a required foundation and anchors expected behavior; tests provide executable evidence. [Graphify](docs/en/integrations/graphify.md) is optional. Runtime-specific orchestration is an extension point rather than a v0.2 guarantee.
 
 **Status:** v0.2. TRUSS runs no coding agent itself: the change lifecycle is agent-driven, and runtime orchestration is planned for v0.3. What TRUSS does check, deterministically, is the project and its configuration, the OpenSpec state and, opt-in, that a change touches tests and has no open tasks (`verification.tests_required`, `verification.tasks_complete`). See the [release contract](docs/en/reference/release-v0.2.md).

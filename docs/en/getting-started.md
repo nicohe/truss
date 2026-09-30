@@ -13,7 +13,7 @@ TRUSS is a harness, not an agent: it keeps your specs, policies and verification
 | The OpenSpec CLI, `>=1.0.0 <2.0.0` | OpenSpec holds the specs; TRUSS requires it | `openspec --version` |
 | A coding agent (Claude Code, Codex, Devin, or any other) | it does the implementation work | — |
 
-Install OpenSpec if you do not have it:
+Install OpenSpec if you do not have it (its formats and commands are documented in its [repository](https://github.com/Fission-AI/OpenSpec)):
 
 ```bash
 npm install --global @fission-ai/openspec@1
