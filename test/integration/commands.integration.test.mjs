@@ -559,3 +559,34 @@ test('status: an active change that OpenSpec lost without archiving it fails wit
   );
   assert.doesNotMatch(out(result), /Could not read OpenSpec status/);
 });
+
+test('continue: names the openspec command to write the next artifact, and the ones that close the change', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  assert.equal(run(root, ['new', 'Add retry'], { binDirs: [bin] }).status, 0);
+  const planning = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(planning, /Run openspec instructions proposal --change add-retry for its format and path\./);
+  assert.doesNotMatch(planning, /\(from /, 'a project without components is run from its root');
+
+  const { root: done, bin: doneBin } = tasksWorkspace('off', '- [x] one\n');
+  const closing = out(run(done, ['continue'], { binDirs: [doneBin] }));
+  assert.match(
+    closing,
+    /code review, then openspec validate add-retry and, once it passes, openspec archive add-retry\./,
+  );
+});
+
+test('continue: a component with its own openspec/ says where to run the command, as TRUSS itself does', () => {
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  fs.mkdirSync(path.join(root, 'apps', 'api', 'openspec'), { recursive: true });
+  const created = run(root, ['new', 'Add retry', '--component', 'api'], { binDirs: [bin] });
+  assert.equal(created.status, 0, out(created));
+  const next = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(
+    next,
+    /Run openspec instructions proposal --change add-retry \(from apps[\\/]api\) for its format and path\./,
+  );
+});

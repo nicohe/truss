@@ -137,7 +137,7 @@ OpenSpec        openspec/changes/add-retry-policy
 Mode            agent-driven (TRUSS v0.2)
 
 Next action
-Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
+Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
 ```
 
 **Grill**, en ese texto, es una ronda de preguntas que el agente te hace cuando la idea no está clara, para no tener que inventar requisitos. Viene en dos skills: `grill-me` cuando partes de una idea, y `grill-with-docs` cuando ya tienes requisitos, una propuesta, un ticket o un ADR de partida (los lee primero y solo pregunta lo que dejan abierto). Por ejemplo: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.* Consulta [Descubrimiento](workflows/discovery.md). El agente se salta Grill cuando la idea ya está clara.
@@ -177,7 +177,7 @@ Context to load
 openspec instructions proposal --change add-retry-policy
 ```
 
-Eso imprime el propósito, el formato y la ruta exacta del artefacto, y lo mismo sirve para `specs`, `design` y `tasks`. El agente escribe cada uno, vuelve a ejecutar `truss continue` y repite hasta que existen los cuatro. Si la idea no está clara, primero debería hacer una ronda de Grill con la skill `grill-me` o `grill-with-docs`, como se ha descrito arriba. Por eso el fragmento de guía de arriba tiene una línea sobre `openspec instructions`.
+Eso imprime el propósito, el formato y la ruta exacta del artefacto, y lo mismo sirve para `specs`, `design` y `tasks`. El agente escribe cada uno, vuelve a ejecutar `truss continue` y repite hasta que existen los cuatro. Si la idea no está clara, primero debería hacer una ronda de Grill con la skill `grill-me` o `grill-with-docs`, como se ha descrito arriba. Por eso `truss continue` nombra el comando en su instrucción, y por eso el fragmento de guía de arriba tiene una línea sobre él.
 
 Cuando la fase pasa a `implementation`, el agente recorre `tasks.md` y cambia `- [ ]` por `- [x]` al terminar cada tarea. Eso es lo que cuenta `truss status`.
 
