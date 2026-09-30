@@ -19,7 +19,7 @@ El inicio rápido fija el clon a una release. Para pasar a otra, descarga los ta
 ```bash
 cd .truss
 git fetch --tags
-git checkout v0.2.4      # un HEAD desacoplado, a propósito: nada se mueve hasta que tú lo digas
+git checkout v0.2.5      # un HEAD desacoplado, a propósito: nada se mueve hasta que tú lo digas
 cd ..
 node .truss/bin/truss.mjs doctor
 ```
