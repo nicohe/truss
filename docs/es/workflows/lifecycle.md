@@ -1,5 +1,7 @@
 # Ciclo de vida de un cambio
 
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/workflows/lifecycle.md).
+
 Este es el orden canónico de punta a punta para un cambio en TRUSS. No todas las skills son pasos secuenciales: algunas son condicionales o transversales.
 
 ## Flujo completo
@@ -42,9 +44,9 @@ Este es el orden canónico de punta a punta para un cambio en TRUSS. No todas la
 | 3 | Probar una idea incierta | sin CLI dedicado | discovery | `prototype` (opcional) |
 | 4 | Cerrar comportamiento esperado | comandos/herramientas OpenSpec | fase spec | OpenSpec |
 | 5 | Implementar siguiente slice/task | `truss continue` | `execute-change` | coding agent; Graphify si aporta valor |
-| 6 | Desarrollar con feedback | dentro de `execute-change` | policies BDD/TDD | — |
-| 7 | Ejecutar quality gates | `truss verify` | verification policy | comandos configurados |
-| 8 | Revisar | no existe `truss review` ejecutable en el starter v0.2 | workflow code-review | `code-review` |
+| 6 | Desarrollar con seguridad | dentro de `execute-change` | policies BDD/TDD | — |
+| 7 | Ejecutar comprobaciones determinísticas | `truss verify` | verification policy | comandos configurados |
+| 8 | Revisar | no existe `truss review` ejecutable en v0.2 | workflow code-review | `code-review` |
 | 9 | Transferir estado vivo | `truss handoff` | workflow handoff | `handoff` |
 | 10 | Comprobar alineación con spec | comandos/herramientas OpenSpec | completion | OpenSpec |
 | 11 | Cerrar/archivar | comandos/herramientas OpenSpec | completion | OpenSpec |

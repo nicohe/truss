@@ -1,6 +1,6 @@
 # execute-change
 
-> Traducción al español. La documentación en `docs/en/` es la referencia canónica.
+> Traducción al español. La referencia canónica es [la versión en inglés](../../en/workflows/execute-change.md).
 
 `execute-change` es el workflow central de implementación de TRUSS. Toma un cambio ya definido en OpenSpec y lo lleva de **especificado** a **implementado, con evidencia, verificado y revisado**.
 

@@ -30,7 +30,7 @@ TRUSS v0.2 remains **agent-driven**. These commands make OpenSpec the operationa
 
 - no active change → create one;
 - planning incomplete → create/refine the next ready OpenSpec artifact, using Grill when ambiguity remains;
-- planning complete, tasks open → follow `.truss/workflows/execute-change.md`, BDD/TDD and verification policies, starting with the first incomplete task;
+- planning complete, tasks open → follow the `execute-change` workflow (`workflows/execute-change.md` in the TRUSS installation; `continue` prints the real path), BDD/TDD and verification policies, starting with the first incomplete task;
 - all tasks complete → run deterministic verification, code review, then OpenSpec verification/archive.
 
 This keeps the boundary explicit: OpenSpec owns change/artifact state; TRUSS owns engineering workflow policy; the coding agent performs non-deterministic implementation in v0.2.

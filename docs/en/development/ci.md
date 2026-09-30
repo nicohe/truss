@@ -56,6 +56,8 @@ and, against the code they describe, that the documentation mentions:
 - every `truss doctor` check (`docs/en/reference/doctor.md`);
 - every environment variable the CLI reads or a CI workflow sets (`docs/en/reference/environment.md`).
 
+The Spanish translations of those four pages (`docs/es/...`) are checked the same way when they exist. The check also lists, as a warning that does not fail the build, every English page that has no counterpart under `docs/es/`.
+
 So adding a command, an option, a doctor check or an environment variable without documenting it fails the build, which is the kind of drift that had left `doctor.md` and the environment variables undocumented. Use `--root <dir>` to check another tree. External links are not checked, to keep the build deterministic.
 
 ## Contract test against the real OpenSpec
@@ -83,4 +85,4 @@ npm run ci
 
 If `npm run lint` reports formatting or fixable lint problems, `npm run lint:fix` applies them.
 
-A failed syntax check or test causes the CI job to fail. Branch protection is a repository setting and should require the CI job before merging when the repository is hosted on GitHub.
+A failed syntax check, docs check, lint or test causes the CI job to fail. Branch protection on `main` requires the nine matrix jobs to pass before a pull request can be merged. The `Contract / real OpenSpec` job is not required.

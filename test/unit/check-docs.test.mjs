@@ -10,6 +10,7 @@ import {
   checkLinks,
   doctorCheckNames,
   environmentVariables,
+  findMissingTranslations,
   findOrphans,
   headingAnchors,
   linksOf,
@@ -191,6 +192,28 @@ test('orphans: enforced directories error, others warn, README and non-docs file
       assert.deepEqual(strict.warnings, []);
     },
   );
+});
+
+test('missing translations: every English page needs a counterpart in each translation directory, and it is only a warning', () => {
+  const files = ['docs/en/README.md', 'docs/en/a/b.md', 'docs/es/README.md', 'docs/fr/x.md', 'CHANGELOG.md'];
+  assert.deepEqual(findMissingTranslations(files), [
+    { file: 'docs/es/a/b.md', message: 'no translation of docs/en/a/b.md' },
+  ]);
+  assert.deepEqual(
+    findMissingTranslations(files, { translations: ['docs/es', 'docs/fr'] }).map((m) => m.file),
+    ['docs/fr/README.md', 'docs/es/a/b.md', 'docs/fr/a/b.md'],
+  );
+  withTree({ 'docs/en/README.md': '# index' }, (root) => {
+    const result = checkDocs(root, { commands: [] });
+    assert.deepEqual(
+      result.missingTranslations.map((m) => m.file),
+      ['docs/es/README.md'],
+    );
+    assert.equal(
+      result.groups.every((group) => group.errors.every((e) => !/translation/.test(e.message))),
+      true,
+    );
+  });
 });
 
 test('a page that only links to itself is still an orphan', () => {

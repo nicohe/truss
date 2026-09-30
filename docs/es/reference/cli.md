@@ -10,13 +10,13 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 |---|---|---|
 | `truss init` | Crea `.truss/config.yaml` si falta (nunca lo sobrescribe) e inicializa o adopta OpenSpec | [`init`](init.md) |
 | `truss doctor` | Comprobación de salud de solo lectura del entorno, la configuración, OpenSpec y Graphify (opcional) | [`doctor`](doctor.md) |
-| `truss config` | Valida e imprime la configuración resuelta, con los valores por defecto aplicados | [validación](../../en/configuration/validation.md) (en inglés) |
-| `truss openspec` | Inspecciona el CLI de OpenSpec, su versión y el proyecto | [detección de OpenSpec](../../en/integrations/openspec-detection.md) (en inglés) |
-| `truss graphify [status\|update\|bootstrap]` | Inspecciona o refresca el grafo de código opcional | [ciclo de vida de Graphify](../../en/integrations/graphify-lifecycle.md) (en inglés) |
-| `truss components [name]` | Resuelve los componentes configurados y su contexto | [componentes](../../en/reference/components.md) (en inglés) |
-| `truss new "Nombre del cambio" [--component name]` | Crea un cambio de OpenSpec y lo marca como activo | [comandos del ciclo de vida](../../en/workflows/lifecycle-commands.md) (en inglés) |
-| `truss status` | Muestra el cambio activo, su fase, sus artefactos y el progreso de tareas | [comandos del ciclo de vida](../../en/workflows/lifecycle-commands.md) (en inglés) |
-| `truss continue` | Imprime la siguiente acción para el agente y los archivos que debe cargar | [comandos del ciclo de vida](../../en/workflows/lifecycle-commands.md) (en inglés) |
+| `truss config` | Valida e imprime la configuración resuelta, con los valores por defecto aplicados | [validación](../configuration/validation.md) |
+| `truss openspec` | Inspecciona el CLI de OpenSpec, su versión y el proyecto | [detección de OpenSpec](../integrations/openspec-detection.md) |
+| `truss graphify [status\|update\|bootstrap]` | Inspecciona o refresca el grafo de código opcional | [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md) |
+| `truss components [name]` | Resuelve los componentes configurados y su contexto | [componentes](components.md) |
+| `truss new "Nombre del cambio" [--component name]` | Crea un cambio de OpenSpec y lo marca como activo | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
+| `truss status` | Muestra el cambio activo, su fase, sus artefactos y el progreso de tareas | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
+| `truss continue` | Imprime la siguiente acción para el agente y los archivos que debe cargar | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
 | `truss verify [--trust]` | Ejecuta `verification.commands` en orden y se detiene en el primer fallo; ejecuta antes las comprobaciones opcionales; pregunta antes de ejecutar una lista de comandos nueva o modificada | [`verify`](verify.md) |
 | `truss handoff` | Escribe una nota de handoff breve para el cambio activo | [gestión de contexto](../concepts/context-management.md) |
 | `truss skills` | Lista las skills portables que trae la instalación | [skills](../skills/overview.md) |

@@ -41,7 +41,7 @@ function truss { node .truss/bin/truss.mjs @args }            # PowerShell
 
 Los ejemplos de abajo usan la forma larga. Consulta la [estructura del proyecto](reference/project-structure.md) para saber qué vive dónde.
 
-Conviene saber pronto una cosa: Git ignora `.truss/`, así que tu `.truss/config.yaml` es **local a esta copia del repositorio**. Si trabajan varias personas o una máquina de CI, cada una necesita su propia copia de la configuración; consulta el [ADR 0001](../en/development/decisions/0001-local-project-configuration.md) (en inglés).
+Conviene saber pronto una cosa: Git ignora `.truss/`, así que tu `.truss/config.yaml` es **local a esta copia del repositorio**. Si trabajan varias personas o una máquina de CI, cada una necesita su propia copia de la configuración; consulta el [ADR 0001](development/decisions/0001-local-project-configuration.md).
 
 ## 3. Inicializa y comprueba la instalación
 
@@ -140,7 +140,7 @@ Context to load
 - .truss/.truss/policies/ (configured BDD/TDD/spec policies)
 ```
 
-Las rutas que ves son las reales para tu disposición de archivos. `truss status` muestra el mismo progreso, y un cambio está `complete` solo cuando todas las tareas de `tasks.md` están marcadas. Las fases y los comandos están en los [comandos del ciclo de vida](../en/workflows/lifecycle-commands.md) (en inglés).
+Las rutas que ves son las reales para tu disposición de archivos. `truss status` muestra el mismo progreso, y un cambio está `complete` solo cuando todas las tareas de `tasks.md` están marcadas. Las fases y los comandos están en los [comandos del ciclo de vida](workflows/lifecycle-commands.md).
 
 ## 6. Verifica
 
@@ -190,7 +190,7 @@ node .truss/bin/truss.mjs components            # check they resolve
 node .truss/bin/truss.mjs new "Add retry policy" --component worker
 ```
 
-Las rutas de los componentes deben existir y quedar dentro del proyecto. Consulta la [resolución de componentes](../en/reference/components.md) (en inglés).
+Las rutas de los componentes deben existir y quedar dentro del proyecto. Consulta la [resolución de componentes](reference/components.md).
 
 ## Si algo sale mal
 

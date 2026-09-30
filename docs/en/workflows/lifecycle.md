@@ -43,8 +43,8 @@ This is the canonical end-to-end order for a TRUSS change. Not every skill is a 
 | 4 | Finalize expected behavior | OpenSpec commands/tools | spec phase | OpenSpec |
 | 5 | Implement next slice/task | `truss continue` | `execute-change` | coding agent; Graphify when useful |
 | 6 | Develop safely | inside `execute-change` | BDD/TDD policies | — |
-| 7 | Run deterministic gates | `truss verify` | verification policy | configured commands |
-| 8 | Review | no executable `truss review` in v0.2 starter | code-review workflow | `code-review` |
+| 7 | Run deterministic checks | `truss verify` | verification policy | configured commands |
+| 8 | Review | no executable `truss review` in v0.2 | code-review workflow | `code-review` |
 | 9 | Transfer live state | `truss handoff` | handoff workflow | `handoff` |
 | 10 | Check spec alignment | OpenSpec commands/tools | completion | OpenSpec |
 | 11 | Close/archive | OpenSpec commands/tools | completion | OpenSpec |

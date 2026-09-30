@@ -32,6 +32,6 @@ Esto describe *esta copia, ahora mismo*. Si algo llega a valer la pena conservar
 
 El [inicio rápido](../getting-started.md) clona TRUSS en `.truss/` e ignora todo el directorio. Eso mantiene a TRUSS fuera de tu historial, y también significa que `.truss/config.yaml` es **local a cada copia**: no se confirma con el proyecto, así que un clon nuevo (o una máquina de CI) empieza con la configuración por defecto, no con la de tu equipo.
 
-Es una decisión deliberada por ahora, registrada en el [ADR 0001](../../en/development/decisions/0001-local-project-configuration.md) (en inglés). El ADR también explica una forma manual de que un equipo comparta su configuración hoy y describe el archivo de configuración versionable que añadiríamos si un equipo lo necesita.
+Es una decisión deliberada por ahora, registrada en el [ADR 0001](../development/decisions/0001-local-project-configuration.md). El ADR también explica una forma manual de que un equipo comparta su configuración hoy y describe el archivo de configuración versionable que añadiríamos si un equipo lo necesita.
 
 Los ignores de Git son también la razón por la que nada de esta tabla debería llegar a un commit por accidente. `truss doctor` avisa cuando `.truss/` no está ignorado.
