@@ -1,6 +1,6 @@
 {
   "name": "truss-harness",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "description": "Portable engineering harness for coding agents.",
   "type": "module",
