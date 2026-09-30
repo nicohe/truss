@@ -69,7 +69,7 @@ Tipo: booleano. Por defecto: `false`. Solo válido con `enabled: true`.
 - `false`: si Graphify no está disponible, se usa search/grep/LSP/exploración nativa del runtime.
 - `true`: Graphify es un requisito del proyecto. `truss graphify` y `truss doctor` lo informan como bloqueante cuando no está disponible o no está listo.
 
-Enforcement en v0.2: **TRUSS** para esas comprobaciones ejecutables; el **AGENT** debe respetar el requisito durante la implementación dirigida por el agente. El gating centralizado de todo el workflow pertenece a la orquestación posterior.
+Enforcement en v0.2: **TRUSS** para esas comprobaciones ejecutables; el **AGENT** debe respetar el requisito durante la implementación dirigida por el agente. `truss continue` le dice al agente el estado del grafo mientras implementa, pero nunca lo detiene. El gating centralizado de todo el workflow pertenece a la orquestación posterior.
 
 `enabled: false` + `required: true` es una configuración inválida.
 

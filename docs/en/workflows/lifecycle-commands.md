@@ -152,7 +152,7 @@ Next action
 Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy.
 ```
 
-While the tasks are open, the output also lists a **Context to load** section with the real paths of the workflow, the policies and the change, as the getting started guide shows. A prompt that works with any agent is: "Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists."
+While the tasks are open, the output also lists a **Context to load** section with the real paths of the workflow, the policies and the change, as the getting started guide shows. With Graphify enabled, the output ends with a **Code graph** section: one sentence that tells the agent to use the graph when it is fresh and what to run when it is stale, missing or damaged (see the [Graphify lifecycle](../integrations/graphify-lifecycle.md)). It says nothing when Graphify is off, or optional and not installed. A prompt that works with any agent is: "Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists."
 
 ## Which one, when
 
