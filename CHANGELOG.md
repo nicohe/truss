@@ -4,6 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.16] - 2026-09-30
+
+Patch release. `truss new` and `truss handoff` say which changes are open in OpenSpec when none is active, as `status` and `continue` already did, and the docs spell out that the `tests_required` gate looks at the whole branch.
+
+### Upgrade notes
+- No exit code changes.
+- `truss new` prints one more line when no change was active and others are open in OpenSpec (a fresh clone, for example). `truss handoff` with no active change, or an archived one, prints an `Open changes` line and `truss use` when some are open. With nothing open the output is what it was.
+- The `tests_required` gate is unchanged.
+- Nothing else changes for an existing project.
+
 ### Changed
 - **`truss new` says which open changes it walks past when no change was active, and `truss handoff` with no active change lists what is open.** `.truss/state.json` is local to each checkout, so on a fresh clone `truss new` created a second change next to ones already open in OpenSpec without a word: it only warned about the change it replaced, and there was none. It now adds `○ Also open in OpenSpec: a, b. None was the active change, and "x" is now: ...` with `truss use <change>` (the exact command when one is open, `--component` for a change in a component), and never together with the existing line about a replaced change. `handoff` with no active change, or with an archived one, lists the open changes and points to `truss use`, as `status` does; with nothing open it still prints the one line it did. `handoff` still does not need a valid configuration: one that cannot be read lists nothing. No exit code changes.
 
