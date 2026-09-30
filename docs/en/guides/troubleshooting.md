@@ -13,8 +13,7 @@ Start with `truss doctor`. It changes nothing, and it reports the environment, t
 | `OpenSpec  × CLI missing`, then `Install a compatible OpenSpec CLI (>=1.0.0 <2.0.0)` | OpenSpec is not on `PATH` | `npm install --global @fission-ai/openspec@1`, then `truss init` again. To use a specific executable, see [`TRUSS_OPENSPEC_PATH`](../reference/environment.md) |
 | `OpenSpec … is not compatible (>=1.0.0 <2.0.0)` | OpenSpec has a version TRUSS does not support | install a 1.x release; TRUSS never upgrades OpenSpec for you |
 | `OpenSpec project is not initialized` | there is no `openspec/` directory | run `truss init` |
-| `× invalid config`, followed by a line such as `$.bogus: unknown property.` | `config.yaml` breaks the schema | fix what the line says. `truss config` lists every error (see [validation](../configuration/validation.md)) |
-| `× Invalid TRUSS configuration.` on its own, from `status`, `new` or `continue` | the same problem, without the detail | run `truss config` to see the errors |
+| `× invalid config`, followed by a line such as `$.bogus: unknown property.` (exit code `2`, from any command that reads the configuration) | `config.yaml` breaks the schema | fix what the line says. `truss config` lists every error (see [validation](../configuration/validation.md)) |
 | `TRUSS installation is incomplete: config schema not found` | the `.truss/` clone is damaged | clone TRUSS again (see [update or remove](update-and-remove.md)) |
 | `Invalid TRUSS state file: .truss/state.json` (exit code `2`) | the file that remembers the active change was edited or cut short | delete `.truss/state.json`. It holds only the pointer to the active change, so TRUSS will say there is none; start the next change with `truss new` |
 
@@ -33,7 +32,7 @@ Start with `truss doctor`. It changes nothing, and it reports the environment, t
 |---|---|---|
 | `The active change "x" was archived (openspec/changes/archive/…)` | you archived the change with `openspec archive`, and TRUSS noticed | nothing is wrong: start the next one with `truss new "Change name"` |
 | `The active change "x" is not in OpenSpec (openspec/changes/x is missing)` | the change's folder was deleted or moved without being archived | restore the folder, or start over with `truss new` |
-| `Unknown component "x". No components are configured.`, or `Available: …` | that name is not declared under `components` | declare it in `.truss/config.yaml`, or leave out `--component` |
+| `Unknown component "x". No components are configured.`, or `Available: …` (exit code `2`) | that name is not declared under `components` | declare it in `.truss/config.yaml`, or leave out `--component` |
 | `Unknown command "stauts".` and `Did you mean "status"?` (exit code `2`) | a typo | see `truss help` |
 | `… already exists and was not changed.` from `truss handoff` | a note for this change already exists, and TRUSS never overwrites one | edit it, or delete it to start a new one (see [handoff](../reference/handoff.md)) |
 | the agent does not run `truss continue` or `truss verify` | TRUSS runs no agent; the agent follows what its guidance file says | check that the snippet is in the file your agent reads (see [use TRUSS with a coding agent](agents.md)) |
