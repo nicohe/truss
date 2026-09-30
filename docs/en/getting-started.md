@@ -135,7 +135,7 @@ OpenSpec        openspec/changes/add-retry-policy
 Mode            agent-driven (TRUSS v0.2)
 
 Next action
-Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
+Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
 ```
 
 **Grill** in that text is a round of questions the agent asks you when the idea is unclear, so that it does not have to invent requirements. It comes as two skills: `grill-me` when you start from an idea, and `grill-with-docs` when you already have requirements, a proposal, a ticket or an ADR to start from (it reads them first and asks only what they leave open). For example: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.* See [Discovery](workflows/discovery.md). The agent skips Grill when the idea is already clear.
@@ -175,7 +175,7 @@ Context to load
 openspec instructions proposal --change add-retry-policy
 ```
 
-That prints the purpose, the format and the exact path of the artifact, and the same works for `specs`, `design` and `tasks`. The agent writes each one, runs `truss continue` again and repeats until the four exist. If the idea is unclear, it should first run a Grill round with the `grill-me` or `grill-with-docs` skill, as described above. This is why the guidance snippet above has a line about `openspec instructions`.
+That prints the purpose, the format and the exact path of the artifact, and the same works for `specs`, `design` and `tasks`. The agent writes each one, runs `truss continue` again and repeats until the four exist. If the idea is unclear, it should first run a Grill round with the `grill-me` or `grill-with-docs` skill, as described above. This is why `truss continue` names the command in its instruction, and why the guidance snippet above has a line about it.
 
 Once the phase is `implementation`, the agent works through `tasks.md` and changes `- [ ]` to `- [x]` as it finishes each task. That is what `truss status` counts.
 

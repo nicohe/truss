@@ -104,7 +104,7 @@ OpenSpec        openspec/changes/add-retry-policy
 Mode            agent-driven (TRUSS v0.2)
 
 Next action
-Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Use Grill first if material ambiguity remains.
+Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
 ```
 
 For a change whose tasks are all checked off:
@@ -119,7 +119,7 @@ Tasks           2/2 complete
 Mode            agent-driven (TRUSS v0.2)
 
 Next action
-Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review and OpenSpec verification/archive.
+Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy.
 ```
 
 While the tasks are open, the output also lists a **Context to load** section with the real paths of the workflow, the policies and the change, as the getting started guide shows. A prompt that works with any agent is: "Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists."

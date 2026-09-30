@@ -30,6 +30,7 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   result = run(root, ['continue'], { binDirs: [bin] });
   assert.equal(result.status, 0);
   assert.match(result.stdout, /proposal/);
+  assert.match(result.stdout, /Run openspec instructions proposal --change add-retry-policy for its format and path\./);
   assert.match(result.stdout, /Use Grill first/);
 
   // Planning: an artifact is done when its file exists, exactly as OpenSpec reports it.
@@ -79,7 +80,10 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   assert.match(result.stdout, /Phase\s+complete/);
   result = run(root, ['continue'], { binDirs: [bin] });
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /code review and OpenSpec verification\/archive/);
+  assert.match(
+    result.stdout,
+    /code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy\./,
+  );
 });
 
 test('E2E: existing OpenSpec project is adopted without changing durable files', () => {
