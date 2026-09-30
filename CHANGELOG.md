@@ -4,6 +4,14 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-09-30
+
+Patch release: the CLI is easier to use (`--version`, `--help` per command, a clear error for a mistyped command) and the Spanish documentation is complete. The configuration schema and the behavior of `truss verify` do not change.
+
+### Upgrade notes
+- An unknown command now exits with `2` instead of `0`. A script that relied on `truss <typo>` succeeding will now fail, which is the point. Running `truss` with no command still lists the commands and exits `0`.
+- Nothing else changes for an existing project.
+
 ### Added
 - **`truss --version`** (also `-v` and `truss version`) prints the installed version. Until now there was no way to tell which TRUSS was installed, and a bug report needs it.
 - **`truss <command> --help`** (also `-h`, and `truss help <command>`) shows the usage, options and exit codes of one command, and never runs it. `truss help` lists the commands as before, and now also says how to get more.
