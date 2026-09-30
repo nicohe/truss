@@ -4,10 +4,22 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-29
+
+TRUSS keeps its agent-driven model and gains its first TRUSS-side checks of engineering policy: two opt-in gates in `truss verify`. It still runs no coding agent itself, so the runtime orchestration the docs used to promise for "v0.2" is now planned for v0.3 (all such references were updated). See the [v0.2.0 release contract](docs/en/reference/release-v0.2.md).
+
+### Upgrade notes
+Both new gates default to `off`, so nothing changes for a project that does not enable them. Also worth knowing:
+- **`truss status` / `truss continue` now report `implementation` (not `complete`) while tasks are open.** The previous output was wrong with a real OpenSpec (see Fixed).
+- `truss config` lists the two new options with their defaults.
+- The evidence file gains `testsRequired` / `tasksComplete` only when the corresponding gate is enabled.
+- Documentation vocabulary moved: "v0.1" (the current model) is now "v0.2", and the future orchestration release is "v0.3". The v0.1.0 contract and audit keep their historical wording.
+
 ### Fixed
 - **`truss status` / `truss continue` reported a change as complete while tasks were still open.** With a real OpenSpec, `isComplete` from `openspec status` means "all artifacts exist", not "all tasks are done", so the `implementation` phase was effectively unreachable and `continue` said "Implementation tasks are complete" for a change with unchecked tasks. The phase now comes from task progress (`openspec instructions apply`): `complete` only when there are tasks and none remain open. `status` shows `Tasks 1/3 complete` and `continue` names the first incomplete task. If progress is unavailable the change is reported as `implementation`, never `complete`.
 
 ### Documentation
+- Version vocabulary updated across the English and Spanish docs, plus a new [v0.2.0 release contract](docs/en/reference/release-v0.2.md); the v0.1.0 contract now points forward.
 - `SECURITY.md` points to GitHub's private vulnerability reporting, which is now enabled for the repository.
 
 ### Added

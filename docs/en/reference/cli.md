@@ -1,8 +1,8 @@
 # CLI reference
 
-TRUSS v0.1 is primarily an agent-driven/declarative harness. The table below distinguishes commands that execute behavior from commands that only prepare or expose state.
+TRUSS v0.2 is primarily an agent-driven/declarative harness. The table below distinguishes commands that execute behavior from commands that only prepare or expose state.
 
-| Command | v0.1 behavior | Next step |
+| Command | v0.2 behavior | Next step |
 |---|---|---|
 | `truss init` | Creates `.truss/config.yaml` if missing; does not overwrite it | `truss doctor` |
 | `truss doctor` | Checks Node, Git, TRUSS config, required OpenSpec CLI/project, and optional Graphify availability | Resolve required failures |
@@ -19,7 +19,7 @@ TRUSS v0.1 is primarily an agent-driven/declarative harness. The table below dis
 
 ## Review
 
-`code-review` exists as a skill/workflow in v0.1, but the starter CLI does **not** currently implement an executable `truss review` command. Runtime-driven review is part of later orchestration work. Documentation must not imply otherwise.
+`code-review` exists as a skill/workflow in v0.2, but the starter CLI does **not** currently implement an executable `truss review` command. Runtime-driven review is part of later orchestration work. Documentation must not imply otherwise.
 
 ## Canonical order
 

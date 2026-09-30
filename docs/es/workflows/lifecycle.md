@@ -38,18 +38,18 @@ Este es el orden canónico de punta a punta para un cambio en TRUSS. No todas la
 |---:|---|---|---|---|
 | 0 | Comprobar requisitos | `truss doctor` | readiness del entorno | OpenSpec requerido; estado Graphify |
 | 1 | Iniciar cambio | `truss new "..."` | crear scaffold del cambio activo | OpenSpec |
-| 2 | Resolver ambigüedad | sin CLI dedicado en v0.1 | `grill` | `grill-me` o `grill-with-docs` |
+| 2 | Resolver ambigüedad | sin CLI dedicado en v0.2 | `grill` | `grill-me` o `grill-with-docs` |
 | 3 | Probar una idea incierta | sin CLI dedicado | discovery | `prototype` (opcional) |
 | 4 | Cerrar comportamiento esperado | comandos/herramientas OpenSpec | fase spec | OpenSpec |
 | 5 | Implementar siguiente slice/task | `truss continue` | `execute-change` | coding agent; Graphify si aporta valor |
 | 6 | Desarrollar con feedback | dentro de `execute-change` | policies BDD/TDD | — |
 | 7 | Ejecutar quality gates | `truss verify` | verification policy | comandos configurados |
-| 8 | Revisar | no existe `truss review` ejecutable en el starter v0.1 | workflow code-review | `code-review` |
+| 8 | Revisar | no existe `truss review` ejecutable en el starter v0.2 | workflow code-review | `code-review` |
 | 9 | Transferir estado vivo | `truss handoff` | workflow handoff | `handoff` |
 | 10 | Comprobar alineación con spec | comandos/herramientas OpenSpec | completion | OpenSpec |
 | 11 | Cerrar/archivar | comandos/herramientas OpenSpec | completion | OpenSpec |
 
-Importante: v0.1 es agent-driven. `truss continue` indica al agente qué continuar; todavía no invoca un runtime adapter ni ejecuta automáticamente la task. La orquestación completa corresponde a v0.2.
+Importante: v0.2 es agent-driven. `truss continue` indica al agente qué continuar; todavía no invoca un runtime adapter ni ejecuta automáticamente la task. La orquestación completa corresponde a v0.3.
 
 ## Skills que no son secuenciales
 

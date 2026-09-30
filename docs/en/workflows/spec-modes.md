@@ -84,7 +84,7 @@ Need to change specified behavior?
                  archive
 ```
 
-When `spec.zone_guard: true`, runtimes that support write controls should enforce the Spec Zone / Code Zone separation. In v0.1 this is an agent policy; runtime enforcement is planned for adapters/orchestration.
+When `spec.zone_guard: true`, runtimes that support write controls should enforce the Spec Zone / Code Zone separation. In v0.2 this is an agent policy; runtime enforcement is planned for adapters/orchestration.
 
 ## Choosing a mode
 

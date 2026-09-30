@@ -1,4 +1,4 @@
-# Cómo usar las skills en TRUSS v0.1
+# Cómo usar las skills en TRUSS v0.2
 
 No hace falta invocar todas las skills en cada cambio.
 

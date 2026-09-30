@@ -1,6 +1,6 @@
 # Skills de TRUSS
 
-TRUSS v0.1 incluye siete skills portables. Son contratos de instrucciones independientes del runtime: Claude Code, Codex, Devin u otro agente pueden leer la misma definición.
+TRUSS v0.2 incluye siete skills portables. Son contratos de instrucciones independientes del runtime: Claude Code, Codex, Devin u otro agente pueden leer la misma definición.
 
 | Skill | Función | Uso típico |
 |---|---|---|
@@ -36,10 +36,10 @@ Workflows
 
 Esta separación evita crear una skill para cada concepto. Las skills son capacidades reutilizables; las policies establecen reglas; los workflows las coordinan; las integrations conectan herramientas externas.
 
-## v0.1
+## v0.2
 
 Las skills son archivos que el coding agent debe leer y aplicar. TRUSS no controla todavía el runtime automáticamente.
 
-## v0.2+
+## v0.3+
 
 Los runtime adapters podrán cargar/inyectar estas mismas skills y orquestar su ejecución sin cambiar su semántica.

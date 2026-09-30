@@ -2,7 +2,7 @@
 
 > Canonical TRUSS documentation. This page answers: **what changes when I change a value?**
 
-| Change | Effective behavior | v0.1 enforcement |
+| Change | Effective behavior | v0.2 enforcement |
 |---|---|---|
 | `spec.mode: anchored` | Spec stays the permanent anchor; explicit reconciliation may evolve spec/tests/code | AGENT |
 | `spec.mode: source` | Behavioral changes return to spec before implementation continues | AGENT |

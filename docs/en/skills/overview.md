@@ -1,6 +1,6 @@
 # TRUSS Skills
 
-TRUSS v0.1 ships seven portable agent skills. They are instruction contracts, not vendor-specific commands.
+TRUSS v0.2 ships seven portable agent skills. They are instruction contracts, not vendor-specific commands.
 
 | Skill | Purpose |
 |---|---|

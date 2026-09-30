@@ -22,6 +22,6 @@ Acceptance GREEN
 truss verify
 ```
 
-BDD cubre comportamiento observable. TDD guía diseño e implementación interna. En v0.1 el agente convierte escenarios en tests y ejecuta el loop; TRUSS crea artefactos y ejecuta verification. La orquestación automática del runtime llega después.
+BDD cubre comportamiento observable. TDD guía diseño e implementación interna. En v0.2 el agente convierte escenarios en tests y ejecuta el loop; TRUSS crea artefactos y ejecuta verification. La orquestación automática del runtime llega después.
 
 `bdd: false` puede ser razonable para refactors/tooling sin comportamiento observable nuevo; no desactiva tests existentes ni verification.

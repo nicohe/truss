@@ -32,9 +32,9 @@ OpenSpec defines **what** must change. `execute-change` coordinates **how the ch
 12. Create a Handoff only when context, responsibility, session or runtime changes.
 13. Continue with the next ready task or finish the change.
 
-## v0.1 enforcement
+## v0.2 enforcement
 
-In v0.1, `execute-change` is an **instruction contract** followed by the coding agent. TRUSS directly executes deterministic verification, while BDD/TDD/spec behavior is primarily agent-enforced. Runtime orchestration is planned for v0.2.
+In v0.2, `execute-change` is an **instruction contract** followed by the coding agent. TRUSS directly executes deterministic verification, while BDD/TDD/spec behavior is primarily agent-enforced. Runtime orchestration is planned for v0.3.
 
 ## Not a skill
 
