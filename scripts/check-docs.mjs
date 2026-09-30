@@ -81,14 +81,29 @@ export function stripCode(text) {
   return stripFences(text).replace(/(`+)[^`\n]*?\1/g, (span) => ' '.repeat(span.length));
 }
 
-const plainHeading = (text) =>
-  text
+// A code span opens with a run of backticks and closes with the next run of exactly the same length.
+const CODE_SPAN = /(?<!`)(`+)(?!`)([\s\S]*?[^`])\1(?!`)/g;
+// Only what HTML accepts as a tag: `<div>`, `</b>`, `<br/>`, comments. `a < b > c` has none.
+const HTML_TAG = /<\/?[A-Za-z][A-Za-z0-9-]*(?:\s[^<>]*)?\/?>|<!--[\s\S]*?-->/g;
+
+// What GitHub keeps of a heading's text when it makes the anchor: a code span keeps its text, even when it looks like
+// an HTML tag or a link (`<change>` stays), while images vanish, a link keeps its label, and HTML tags and emphasis
+// markers go. Code is set aside first so none of those rules can reach into it.
+const plainHeading = (text) => {
+  const code = [];
+  const masked = text.replace(CODE_SPAN, (_span, _ticks, inner) => {
+    code.push(/^ .*[^ ].* $|^ [^ ] $/.test(inner) ? inner.slice(1, -1) : inner);
+    return `\uE000${code.length - 1}\uE001`;
+  });
+  return masked
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/\[([^\]]*)\]\[[^\]]*\]/g, '$1')
-    .replace(/<[^>]+>/g, '')
-    .replace(/[*`]/g, '')
+    .replace(HTML_TAG, '')
+    .replace(/\*/g, '')
+    .replace(/\uE000(\d+)\uE001/g, (_mark, index) => code[Number(index)])
     .trim();
+};
 
 // GitHub's anchor for a heading: lower case, punctuation removed (letters, digits, `_` and `-` stay), each space
 // becomes a hyphen. Repeated headings get `-1`, `-2`... appended by `headingAnchors`.
