@@ -4,6 +4,15 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.13] - 2026-09-30
+
+Patch release: `truss graphify bootstrap` and `update` show why `graphify extract` failed instead of the failure of a second command, and that second command now runs only when Graphify does not know `extract`. Found by testing TRUSS with the real Graphify.
+
+### Upgrade notes
+- No exit code changes: a Graphify failure is still non-blocking when Graphify is optional and exits `1` when it is required.
+- The text of a failed `truss graphify bootstrap` or `update` changes: it names the command and shows the last 12 lines of Graphify's output.
+- Nothing else changes for an existing project.
+
 ### Fixed
 - **`truss graphify bootstrap` and `update` no longer hide why `graphify extract` failed, and no longer run a second command that can call a language model.** When `graphify extract . --code-only` failed, TRUSS ran `graphify . --no-viz` and showed only that second failure. With a corrupt `graphify-out/graph.json`, Graphify said exactly what to do (`Delete the file and run a full rebuild`) and TRUSS showed `no LLM API key found` instead. Worse, that second command has no `--code-only`, so with an API key in the environment it could have sent the project's documents to a language model. TRUSS now runs the older path-first command only when Graphify does not know `extract` (`unknown command`), and any other failure is shown as it is.
 - **A failed Graphify command is now printed with the command and its last 12 lines of output.** The success message already named the command; it also named `extract` when the path-first fallback was the one that ran. Graphify fails with a Python traceback, whose last line holds the message, so the long ones are cut and the omitted lines are counted.
