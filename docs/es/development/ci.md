@@ -14,6 +14,8 @@ El CI se ejecuta en:
 - cada pull request;
 - las ejecuciones manuales con `workflow_dispatch`.
 
+Un push nuevo a una pull request cancela la ejecución anterior de esa pull request, que ya no importa. Una ejecución en `main` nunca se cancela: cada commit tiene su propio grupo de concurrencia, así que cada commit que entra obtiene su resultado completo.
+
 ## Matriz de runtimes
 
 TRUSS declara Node.js `>=20`, así que el CI verifica la versión mayor mínima admitida y las líneas más nuevas (6 jobs):
