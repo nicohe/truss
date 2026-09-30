@@ -129,11 +129,20 @@ test('handoff: reports a corrupt state file instead of crashing', () => {
   assert.match(plain(result.stdout), /Invalid TRUSS state file/);
 });
 
-test('unknown command falls back to help', () => {
+test('names inherited from Object.prototype are not commands, and are reported as unknown', () => {
   const root = workspace({ config: validConfig });
-  const result = run(root, ['constructor']);
-  assert.equal(result.status, 0);
-  assert.match(result.stdout, /Usage: truss <command>/);
+  for (const args of [
+    ['constructor'],
+    ['toString'],
+    ['__proto__'],
+    ['help', 'constructor'],
+    ['constructor', '--help'],
+  ]) {
+    const result = run(root, args);
+    assert.equal(result.status, 2, args.join(' '));
+    assert.match(result.stdout, /Unknown command "(constructor|toString|__proto__)"/, args.join(' '));
+    assert.equal(result.stderr, '', `${args.join(' ')} crashed`);
+  }
 });
 
 test('verify trust: untrusted commands are refused non-interactively and nothing runs', () => {
