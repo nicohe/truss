@@ -40,7 +40,7 @@ La ejecución automática del coding agent y el archivado automático de OpenSpe
 
 ## CI
 
-La misma suite permanente se ejecuta en GitHub Actions sobre Ubuntu (Node.js 20, 22 y 24), macOS (20 y 24) y Windows (24), y un job exige el mínimo de cobertura. Consulta [`ci.md`](ci.md).
+La misma suite permanente se ejecuta en GitHub Actions sobre Ubuntu (Node.js 20 y 24) y macOS (20 y 24), y un job exige el mínimo de cobertura. Ubuntu con Node 22 y Windows con Node 24 están en pausa por ahora. Consulta [`ci.md`](ci.md).
 
 Equivalente en local:
 

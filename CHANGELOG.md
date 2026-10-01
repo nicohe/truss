@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Documentation
+- **The testing page and the v0.2 contract (EN/ES) say which CI cells run now.** They still listed Ubuntu / Node 22 and Windows / Node 24, which were paused in 0.2.17, and the contract said CI covered Windows.
+
 ## [0.2.18] - 2026-09-30
 
 Patch release, from testing TRUSS as a new user in four isolated projects. A command now fails on an option it does not have instead of ignoring it, and `truss handoff` writes the phase OpenSpec reports now.
