@@ -38,6 +38,15 @@ node .truss/bin/truss.mjs --version        # truss 0.2.17
 Did you mean "verify"? Run "truss help" to list the commands.
 ```
 
+An option the command does not have fails the same way, before anything is done. Without that, a typo such as `--componnet` would be ignored and the change created in the workspace instead of the component:
+
+```text
+× Unknown option "--componnet" for "truss new".
+Did you mean "--component"? Run "truss new --help" for its options.
+```
+
+An option that needs a value and has none (`--component` alone) is an error too, and so is the `--component=api` form: write the value after a space. Only long options (`--name`) are options, so a title or a change name that starts with a single dash is still a title or a name.
+
 ## Options
 
 | Option | On | Effect |
@@ -55,7 +64,7 @@ The same three values are used everywhere:
 |---|---|
 | `0` | The command did what it was asked. |
 | `1` | A check or precondition failed: verification failed, a command list was not approved, OpenSpec is missing or incompatible, or a required capability is unavailable. |
-| `2` | The configuration is invalid, or the command was used wrongly (for example, `new` without a title, or an unknown command, component or action). |
+| `2` | The configuration is invalid, or the command was used wrongly (for example, `new` without a title, or an unknown command, option, component or action). |
 
 Per command:
 

@@ -40,6 +40,15 @@ node .truss/bin/truss.mjs --version        # truss 0.2.17
 Did you mean "verify"? Run "truss help" to list the commands.
 ```
 
+Una opción que el comando no tiene falla igual, antes de hacer nada. Sin eso, una errata como `--componnet` se ignoraría y el cambio se crearía en el workspace en lugar de en el componente:
+
+```text
+× Unknown option "--componnet" for "truss new".
+Did you mean "--component"? Run "truss new --help" for its options.
+```
+
+Una opción que necesita un valor y no lo tiene (`--component` sola) también es un error, y lo es la forma `--component=api`: escribe el valor después de un espacio. Solo las opciones largas (`--nombre`) son opciones, así que un título o un nombre de cambio que empiece con un solo guion sigue siendo un título o un nombre.
+
 ## Opciones
 
 | Opción | En | Efecto |
@@ -57,7 +66,7 @@ Se usan los mismos tres valores en todos los comandos:
 |---|---|
 | `0` | El comando hizo lo que se le pidió. |
 | `1` | Falló una comprobación o una precondición: falló la verificación, no se aprobó una lista de comandos, OpenSpec falta o es incompatible, o una capacidad requerida no está disponible. |
-| `2` | La configuración es inválida o el comando se usó mal (por ejemplo, `new` sin título, o un comando, un componente o una acción desconocidos). |
+| `2` | La configuración es inválida o el comando se usó mal (por ejemplo, `new` sin título, o un comando, una opción, un componente o una acción desconocidos). |
 
 Por comando:
 

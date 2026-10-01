@@ -20,7 +20,7 @@
 
   With nothing open it stays the one line. The same holds when the active change was archived with `openspec archive`: it says so, lists what is still open (or points to `truss new`), and writes nothing, because a finished change has nothing to hand off.
 - It writes `.truss/handoffs/<change>.md` and prints the path.
-- It fills in what TRUSS knows (the change, the component, the phase, the OpenSpec path and the current Git branch, or `unknown`) and leaves the rest empty:
+- It fills in what TRUSS knows (the change, the component, the phase, the OpenSpec path and the current Git branch, or `unknown`) and leaves the rest empty. The phase is asked from OpenSpec when the note is written, so it is the one `truss status` would show now. If OpenSpec or the configuration cannot be used, `handoff` still writes the note, with the phase last recorded and a line saying so (`Phase: implementation (last recorded; OpenSpec could not be asked)`):
 
 ```markdown
 # Handoff: add-retry-policy

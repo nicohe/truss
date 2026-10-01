@@ -3,7 +3,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { createCommands } from '../../lib/commands.mjs';
-import { COMMAND_HELP, renderCommandHelp, renderHelp, suggestCommand, unknownCommandMessage } from '../../lib/help.mjs';
+import {
+  COMMAND_HELP,
+  optionProblem,
+  renderCommandHelp,
+  renderHelp,
+  suggestCommand,
+  unknownCommandMessage,
+} from '../../lib/help.mjs';
 import { createUi } from '../../lib/ui.mjs';
 import { trussRoot } from '../integration/helpers.mjs';
 
@@ -73,4 +80,32 @@ test('unknownCommandMessage names the input and the way out, with a suggestion o
     hint: 'Run "truss help" to list the commands.',
   });
   assert.equal(unknownCommandMessage('stat', ['status', 'skills']).hint.startsWith('Did you mean "status"?'), true);
+});
+
+test('optionProblem accepts the options a command has, with their value, and nothing else', () => {
+  assert.equal(optionProblem('new', ['Add retry']), null);
+  assert.equal(optionProblem('new', ['Add retry', '--component', 'api']), null);
+  assert.equal(optionProblem('new', ['--component', 'api', 'Add retry']), null);
+  assert.equal(optionProblem('verify', ['--trust']), null);
+  assert.equal(optionProblem('status', []), null);
+  assert.equal(optionProblem('use', ['-hotfix']), null, 'only long options are options');
+});
+
+test('optionProblem names an unknown option, the closest one the command has, and says when there are none', () => {
+  assert.deepEqual(optionProblem('new', ['x', '--componnet', 'api']), {
+    problem: 'Unknown option "--componnet" for "truss new".',
+    hint: 'Did you mean "--component"? Run "truss new --help" for its options.',
+  });
+  assert.match(optionProblem('verify', ['--trsut']).hint, /Did you mean "--trust"\?/);
+  assert.match(optionProblem('new', ['x', '--zzzzzzzz']).hint, /^Run "truss new --help"/, 'nothing close: no guess');
+  assert.deepEqual(optionProblem('status', ['--bogus']), {
+    problem: 'Unknown option "--bogus" for "truss status".',
+    hint: 'It takes no options. Run "truss status --help" for its options.',
+  });
+});
+
+test('optionProblem rejects an option without its value, and the --name=value form', () => {
+  for (const rest of [['x', '--component'], ['--component'], ['x', '--component', '--trust']])
+    assert.match(optionProblem('new', rest).problem, /The option "--component" needs a value\./, rest.join(' '));
+  assert.match(optionProblem('new', ['x', '--component=api']).problem, /after a space, not after "="/);
 });

@@ -37,6 +37,8 @@ Start with `truss doctor`. It changes nothing, and it reports the environment, t
 | `○ "x" is still open in OpenSpec (…) and is no longer the active change`, from `truss new` | you started a change while another was still open, and TRUSS follows one at a time | nothing was lost, and this is not an error. The line ends with the command that goes back: `truss use x`, see [`truss use`](../workflows/lifecycle-commands.md#truss-use) |
 | `Unknown component "x". No components are configured.`, or `Available: …` (exit code `2`) | that name is not declared under `components` | declare it in `.truss/config.yaml`, or leave out `--component` |
 | `Unknown command "stauts".` and `Did you mean "status"?` (exit code `2`) | a typo | see `truss help` |
+| `Unknown option "--componnet" for "truss new".` (exit code `2`), or `The option "--component" needs a value.` | a typo in an option, or an option without its value; nothing was done | fix it as the line says, or see `truss <command> --help` for the options |
+| `Phase: … (last recorded; OpenSpec could not be asked)` in a handoff note | `handoff` could not ask OpenSpec (it is missing, or the configuration is invalid), so it wrote the phase last recorded | run `truss status` to see the current phase, and fix what it reports |
 | `… already exists and was not changed.` from `truss handoff` | a note for this change already exists, and TRUSS never overwrites one | edit it, or delete it to start a new one (see [handoff](../reference/handoff.md)) |
 | the agent does not run `truss continue` or `truss verify` | TRUSS runs no agent; the agent follows what its guidance file says | check that the snippet is in the file your agent reads (see [use TRUSS with a coding agent](agents.md)) |
 
