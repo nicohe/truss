@@ -299,7 +299,7 @@ test('graphify status and doctor: a graph.json that is cut short or empty is dam
   const optional = workspace({ config: validConfig });
   const optionalBin = fakeGraphify(optional, { withIndex: true });
   fs.writeFileSync(graphFile(optional), '{ roto');
-  const soft = run(optional, ['doctor', '--trust'], { binDirs: [optionalBin, fakeOpenSpec(optional)] });
+  const soft = run(optional, ['doctor'], { binDirs: [optionalBin, fakeOpenSpec(optional)] });
   assert.match(out(soft), /○ Graphify\s+graph\.json damaged/);
   assert.equal(soft.status, 0);
 
@@ -1147,6 +1147,98 @@ test('handoff: with no active change and nothing open it stays one line, and a b
   assert.equal(r.status, 0, 'handoff has never needed a valid configuration');
   assert.match(out(r), /No active change\./);
   assert.doesNotMatch(out(r), /Open changes|invalid config/);
+});
+
+const withApi = () => {
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  fs.mkdirSync(path.join(root, 'apps', 'api', 'openspec'), { recursive: true });
+  return { root, bin };
+};
+
+test('handoff: the phase is the one OpenSpec reports now, not the last one recorded', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  const recorded = JSON.parse(fs.readFileSync(path.join(root, '.truss', 'state.json'), 'utf8')).phase;
+  assert.equal(recorded, 'spec', 'the state file still has the phase of the day the change was created');
+  const note = path.join(root, '.truss', 'handoffs', 'add-retry.md');
+  assert.equal(run(root, ['handoff'], { binDirs: [bin] }).status, 0);
+  assert.match(fs.readFileSync(note, 'utf8'), /- Phase: complete\n/);
+
+  fs.rmSync(note);
+  fs.writeFileSync(path.join(root, 'openspec', 'changes', 'add-retry', 'tasks.md'), '- [x] one\n- [ ] two\n');
+  assert.equal(run(root, ['handoff'], { binDirs: [bin] }).status, 0);
+  assert.match(fs.readFileSync(note, 'utf8'), /- Phase: implementation\n/, 'and it follows the tasks, as status does');
+});
+
+test('handoff: when OpenSpec or the configuration cannot be used, it writes the recorded phase and says so', () => {
+  const state = JSON.stringify({ change: 'add-retry', phase: 'spec', path: 'openspec/changes/add-retry' });
+  const noOpenSpec = workspace({ config: validConfig });
+  fs.writeFileSync(path.join(noOpenSpec, '.truss', 'state.json'), state);
+  assert.equal(run(noOpenSpec, ['handoff']).status, 0);
+  assert.match(
+    fs.readFileSync(path.join(noOpenSpec, '.truss', 'handoffs', 'add-retry.md'), 'utf8'),
+    /- Phase: spec \(last recorded; OpenSpec could not be asked\)\n/,
+  );
+
+  const invalid = workspace({ config: 'version: 1\nbogus: true\n' });
+  fs.writeFileSync(path.join(invalid, '.truss', 'state.json'), state);
+  const r = run(invalid, ['handoff'], { binDirs: [fakeOpenSpec(invalid)] });
+  assert.equal(r.status, 0, 'handoff has never needed a valid configuration');
+  assert.match(
+    fs.readFileSync(path.join(invalid, '.truss', 'handoffs', 'add-retry.md'), 'utf8'),
+    /- Phase: spec \(last recorded/,
+  );
+});
+
+test('an option the command does not have is an error, and nothing is done', () => {
+  const { root, bin } = withApi();
+  const typo = run(root, ['new', 'Add retry', '--componnet', 'api'], { binDirs: [bin] });
+  assert.equal(typo.status, 2);
+  assert.match(out(typo), /× Unknown option "--componnet" for "truss new"\.\nDid you mean "--component"\?/);
+  assert.equal(fs.existsSync(path.join(root, 'openspec', 'changes', 'add-retry')), false, 'no change was created');
+  assert.equal(fs.existsSync(path.join(root, '.truss', 'state.json')), false);
+
+  const none = run(root, ['status', '--bogus'], { binDirs: [bin] });
+  assert.equal(none.status, 2);
+  assert.match(out(none), /Unknown option "--bogus" for "truss status"\.\nIt takes no options\./);
+  assert.match(out(run(root, ['verify', '--trsut'], { binDirs: [bin] })), /Did you mean "--trust"\?/);
+  assert.equal(run(root, ['doctor', '--bogus'], { binDirs: [bin] }).status, 2);
+});
+
+test('an option that needs a value and has none is an error, and the title is never an option', () => {
+  const { root, bin } = withApi();
+  for (const args of [
+    ['new', 'Add retry', '--component'],
+    ['new', '--component'],
+    ['use', 'x', '--component'],
+  ]) {
+    const r = run(root, args, { binDirs: [bin] });
+    assert.equal(r.status, 2, args.join(' '));
+    assert.match(out(r), /The option "--component" needs a value\./);
+  }
+  const noTitle = run(root, ['new', '--component', 'api'], { binDirs: [bin] });
+  assert.equal(noTitle.status, 2);
+  assert.match(out(noTitle), /Usage: truss new "Change name"/);
+  assert.equal(
+    fs.existsSync(path.join(root, 'openspec', 'changes', 'component')),
+    false,
+    'no change called "component"',
+  );
+
+  const equals = run(root, ['new', 'Add retry', '--component=api'], { binDirs: [bin] });
+  assert.equal(equals.status, 2);
+  assert.match(out(equals), /after a space, not after "="/);
+});
+
+test('new: the option may come before the title, and --help still wins over everything', () => {
+  const { root, bin } = withApi();
+  const first = run(root, ['new', '--component', 'api', 'Add retry'], { binDirs: [bin] });
+  assert.equal(first.status, 0, out(first));
+  assert.match(out(first), /Change\s+add-retry\nComponent\s+api/);
+  assert.match(out(run(root, ['new', '--componnet', '--help'], { binDirs: [bin] })), /Usage: truss new/);
+  assert.equal(run(root, ['status', '--help'], { binDirs: [bin] }).status, 0);
 });
 
 test('handoff: an archived change with another still open says which, and how to pick it up', () => {

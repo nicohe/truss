@@ -22,7 +22,7 @@
 
   Sin nada abierto se queda en esa única línea. Lo mismo ocurre cuando el cambio activo se archivó con `openspec archive`: lo dice, lista lo que sigue abierto (o señala `truss new`) y no escribe nada, porque un cambio terminado no tiene nada que traspasar.
 - Escribe `.truss/handoffs/<change>.md` e imprime la ruta.
-- Rellena lo que TRUSS sabe (el cambio, el componente, la fase, la ruta de OpenSpec y la rama actual de Git, o `unknown`) y deja vacío el resto:
+- Rellena lo que TRUSS sabe (el cambio, el componente, la fase, la ruta de OpenSpec y la rama actual de Git, o `unknown`) y deja vacío el resto. La fase se pregunta a OpenSpec al escribir la nota, así que es la que mostraría `truss status` ahora. Si OpenSpec o la configuración no se pueden usar, `handoff` escribe la nota igualmente, con la última fase registrada y una línea que lo dice (`Phase: implementation (last recorded; OpenSpec could not be asked)`):
 
 ```markdown
 # Handoff: add-retry-policy
