@@ -21,7 +21,7 @@ Ambos gates vienen en `off` por defecto, así que un proyecto que no cambia nada
 Comprueban que cambiaron archivos de test y que las tareas están marcadas. **No** demuestran que los tests se escribieron primero (TDD), que cubren el cambio, que pasan ni que las tareas marcadas se hicieran de verdad. Eso sigue siendo cosa de `verification.commands` y de la disciplina del agente. Consulta el [modelo de enforcement](enforcement.md).
 
 ## Compatibilidad
-- Node.js: `>=20`; el CI cubre Node 20, 22 y 24 en Ubuntu, 20 y 24 en macOS, y 24 en Windows.
+- Node.js: `>=20`; el CI cubre Node 20 y 24 en Ubuntu y en macOS. Node 22 en Ubuntu y Node 24 en Windows están en pausa por ahora (consulta [CI](../development/ci.md)), así que no se prueba nada en Windows hasta que vuelvan.
 - Schema de configuración: `version: 1`. Las opciones nuevas son aditivas; las configuraciones existentes siguen siendo válidas.
 - OpenSpec: estable `>=1.0.0 <2.0.0`. Un test de contrato ejecuta el ciclo de vida contra el CLI real (`@fission-ai/openspec@1`) en el CI.
 - Graphify: opcional salvo que `integrations.graphify.required: true`.

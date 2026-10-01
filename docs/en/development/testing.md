@@ -38,7 +38,7 @@ Automatic coding-agent execution and automatic OpenSpec archive remain outside t
 
 ## CI
 
-The same permanent suite runs in GitHub Actions on Ubuntu (Node.js 20, 22 and 24), macOS (20 and 24) and Windows (24), and one job enforces the coverage floor. See [`ci.md`](ci.md).
+The same permanent suite runs in GitHub Actions on Ubuntu (Node.js 20 and 24) and macOS (20 and 24), and one job enforces the coverage floor. Ubuntu with Node 22 and Windows with Node 24 are paused for now. See [`ci.md`](ci.md).
 
 Local equivalent:
 

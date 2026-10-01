@@ -19,7 +19,7 @@ Both gates default to `off`, so a project that changes nothing keeps its previou
 They check that test files changed and that tasks are checked off. They do **not** prove tests were written first (TDD), that they cover the change, that they pass, or that checked-off tasks were really done. Those remain `verification.commands` and agent discipline. See the [enforcement model](enforcement.md).
 
 ## Compatibility
-- Node.js: `>=20`; CI covers Node 20, 22 and 24 on Ubuntu, 20 and 24 on macOS, and 24 on Windows.
+- Node.js: `>=20`; CI covers Node 20 and 24 on Ubuntu and on macOS. Node 22 on Ubuntu and Node 24 on Windows are paused for now (see [CI](../development/ci.md)), so nothing is tested on Windows until they come back.
 - Config schema: `version: 1`. The new options are additive; existing configs stay valid.
 - OpenSpec: stable `>=1.0.0 <2.0.0`. A contract test runs the lifecycle against the real CLI (`@fission-ai/openspec@1`) in CI.
 - Graphify: optional unless `integrations.graphify.required: true`.
