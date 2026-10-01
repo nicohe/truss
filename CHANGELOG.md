@@ -4,6 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.18] - 2026-09-30
+
+Patch release, from testing TRUSS as a new user in four isolated projects. A command now fails on an option it does not have instead of ignoring it, and `truss handoff` writes the phase OpenSpec reports now.
+
+### Upgrade notes
+- **A command that is given an option it does not have now exits `2`** with `× Unknown option "--x" for "truss <command>".`, and does nothing. Before, the option was ignored. A script that passed one (`truss doctor --trust`, for example) has to drop it. The options are the ones `truss <command> --help` lists: `--component <name>` for `new` and `use`, `--trust` for `verify`.
+- `--component` without a value, and `--component=api`, are errors too: write `--component api`.
+- `truss handoff` asks OpenSpec for the phase when it writes the note. Without OpenSpec or with an invalid configuration it still writes the note, with the phase last recorded.
+- Nothing else changes for an existing project.
+
 ### Fixed
 - **A command no longer ignores an option it does not have.** `truss new "Add retry" --componnet api` created the change in the workspace without a word, because the typo was dropped; `truss new --component` created a change called `component`, taking the option for the title; and `truss verify --bogus` ran the verification. Now the options a command accepts are the ones its help lists. Anything else fails before anything is done, with exit code `2`, `× Unknown option "--componnet" for "truss new".` and the closest option the command has. An option that needs a value and has none (`--component` alone), or is written `--component=api`, is an error as well. The title of `new` is the first argument that is not an option or its value, so `truss new --component api "Add retry"` works. Only long options count: a title or a name that starts with a single dash is unchanged. `--help` still wins over everything. A script that passed an option the command never had (`truss doctor --trust`, say) now fails with exit code `2`.
 - **`truss handoff` writes the phase OpenSpec reports now.** It copied the phase from `.truss/state.json`, which only `new`, `use`, `status` and `continue` refresh, so a note could say `implementation` for a change that was already `complete`, or the reverse, and mislead whoever picked it up. It now asks OpenSpec when it writes the note. When OpenSpec or the configuration cannot be used (`handoff` has never needed either), it still writes the note, with the phase last recorded and `(last recorded; OpenSpec could not be asked)` after it.
