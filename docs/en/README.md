@@ -33,6 +33,7 @@ How a change moves through TRUSS.
 Step-by-step answers to a task.
 
 - [Use TRUSS with a coding agent](guides/agents.md): the loop, where each agent reads its guidance, and approving verification once.
+- [Use TRUSS in a shared repository](guides/shared-repo.md): keeping TRUSS and your agent guidance local with `.git/info/exclude`, and what Prettier does to `.truss/`.
 - [Use TRUSS in CI](guides/ci.md): a pinned install, the configuration, approval and an example workflow.
 - [Update or remove TRUSS](guides/update-and-remove.md): pinning a release, and what not to delete.
 - [Troubleshooting](guides/troubleshooting.md): what TRUSS prints when something is wrong, what it means and what to do.
