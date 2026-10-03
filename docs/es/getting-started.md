@@ -41,6 +41,8 @@ function truss { node .truss/bin/truss.mjs @args }            # PowerShell
 
 Los ejemplos de abajo usan la forma larga. Consulta la [estructura del proyecto](reference/project-structure.md) para saber qué vive dónde.
 
+Si el repositorio es compartido y no quieres cambiar su `.gitignore`, ignora `.truss/` con `.git/info/exclude`; consulta [usar TRUSS en un repositorio compartido](guides/shared-repo.md).
+
 Conviene saber pronto una cosa: Git ignora `.truss/`, así que tu `.truss/config.yaml` es **local a esta copia del repositorio**. Si trabajan varias personas o una máquina de CI, cada una necesita su propia copia de la configuración; consulta el [ADR 0001](development/decisions/0001-local-project-configuration.md). Lo mismo ocurre con el registro del cambio activo: un clon nuevo no tiene ninguno, así que `truss status` lista los cambios abiertos en OpenSpec y `truss use <change>` retoma uno.
 
 ## 3. Inicializa y comprueba la instalación

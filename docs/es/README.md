@@ -33,6 +33,7 @@ Cómo avanza un cambio por TRUSS.
 Respuestas paso a paso a una tarea.
 
 - [Usar TRUSS con un coding agent](guides/agents.md): el bucle, dónde lee cada agente su guía y aprobar la verificación una vez.
+- [Usar TRUSS en un repositorio compartido](guides/shared-repo.md): mantener TRUSS y tu guía para el agente en local con `.git/info/exclude`, y qué hace Prettier con `.truss/`.
 - [Usar TRUSS en CI](guides/ci.md): una instalación fijada, la configuración, la aprobación y un workflow de ejemplo.
 - [Actualizar o desinstalar TRUSS](guides/update-and-remove.md): fijar una release y qué no borrar.
 - [Solución de problemas](guides/troubleshooting.md): qué imprime TRUSS cuando algo va mal, qué significa y qué hacer.

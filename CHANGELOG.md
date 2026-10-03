@@ -5,6 +5,7 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Documentation
+- **A guide to using TRUSS in a shared repository (EN/ES).** It covers keeping `.truss/` and your agent guidance local with `.git/info/exclude`, the personal guidance file of Claude Code, Devin and Codex (and how Claude Code stops reading a shared `AGENTS.md` once a `CLAUDE.local.md` exists), what Prettier does to `.truss/`, and what `git clean` removes. It is linked from the documentation index, the getting-started guide and the agent guide.
 - **The testing page and the v0.2 contract (EN/ES) say which CI cells run now.** They still listed Ubuntu / Node 22 and Windows / Node 24, which were paused in 0.2.17, and the contract said CI covered Windows.
 
 ## [0.2.18] - 2026-09-30

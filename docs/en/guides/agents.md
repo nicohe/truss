@@ -25,6 +25,8 @@ Each phase can be a different agent or model; see [who does what](../concepts/wh
 | Claude Code | `CLAUDE.md`. Recent versions read `AGENTS.md` only when there is no `CLAUDE.md`; if you have one, add the line `@AGENTS.md` to it to import the file. See the [Claude Code memory docs](https://code.claude.com/docs/en/memory). |
 | Any other | its documentation says which file it reads; the snippet works in any of them |
 
+To keep the guidance to yourself in a repository your team shares, use a personal file (`CLAUDE.local.md`, `AGENTS.local.md`, `AGENTS.override.md`). Each agent treats it differently; see [use TRUSS in a shared repository](shared-repo.md#guidance-for-your-agent-that-stays-with-you).
+
 ## Approve the verification commands yourself, once
 
 `truss verify` asks for approval of a command list it has not seen. Do it in your own terminal the first time:
