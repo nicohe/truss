@@ -4,6 +4,10 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.19] - 2026-10-04
+
+Patch release of warnings and wording, from using TRUSS on a TypeScript project in a shared repository. `truss doctor` warns about an empty `AGENTS.md`, `truss init` recognizes `.git/info/exclude`, and `continue` and `status` read more clearly. Six new guides and pages cover using TRUSS in a shared repository, choosing where it lives, a TypeScript, pnpm and Vitest example, skills and the review flow, Graphify, and a first change with prompts.
+
 ### Upgrade notes
 - **Nothing that ran before changes.** Exit codes, `verify` and the files TRUSS writes are the same. The additions are warnings and wording.
 - `truss status` prints `Needed to implement` where it printed `Tasks required`. A script that reads that line has to use the new label.
