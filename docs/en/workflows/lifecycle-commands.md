@@ -95,12 +95,12 @@ Tasks           1/2 complete
   ● specs              done
   ● design             done
   ● tasks              done
-Tasks required   tasks
+Needed to implement   tasks
 
 Next: truss continue
 ```
 
-The markers next to each artifact are `●` done, `◐` ready to be written and `○` blocked until another artifact exists. `Tasks required` names the artifact OpenSpec needs before a task can be worked on. While planning is unfinished the `Tasks` line is absent, because there are no tasks yet.
+The markers next to each artifact are `●` done, `◐` ready to be written and `○` blocked until another artifact exists. `Needed to implement` names the artifact OpenSpec needs before a task can be worked on (releases before 0.2.19 called this line `Tasks required`). While planning is unfinished the `Tasks` line is absent, because there are no tasks yet.
 
 With no active change it says so and points at the next step:
 
@@ -171,6 +171,8 @@ Mode            agent-driven (TRUSS v0.2)
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
 ```
+
+The instruction for the artifacts after the proposal adds a sentence about traceability: *Keep every requirement traceable to a decision in the proposal, and ask before adding behavior it does not cover.* While implementing, the first incomplete task is shown by its title, cut to about 80 characters with `…` and followed by `; the full text is in tasks.md` when it was cut, so a long task line does not flood the output.
 
 For a change whose tasks are all checked off:
 

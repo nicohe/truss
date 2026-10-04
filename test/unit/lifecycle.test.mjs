@@ -8,6 +8,7 @@ import {
   openChanges,
   pickUpCommand,
   readLifecycleState,
+  shortTaskTitle,
   slugifyChange,
   useCommand,
   writeLifecycleState,
@@ -138,4 +139,17 @@ test('the open-change wording: the command to run, and how a change is named', (
     ]),
     'truss use <change>',
   );
+});
+
+test('shortTaskTitle keeps a short task and cuts a long one to a single line with an ellipsis', () => {
+  assert.deepEqual(shortTaskTitle('1.2 Add tests'), { text: '1.2 Add tests', cut: false });
+  assert.deepEqual(shortTaskTitle('a\n  b\tc'), { text: 'a b c', cut: false });
+  assert.deepEqual(shortTaskTitle(undefined), { text: '', cut: false });
+  const exact = 'x'.repeat(80);
+  assert.equal(shortTaskTitle(exact).cut, false);
+  const long = shortTaskTitle(`${'word '.repeat(40)}end`);
+  assert.equal(long.cut, true);
+  assert.ok(long.text.length <= 80, long.text);
+  assert.ok(long.text.endsWith('…'));
+  assert.ok(!long.text.endsWith(' …'), 'no space before the ellipsis');
 });

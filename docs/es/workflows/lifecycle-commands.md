@@ -97,12 +97,12 @@ Tasks           1/2 complete
   ● specs              done
   ● design             done
   ● tasks              done
-Tasks required   tasks
+Needed to implement   tasks
 
 Next: truss continue
 ```
 
-Los marcadores junto a cada artefacto son `●` hecho, `◐` listo para escribirse y `○` bloqueado hasta que exista otro artefacto. `Tasks required` nombra el artefacto que OpenSpec necesita antes de poder trabajar en una tarea. Mientras la planificación está sin terminar, la línea `Tasks` no aparece, porque aún no hay tareas.
+Los marcadores junto a cada artefacto son `●` hecho, `◐` listo para escribirse y `○` bloqueado hasta que exista otro artefacto. `Needed to implement` nombra el artefacto que OpenSpec necesita antes de poder trabajar en una tarea (las releases anteriores a la 0.2.19 llamaban a esta línea `Tasks required`). Mientras la planificación está sin terminar, la línea `Tasks` no aparece, porque aún no hay tareas.
 
 Sin cambio activo lo dice y señala el siguiente paso:
 
@@ -173,6 +173,8 @@ Mode            agent-driven (TRUSS v0.2)
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
 ```
+
+La instrucción para los artefactos posteriores a la proposal añade una frase de trazabilidad: *Keep every requirement traceable to a decision in the proposal, and ask before adding behavior it does not cover.* Durante la implementación, la primera tarea incompleta se muestra por su título, cortado en unos 80 caracteres con `…` y seguido de `; the full text is in tasks.md` cuando se cortó, para que una línea de tarea larga no inunde la salida.
 
 Para un cambio con todas las tareas marcadas:
 

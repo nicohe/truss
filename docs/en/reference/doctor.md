@@ -50,6 +50,7 @@ A check marked *required* makes `doctor` fail when it does not pass. The others 
 | Core | .truss ignore | no | Git ignores `.truss/` (warns otherwise) |
 | Core | Config | yes | `.truss/config.yaml` exists and is valid; on failure the errors are listed |
 | Project | Components | yes | every configured component resolves (skipped if the config is invalid) |
+| Project | AGENTS.md, or AGENTS.md (component) | no | shown only when the effective guidance file exists and is empty: it is the component's own file, or the workspace one when the component has none. A component's empty file replaces the workspace one, so the agent gets no guidance. Add some, or remove the file; the `writing-for-agents` skill says what to put in it |
 | OpenSpec | CLI | yes | an OpenSpec CLI is found |
 | OpenSpec | Compatibility | yes | its version is within `>=1.0.0 <2.0.0` |
 | OpenSpec | Project | yes | the directory has an initialized `openspec/` project |
@@ -57,6 +58,7 @@ A check marked *required* makes `doctor` fail when it does not pass. The others 
 | Capabilities | Native search fallback | no | always; informational |
 | Capabilities | Git worktrees | no | Git is available |
 | Verification | Commands | no | `verification.commands` is not empty |
+| Verification | Package manager | no | shown only on a mismatch: a command starts with `npm`, and the project declares another manager in `package.json` (`packageManager`) or has another lockfile (`pnpm-lock.yaml`, `yarn.lock`, `bun.lock`). TRUSS never changes the list; it tells you to list that manager's commands |
 | Verification | Tests required | no | always; shows the mode of [`verification.tests_required`](verify.md#tests-required-gate) |
 | Verification | Tasks complete | no | always; shows the mode of [`verification.tasks_complete`](verify.md#tasks-complete-gate) |
 | Verification | Trust | no | the current command list is [approved](verify.md#trust) for this project (shown only when commands are configured) |

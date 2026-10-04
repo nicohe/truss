@@ -52,6 +52,7 @@ Un check marcado como *requerido* hace que `doctor` falle cuando no pasa. Los de
 | Core | .truss ignore | no | Git ignora `.truss/` (si no, avisa) |
 | Core | Config | sí | `.truss/config.yaml` existe y es válido; si falla, lista los errores |
 | Project | Components | sí | todos los componentes configurados se resuelven (se omite si la configuración es inválida) |
+| Project | AGENTS.md, o AGENTS.md (componente) | no | se muestra solo cuando el archivo de guía efectivo existe y está vacío: es el archivo propio del componente, o el del workspace cuando el componente no tiene. El archivo vacío de un componente reemplaza al del workspace, así que el agente no recibe guía. Añade alguna, o quita el archivo; la skill `writing-for-agents` dice qué poner en él |
 | OpenSpec | CLI | sí | se encuentra un CLI de OpenSpec |
 | OpenSpec | Compatibility | sí | su versión está dentro de `>=1.0.0 <2.0.0` |
 | OpenSpec | Project | sí | el directorio tiene un proyecto `openspec/` inicializado |
@@ -59,6 +60,7 @@ Un check marcado como *requerido* hace que `doctor` falle cuando no pasa. Los de
 | Capabilities | Native search fallback | no | siempre; es informativo |
 | Capabilities | Git worktrees | no | Git está disponible |
 | Verification | Commands | no | `verification.commands` no está vacío |
+| Verification | Package manager | no | se muestra solo si hay un desajuste: un comando empieza por `npm`, y el proyecto declara otro gestor en `package.json` (`packageManager`) o tiene otro lockfile (`pnpm-lock.yaml`, `yarn.lock`, `bun.lock`). TRUSS nunca cambia la lista; te dice que pongas los comandos de ese gestor |
 | Verification | Tests required | no | siempre; muestra el modo de [`verification.tests_required`](verify.md#gate-tests-required) |
 | Verification | Tasks complete | no | siempre; muestra el modo de [`verification.tasks_complete`](verify.md#gate-tasks-complete) |
 | Verification | Trust | no | la lista de comandos actual está [aprobada](verify.md#aprobación) para este proyecto (solo se muestra si hay comandos configurados) |

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { diagnoseProject } from '../../lib/doctor.mjs';
@@ -120,6 +121,81 @@ test('doctor reports an invalid component definition without crashing', () => {
   try {
     const r = diagnose(root, fakeOpenSpec(root));
     assert.equal(check(r, 'Project', 'Components').status, 'fail');
+  } finally {
+    cleanup(root);
+  }
+});
+
+test('doctor warns about an empty AGENTS.md, and says when it replaces the workspace one', () => {
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  try {
+    fs.mkdirSync(path.join(root, 'apps', 'api'), { recursive: true });
+    assert.equal(
+      check(diagnose(root, fakeOpenSpec(root)), 'Project', 'AGENTS.md (api)'),
+      undefined,
+      'no file, no warning',
+    );
+
+    fs.writeFileSync(path.join(root, 'AGENTS.md'), '# Guide\n');
+    fs.writeFileSync(path.join(root, 'apps', 'api', 'AGENTS.md'), '  \n');
+    const r = diagnose(root, fakeOpenSpec(root));
+    const found = check(r, 'Project', 'AGENTS.md (api)');
+    assert.equal(found.status, 'warn');
+    assert.equal(found.required, false);
+    assert.match(found.detail, /apps[\\/]api[\\/]AGENTS\.md is empty and replaces the workspace one/);
+    assert.match(found.detail, /writing-for-agents/);
+    assert.equal(r.healthy, true);
+    assert.equal(r.exitCode, 0);
+
+    fs.writeFileSync(path.join(root, 'apps', 'api', 'AGENTS.md'), '# API guide\n');
+    assert.equal(check(diagnose(root, fakeOpenSpec(root)), 'Project', 'AGENTS.md (api)'), undefined);
+  } finally {
+    cleanup(root);
+  }
+});
+
+test('doctor warns about an empty workspace AGENTS.md without saying it replaces anything', () => {
+  const root = workspace({ config: validConfig });
+  try {
+    fs.writeFileSync(path.join(root, 'AGENTS.md'), '');
+    const found = check(diagnose(root, fakeOpenSpec(root)), 'Project', 'AGENTS.md');
+    assert.equal(found.status, 'warn');
+    assert.match(found.detail, /^AGENTS\.md is empty; add guidance/);
+  } finally {
+    cleanup(root);
+  }
+});
+
+test('doctor warns when the commands start with npm and the project uses another package manager', () => {
+  const npmConfig = validConfig.replace('node -e "process.exit(0)"', 'npm test');
+  const root = workspace({ config: npmConfig });
+  try {
+    const mismatch = () => check(diagnose(root, fakeOpenSpec(root)), 'Verification', 'Package manager');
+    assert.equal(mismatch(), undefined, 'nothing says the project uses another manager');
+
+    fs.writeFileSync(path.join(root, 'package.json'), '{"packageManager":"pnpm@9.1.0"}');
+    assert.equal(mismatch().status, 'warn');
+    assert.match(mismatch().detail, /uses pnpm \(packageManager: pnpm@9\.1\.0\); list pnpm commands instead/);
+    assert.equal(diagnose(root, fakeOpenSpec(root)).healthy, true);
+
+    fs.writeFileSync(path.join(root, 'package.json'), '{"packageManager":"npm@10.0.0"}');
+    assert.equal(mismatch(), undefined, 'npm declared, npm commands');
+
+    fs.writeFileSync(path.join(root, 'package.json'), '{not json');
+    fs.writeFileSync(path.join(root, 'yarn.lock'), '');
+    assert.match(mismatch().detail, /uses yarn \(yarn\.lock\)/);
+  } finally {
+    cleanup(root);
+  }
+});
+
+test('doctor does not mention the package manager when no command starts with npm', () => {
+  const root = workspace({ config: validConfig });
+  try {
+    fs.writeFileSync(path.join(root, 'package.json'), '{"packageManager":"pnpm@9.1.0"}');
+    assert.equal(check(diagnose(root, fakeOpenSpec(root)), 'Verification', 'Package manager'), undefined);
   } finally {
     cleanup(root);
   }

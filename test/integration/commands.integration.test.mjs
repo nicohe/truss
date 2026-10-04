@@ -498,6 +498,19 @@ test('init: warns when .truss/ is not git-ignored', () => {
   assert.match(out(r), /no \.gitignore detected/);
 });
 
+test('init: says when .truss/ is ignored through a private exclude file, and stays quiet for .gitignore', () => {
+  const root = workspace({ config: validConfig, ignore: false });
+  const bin = fakeOpenSpec(root);
+  fs.appendFileSync(path.join(root, '.git', 'info', 'exclude'), '.truss/\n');
+  const viaExclude = run(root, ['init'], { binDirs: [bin] });
+  assert.match(out(viaExclude), /Git ignore\s+● \.truss\/ ignored \(via \.git\/info\/exclude\)/);
+  assert.doesNotMatch(out(viaExclude), /no \.gitignore detected|is not ignored/);
+
+  const plain = workspace({ config: validConfig });
+  const viaGitignore = run(plain, ['init'], { binDirs: [fakeOpenSpec(plain)] });
+  assert.match(out(viaGitignore), /Git ignore\s+● \.truss\/ ignored\n/);
+});
+
 test('openspec: reports a missing CLI with exit 1 and a healthy one with exit 0', () => {
   const root = workspace({ config: validConfig });
   const none = run(root, ['openspec'], { env: { PATH: fakeBin(root), TRUSS_OPENSPEC_PATH: '' } });
@@ -659,6 +672,21 @@ function tasksWorkspace(mode, tasks) {
   fs.writeFileSync(path.join(change, 'tasks.md'), tasks);
   return { root, bin };
 }
+
+test('continue shows a long task by a short title and points to tasks.md; status labels what is needed', () => {
+  const longTask = `${'Implement the retry policy for every outgoing request and record each attempt. '.repeat(3)}Done.`;
+  const { root, bin } = tasksWorkspace('off', `- [ ] ${longTask}\n- [ ] short one\n`);
+  const next = out(run(root, ['continue'], { binDirs: [bin] }));
+  const title = next.match(/first incomplete task \("([^"]+)"; the full text is in tasks\.md\)/);
+  assert.ok(title, next);
+  assert.ok(title[1].length <= 80, title[1]);
+  assert.ok(title[1].endsWith('…'));
+  assert.ok(!next.includes('Done.'), 'the full text stays in tasks.md');
+
+  const status = out(run(root, ['status'], { binDirs: [bin] }));
+  assert.match(status, /Needed to implement\s+tasks/);
+  assert.doesNotMatch(status, /Tasks required/);
+});
 
 test('tasks_complete block: open tasks fail verify, list what is left and run no command', () => {
   const { root, bin } = tasksWorkspace('block', '- [x] one\n- [ ] add the tests\n- [ ] update the docs\n');

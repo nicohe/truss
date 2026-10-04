@@ -149,3 +149,22 @@ test('init reports whether .truss/ is git-ignored', () => {
     cleanup(root);
   }
 });
+
+test('init asks Git where .truss/ is ignored, and names a private exclude file', () => {
+  const root = workspace({ config: validConfig, ignore: false });
+  try {
+    fs.appendFileSync(path.join(root, '.git', 'info', 'exclude'), '.truss/\n');
+    const bin = fakeOpenSpec(root);
+    const viaExclude = withOpenSpec(bin, () => initializeProject(root)).gitignore;
+    assert.equal(viaExclude.state, 'ignored');
+    assert.equal(viaExclude.source, '.git/info/exclude');
+
+    fs.writeFileSync(path.join(root, '.git', 'info', 'exclude'), '');
+    fs.writeFileSync(path.join(root, '.gitignore'), '.truss/\n');
+    const viaGitignore = withOpenSpec(bin, () => initializeProject(root)).gitignore;
+    assert.equal(viaGitignore.state, 'ignored');
+    assert.equal(viaGitignore.source, null, 'the usual place needs no mention');
+  } finally {
+    cleanup(root);
+  }
+});
