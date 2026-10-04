@@ -176,6 +176,8 @@ Context to load
 
 ### Qué hace tu agente
 
+Para los prompts que darle en cada paso, consulta [tu primer cambio, de punta a punta](guides/first-change.md).
+
 `continue` dice *qué* hacer; tu agente necesita saber *cómo*. TRUSS no instala los comandos de OpenSpec en tu agente (`init` ejecuta OpenSpec con `--tools none`), así que el agente se lo pregunta directamente a OpenSpec:
 
 ```bash

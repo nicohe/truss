@@ -47,6 +47,10 @@ Un resultado conciso con estos campos, comunes a las dos skills: el objetivo; qu
 
 La forma es la misma con cualquiera de las dos skills, así que la sesión que escribe la spec puede partir de ella incluso cuando otra sesión hizo las preguntas (consulta [quién hace qué](../concepts/who-does-what.md)).
 
+## Pedir una hoja de ruta
+
+Cuando el objetivo es «qué tenemos que construir para X», una ronda puede acabar en varios cambios, no en uno. Un Grill no produce ese desglose por sí solo; pídelo al final: *Now break the work into candidate changes: for each, a one-line goal, what it depends on and whether it can go first. Order them. Do not create them yet.* Después empieza el primero con `truss new`. Hay un conjunto completo de prompts en [tu primer cambio, de punta a punta](../guides/first-change.md).
+
 ## Dónde están las skills y el workflow
 
 Viven en la instalación de TRUSS: `skills/grill-me.SKILL.md`, `skills/grill-with-docs.SKILL.md`, `skills/prototype.SKILL.md` y `workflows/grill.md`. En la disposición del inicio rápido están bajo `.truss/.truss/`, y `truss skills` lista las skills. Consulta la [visión general de las skills](../skills/overview.md).

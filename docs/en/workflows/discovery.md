@@ -45,6 +45,10 @@ A concise result with these fields, from both skills: the goal; what is in and o
 
 The shape is the same whichever skill was used, so the session that writes the spec can start from it even when a different session did the asking (see [who does what](../concepts/who-does-what.md)).
 
+## Ask for a roadmap
+
+When the goal is "what do we need to build for X", one round can end in several changes, not one. A Grill does not produce that breakdown by itself; ask for it at the end: *Now break the work into candidate changes: for each, a one-line goal, what it depends on and whether it can go first. Order them. Do not create them yet.* Then start the first with `truss new`. A full set of prompts is in [your first change, end to end](../guides/first-change.md).
+
 ## Where the skills and the workflow are
 
 They live in the TRUSS installation: `skills/grill-me.SKILL.md`, `skills/grill-with-docs.SKILL.md`, `skills/prototype.SKILL.md` and `workflows/grill.md`. In the quick start layout they are under `.truss/.truss/`, and `truss skills` lists the skills. See the [skills overview](../skills/overview.md).
