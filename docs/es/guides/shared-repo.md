@@ -89,6 +89,8 @@ El agente también puede aprender el flujo desde tu prompt, sin archivo: *Implem
 | Añadir `.truss/` a `.prettierignore` | Una línea visible en un archivo compartido |
 | Añadir el patrón `.*/` a `.prettierignore` | No nombra a TRUSS, pero deja de revisar todas las carpetas que empiezan por punto, como `.github/` |
 
+Los ejecutores de pruebas también recorren el árbol: un `vitest` sin configuración encuentra los archivos de prueba dentro de `.truss/` y ejecuta las pruebas de TRUSS. Limita el ejecutor a tu código; consulta [un proyecto TypeScript con pnpm y Vitest](../configuration/examples.md#un-proyecto-typescript-con-pnpm-y-vitest).
+
 Para la lista de verificación, prefiere la primera: `pnpm exec prettier --check src` en `verification.commands`, y no ejecutes un script `format` que apunte a `.` en la raíz de un proyecto que contenga `.truss/`.
 
 ## Antes de limpiar el repositorio

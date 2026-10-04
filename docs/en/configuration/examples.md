@@ -33,6 +33,38 @@ verification:
 ```
 Because you edited the list, the first `truss verify` asks you to approve it (see [`truss verify`](../reference/verify.md#trust)).
 
+## A TypeScript project with pnpm and Vitest
+The default list calls `npm`. In a project that uses pnpm, list its scripts instead:
+```yaml
+verification:
+  commands:
+    - pnpm typecheck
+    - pnpm lint
+    - pnpm exec prettier --check src
+    - pnpm test run
+    - pnpm build
+```
+This list ran green with pnpm 12, Vitest 5, ESLint 10 and Prettier 3. Four things in it are deliberate:
+
+- **`pnpm test run`, not `pnpm test`.** With `"test": "vitest"`, Vitest starts in watch mode when it is attached to a terminal, it is not in CI and it does not detect an agent. TRUSS gives each command your terminal, so `truss verify` run by hand prints `Waiting for file changes...` and never finishes. The extra `run` makes it a single run. Inside an agent session Vitest sees the agent and runs once on its own, so the problem shows up only when you run `verify` yourself. Changing the script to `"test": "vitest run"` has the same effect.
+- **Keep Vitest inside your sources.** `.truss/` is a full clone with its own test files, and a bare `vitest` finds them (22 in the test, next to the project's one) and runs TRUSS's tests as if they were yours. Limit it in `vitest.config.ts`:
+  ```ts
+  import { defineConfig } from 'vitest/config';
+
+  export default defineConfig({
+    test: { include: ['src/**/*.test.ts'] },
+  });
+  ```
+- **`prettier --check src`, not `.`.** Prettier also scans `.truss/`; see [use TRUSS in a shared repository](../guides/shared-repo.md#formatters-and-linters-that-walk-the-whole-tree).
+- **Allow the dependency builds that need it.** pnpm 12 does not run a dependency's install script until you allow it. The first script you run installs the dependencies and, for a package such as `esbuild`, stops with `ERR_PNPM_IGNORED_BUILDS`; the next run works, but the first `verify` fails. Decide it once, in `pnpm-workspace.yaml`:
+  ```yaml
+  allowBuilds:
+    esbuild: true
+  ```
+  (or run `pnpm approve-builds`). The same message appears in [troubleshooting](../guides/troubleshooting.md#verification).
+
+To keep OpenSpec's own check in the evidence, add it to the list: `openspec validate --all --strict --no-interactive` validates every change and spec, and exits `1` if one is malformed. It also fails for a change that has no spec deltas yet, so add it once the specs exist, not while a change is still a proposal. Without it, `latest.json` records only the commands you list, and a reviewer cannot see that the change was validated.
+
 ## Strict spec-as-source
 ```yaml
 spec:

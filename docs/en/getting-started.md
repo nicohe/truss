@@ -37,6 +37,8 @@ alias truss='node .truss/bin/truss.mjs'                       # bash / zsh
 function truss { node .truss/bin/truss.mjs @args }            # PowerShell
 ```
 
+An alias exists only in the terminal where you defined it. Put it in your shell's startup file to keep it, and note that agents and scripts do not see it: they run `node .truss/bin/truss.mjs`.
+
 The examples below use the long form. See [project structure](reference/project-structure.md) for what lives where.
 
 If the repository is shared and you do not want to change its `.gitignore`, ignore `.truss/` through `.git/info/exclude` instead; see [use TRUSS in a shared repository](guides/shared-repo.md).
