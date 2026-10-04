@@ -24,6 +24,8 @@ Para cada componente, TRUSS informa de:
 
 Una ruta configurada debe existir, ser un directorio, quedar dentro de la raíz del proyecto y no resolverse a la misma ruta real que otro componente. Una resolución inválida devuelve el código de salida 2. `truss doctor` también comprueba la resolución de componentes.
 
+Para saber qué disposición elegir y las reglas con las que es fácil tropezar (un `AGENTS.md` vacío, una carpeta `openspec/` hecha a mano), consulta [elegir dónde vive TRUSS](../guides/where-to-put-truss.md).
+
 Cuando `components: {}`, el repositorio se resuelve como un único componente `workspace`.
 
 `truss new --component <name>` usa el identificador del componente, no una ruta cruda del sistema de archivos. El cambio nuevo se crea bajo la raíz de OpenSpec resuelta.

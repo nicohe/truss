@@ -244,7 +244,7 @@ node .truss/bin/truss.mjs components            # check they resolve
 node .truss/bin/truss.mjs new "Add retry policy" --component worker
 ```
 
-Las rutas de los componentes deben existir y quedar dentro del proyecto. Consulta la [resolución de componentes](reference/components.md).
+Las rutas de los componentes deben existir y quedar dentro del proyecto. Consulta la [resolución de componentes](reference/components.md) y [elegir dónde vive TRUSS](guides/where-to-put-truss.md) para decidir entre componentes y un TRUSS por carpeta de proyecto.
 
 ## Si algo sale mal
 
