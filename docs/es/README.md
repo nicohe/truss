@@ -33,6 +33,7 @@ Cómo avanza un cambio por TRUSS.
 Respuestas paso a paso a una tarea.
 
 - [Usar TRUSS con un coding agent](guides/agents.md): el bucle, dónde lee cada agente su guía y aprobar la verificación una vez.
+- [Tu primer cambio, de punta a punta](guides/first-change.md): los prompts que darle a tu agente en cada paso y qué hace OpenSpec con ellos.
 - [Usar TRUSS en un repositorio compartido](guides/shared-repo.md): mantener TRUSS y tu guía para el agente en local con `.git/info/exclude`, y qué hace Prettier con `.truss/`.
 - [Elegir dónde vive TRUSS](guides/where-to-put-truss.md): un TRUSS con componentes, uno por carpeta de proyecto o uno por módulo, y qué hace cada uno.
 - [Usar TRUSS en CI](guides/ci.md): una instalación fijada, la configuración, la aprobación y un workflow de ejemplo.
