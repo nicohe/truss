@@ -191,6 +191,19 @@ Implementation tasks for add-retry-policy are complete. Run truss verify, then p
 
 Mientras hay tareas abiertas, la salida incluye además una sección **Context to load** con las rutas reales del workflow, las policies, el cambio y el `.truss/config.yaml` del proyecto, como muestra la guía de inicio. Lista el `AGENTS.md` del proyecto (el del componente, o si no el del espacio de trabajo) solo cuando existe: `init` no lo crea. Con Graphify activado, la salida termina con una sección **Code graph**: una frase que le dice al agente que use el grafo cuando está al día y qué ejecutar cuando está obsoleto, falta o está dañado (consulta el [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md)). No dice nada cuando Graphify está apagado, u opcional y no instalado. Un prompt que funciona con cualquier agente es: «Implementa el cambio activo de TRUSS. Ejecuta `truss continue` y sigue las instrucciones y los archivos que lista.»
 
+## Reabrir un cambio terminado
+
+Un cambio está `complete` cuando todas sus tareas están marcadas. Si una revisión o una mirada posterior descubre más trabajo antes de archivar, no edites el código dejando `tasks.md` como está: `status`, el gate `tasks_complete` y el siguiente lector dirían que el trabajo estaba terminado. Añade en su lugar un **grupo de tareas nuevo** a `tasks.md`:
+
+```markdown
+## 2. Review follow-ups
+- [ ] 2.1 Handle the timeout case
+```
+
+La fase vuelve a `implementation` (`Tasks 2/3 complete`), y `continue` nombra la tarea nueva como la primera incompleta. Esto se ejecutó sobre un cambio que había llegado a `complete`. Marca las tareas según las termines, ejecuta `truss verify` otra vez, y el cambio vuelve a `complete`. Si el trabajo nuevo cambia el comportamiento, actualiza también la spec y el diseño. Una vez archivado, un cambio no se puede reabrir así: empieza uno nuevo con `truss new`.
+
+Antes de `openspec archive`, comprueba que las tareas, la spec, el diseño y la proposal siguen coincidiendo, y que lo que decidiste dejar para más tarde está anotado en algún sitio duradero.
+
 ## Cuál usar y cuándo
 
 - **Empezar algo nuevo:** `new`.

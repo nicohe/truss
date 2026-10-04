@@ -19,6 +19,7 @@ Los términos están en orden alfabético.
 - **Graphify:** una herramienta opcional que mapea las relaciones del código. Cuando falta, TRUSS recurre a la búsqueda nativa.
 - **Grill:** una ronda guiada de preguntas que convierte una idea poco clara en decisiones explícitas, hecha con la skill `grill-me` o `grill-with-docs`. Es la herramienta principal del *descubrimiento*; consulta [Descubrimiento (Grill)](../workflows/discovery.md).
 - **Handoff:** el estado vivo mínimo que se transfiere ante un cambio real de contexto, agente, runtime o sesión.
+- **Idioma de los artefactos:** el idioma en que escribes specs, diseños y tareas. Las palabras clave de OpenSpec se quedan en inglés sea cual sea (`SHALL`, `MUST`, `WHEN`, `THEN`, el encabezado `#### Scenario:`); las políticas de TRUSS dicen RED, GREEN, refactor y *vertical slice*, y la documentación en español mantiene esos términos en inglés para que una tarea y su política usen las mismas palabras.
 - **Instalación (installation):** la copia de TRUSS en sí (su código, schema, skills, policies y workflows), frente al *proyecto* sobre el que se ejecuta. Consulta la [estructura del proyecto](project-structure.md).
 - **Integración (integration):** una capacidad externa con la que trabaja TRUSS, como OpenSpec o Graphify.
 - **Merge-base:** el commit donde tu rama salió de la rama base. El gate tests-required compara tus cambios contra él.
