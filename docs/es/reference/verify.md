@@ -20,6 +20,8 @@
 
 `truss init` escribe `npm test --if-present`, `npm run lint --if-present`, `npm run typecheck --if-present` y `npm run build --if-present`. `--if-present` omite un script que el proyecto no define, pero `npm` necesita un `package.json`: en un proyecto que no lo tiene (Python, Go, o la raíz de un monorepo cuyos paquetes están en subdirectorios) el primer comando falla con `npm error … Could not read package.json` y `verify` se detiene. Sustituye la lista por tus propias comprobaciones en `.truss/config.yaml`; consulta los [ejemplos](../configuration/examples.md#un-proyecto-que-no-es-node).
 
+Cada comando se ejecuta a través de tu shell con tu terminal conectada (entrada y salida estándar heredadas), así que un comando que espera entrada o vigila cambios en los archivos mantiene a `verify` esperando. Usa la forma de una sola ejecución de tu ejecutor de pruebas, como `vitest run` en lugar de `vitest`. Hay un ejemplo con pnpm y Vitest en [los ejemplos de configuración](../configuration/examples.md#un-proyecto-typescript-con-pnpm-y-vitest).
+
 ## Códigos de salida
 
 | Código | Significado |

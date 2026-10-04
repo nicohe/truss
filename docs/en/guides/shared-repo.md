@@ -87,6 +87,8 @@ The agent can also learn the workflow from your prompt, with no file: *Implement
 | Add `.truss/` to `.prettierignore` | One visible line in a shared file |
 | Add the pattern `.*/` to `.prettierignore` | Does not name TRUSS, but stops checking every dot-folder, such as `.github/` |
 
+Test runners walk the tree too: a bare `vitest` finds the test files inside `.truss/` and runs TRUSS's own tests. Limit the runner to your sources; see [a TypeScript project with pnpm and Vitest](../configuration/examples.md#a-typescript-project-with-pnpm-and-vitest).
+
 For the verification list, prefer the first one: `pnpm exec prettier --check src` in `verification.commands`, and do not run a `format` script that targets `.` at the root of a project that holds `.truss/`.
 
 ## Before you clean the repository
