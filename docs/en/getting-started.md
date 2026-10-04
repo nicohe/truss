@@ -242,7 +242,7 @@ node .truss/bin/truss.mjs components            # check they resolve
 node .truss/bin/truss.mjs new "Add retry policy" --component worker
 ```
 
-Component paths must exist and stay inside the project. See [component resolution](reference/components.md).
+Component paths must exist and stay inside the project. See [component resolution](reference/components.md), and [choose where TRUSS lives](guides/where-to-put-truss.md) to decide between components and one TRUSS per project folder.
 
 ## If something goes wrong
 
