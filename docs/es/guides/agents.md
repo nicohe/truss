@@ -41,6 +41,19 @@ Lee la lista y responde `y`. La aprobación se guarda por proyecto en tu cuenta 
 
 No dejes que un agente pase `--trust` para una lista que no te mostró: el prompt existe para que una persona lea los comandos. Un agente que se ejecuta en un sandbox o contenedor con otro directorio home tiene su propio almacén de aprobaciones; ejecuta `verify` una vez allí, o apunta `TRUSS_HOME` a un directorio compartido (consulta las [variables de entorno](../reference/environment.md#truss_home)).
 
+## Revisar en otra sesión y volver al implementador
+
+Conviene que la revisión la haga un agente que no escribió el código, en una sesión nueva, para que juzgue la spec y el diff y no el razonamiento del implementador ([quién hace qué](../concepts/who-does-what.md#un-modelo-o-varios)). Dos sesiones no se ven entre sí, así que importa cómo viajan los hallazgos:
+
+1. **Revisor.** Abre una sesión nueva y señálale la skill por su ruta, con el cambio y la evidencia: *Review the active change with `.truss/.truss/skills/code-review.SKILL.md`. Read the spec first, then the diff and `.truss/verification/latest.json`.* Un subagente también sirve si tu runtime lo tiene; TRUSS no da por hecho que lo tenga. El comando `/code-review` de Claude Code es otra herramienta; consulta [las skills](../skills/overview.md#code-review-y-el-code-review-de-claude-code).
+2. **El informe es efímero.** Vive en la sesión del revisor. Pégalo, o guárdalo en un archivo, y entrégalo completo al implementador. No des una copia comprimida en lugar del original; consulta [`caveman`](../skills/overview.md#caveman).
+3. **Lo que debe sobrevivir va a archivos duraderos.** Un hallazgo que cambia el comportamiento va a la spec o al diseño; el trabajo por hacer va a `tasks.md` como un grupo de tareas nuevo (consulta [reabrir un cambio terminado](../workflows/lifecycle-commands.md#reabrir-un-cambio-terminado)); un hallazgo que decides no corregir ahora se anota, por ejemplo como pregunta abierta en el diseño, para que no se pierda cuando termine la sesión.
+4. **Implementador.** De vuelta en la sesión que implementa: *Apply the review findings. Register each fix as a task in `tasks.md`, update the spec if behavior changes, then run `truss verify`.* Si el trabajo pasó a una sesión nueva, [`truss handoff`](../reference/handoff.md) lleva el estado.
+
+## El modo de permisos del agente
+
+Los agentes preguntan antes de editar archivos o ejecutar comandos, y lo que preguntan depende de su modo de permisos. Para un bucle de TRUSS, una configuración sensata es dejar que el agente edite archivos sin preguntar y preaprobar solo los comandos que has revisado, como `node .truss/bin/truss.mjs continue` y `status`, y mantener a una persona en el bucle para el resto. No uses un modo que se salta todas las comprobaciones fuera de un contenedor o una VM aislados. En Claude Code los modos se describen en [permission modes](https://code.claude.com/docs/en/permission-modes). Sea cual sea el modo, el agente nunca debe pasar `--trust` a `truss verify`; consulta [aprueba tú mismo los comandos de verificación](#aprueba-tú-mismo-los-comandos-de-verificación-una-vez).
+
 ## Comprueba lo que hizo el agente
 
 - `truss status` muestra la fase y el progreso de las tareas (`Tasks 1/3 complete`).

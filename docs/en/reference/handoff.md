@@ -43,6 +43,38 @@
 
 Filling in the sections is the agent's job. The `handoff` skill says what a good note contains: the first incomplete task, completed work, decisions not yet in a durable artifact, the verification status, blockers and the exact next action.
 
+## A filled-in note
+
+TRUSS writes the header; the agent writes the rest. A note for a change that moves to a reviewer can look like this (the contents are an illustration):
+
+```markdown
+# Handoff: add-retry-policy
+
+- Component: workspace
+- Phase: implementation
+- OpenSpec: openspec/changes/add-retry-policy
+- Branch: feature/add-retry-policy
+
+## Completed
+- Tasks 1.1 to 1.4 done and checked off; `truss verify` passes (5 of 5 commands).
+- Retry with exponential backoff in `src/retry.ts`; scenarios 1 to 3 of the spec pass.
+
+## Discoveries
+- The timeout case is not in the spec: a request that times out is retried like a failure. Decide whether that is intended before archiving.
+
+## Verification
+- `truss verify` passed at the last commit; evidence in `.truss/verification/latest.json`.
+- Not run: `openspec validate add-retry-policy`.
+
+## Blockers
+- None.
+
+## Next action
+- Review against the spec with `.truss/.truss/skills/code-review.SKILL.md`; start from the timeout question above.
+```
+
+Write it briefly: the [`caveman`](../skills/overview.md#caveman) skill applies to a note like this one, which is read once, and not to the spec or the review report. A handoff is for the boundary between the implementer and the reviewer; the reviewer's findings come back as a report, not as a handoff (see [review in a separate session](../guides/agents.md#review-in-a-separate-session-then-back-to-the-implementer)).
+
 ## Running it again keeps your note
 
 If a note for the change already exists, `truss handoff` leaves it exactly as it is and says so:

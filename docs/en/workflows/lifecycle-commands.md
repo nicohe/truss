@@ -189,6 +189,19 @@ Implementation tasks for add-retry-policy are complete. Run truss verify, then p
 
 While the tasks are open, the output also lists a **Context to load** section with the real paths of the workflow, the policies, the change and the project's `.truss/config.yaml`, as the getting started guide shows. It lists the project's `AGENTS.md` (the component's own, or else the workspace's) only when one exists: `init` does not create it. With Graphify enabled, the output ends with a **Code graph** section: one sentence that tells the agent to use the graph when it is fresh and what to run when it is stale, missing or damaged (see the [Graphify lifecycle](../integrations/graphify-lifecycle.md)). It says nothing when Graphify is off, or optional and not installed. A prompt that works with any agent is: "Implement the active TRUSS change. Run `truss continue` and follow the instructions and the files it lists."
 
+## Reopening a finished change
+
+A change is `complete` when every task is checked off. If a review or a later look turns up more work before you archive, do not edit the code and leave `tasks.md` as it is: `status`, the `tasks_complete` gate and the next reader would all say the work was finished. Add a **new task group** to `tasks.md` instead:
+
+```markdown
+## 2. Review follow-ups
+- [ ] 2.1 Handle the timeout case
+```
+
+The phase goes back to `implementation` (`Tasks 2/3 complete`), and `continue` names the new task as the first incomplete one. This was run on a change that had reached `complete`. Check the tasks off as you finish them, run `truss verify` again, and the change returns to `complete`. If the new work changes behavior, update the spec and the design too. Once a change has been archived, it cannot be reopened this way: start a new one with `truss new`.
+
+Before `openspec archive`, check that the tasks, the spec, the design and the proposal still agree, and that what you decided to leave for later is written down somewhere durable.
+
 ## Which one, when
 
 - **Starting something new:** `new`.
