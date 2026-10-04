@@ -58,7 +58,6 @@ A check marked *required* makes `doctor` fail when it does not pass. The others 
 | Capabilities | Native search fallback | no | always; informational |
 | Capabilities | Git worktrees | no | Git is available |
 | Verification | Commands | no | `verification.commands` is not empty |
-| Verification | Package manager | no | shown only on a mismatch: a command starts with `npm`, and the project declares another manager in `package.json` (`packageManager`) or has another lockfile (`pnpm-lock.yaml`, `yarn.lock`, `bun.lock`). TRUSS never changes the list; it tells you to list that manager's commands |
 | Verification | Tests required | no | always; shows the mode of [`verification.tests_required`](verify.md#tests-required-gate) |
 | Verification | Tasks complete | no | always; shows the mode of [`verification.tasks_complete`](verify.md#tasks-complete-gate) |
 | Verification | Trust | no | the current command list is [approved](verify.md#trust) for this project (shown only when commands are configured) |

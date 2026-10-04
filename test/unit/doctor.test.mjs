@@ -167,36 +167,3 @@ test('doctor warns about an empty workspace AGENTS.md without saying it replaces
     cleanup(root);
   }
 });
-
-test('doctor warns when the commands start with npm and the project uses another package manager', () => {
-  const npmConfig = validConfig.replace('node -e "process.exit(0)"', 'npm test');
-  const root = workspace({ config: npmConfig });
-  try {
-    const mismatch = () => check(diagnose(root, fakeOpenSpec(root)), 'Verification', 'Package manager');
-    assert.equal(mismatch(), undefined, 'nothing says the project uses another manager');
-
-    fs.writeFileSync(path.join(root, 'package.json'), '{"packageManager":"pnpm@9.1.0"}');
-    assert.equal(mismatch().status, 'warn');
-    assert.match(mismatch().detail, /uses pnpm \(packageManager: pnpm@9\.1\.0\); list pnpm commands instead/);
-    assert.equal(diagnose(root, fakeOpenSpec(root)).healthy, true);
-
-    fs.writeFileSync(path.join(root, 'package.json'), '{"packageManager":"npm@10.0.0"}');
-    assert.equal(mismatch(), undefined, 'npm declared, npm commands');
-
-    fs.writeFileSync(path.join(root, 'package.json'), '{not json');
-    fs.writeFileSync(path.join(root, 'yarn.lock'), '');
-    assert.match(mismatch().detail, /uses yarn \(yarn\.lock\)/);
-  } finally {
-    cleanup(root);
-  }
-});
-
-test('doctor does not mention the package manager when no command starts with npm', () => {
-  const root = workspace({ config: validConfig });
-  try {
-    fs.writeFileSync(path.join(root, 'package.json'), '{"packageManager":"pnpm@9.1.0"}');
-    assert.equal(check(diagnose(root, fakeOpenSpec(root)), 'Verification', 'Package manager'), undefined);
-  } finally {
-    cleanup(root);
-  }
-});

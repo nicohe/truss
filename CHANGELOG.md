@@ -7,11 +7,10 @@ All notable changes to TRUSS are documented here.
 ### Upgrade notes
 - **Nothing that ran before changes.** Exit codes, `verify` and the files TRUSS writes are the same. The additions are warnings and wording.
 - `truss status` prints `Needed to implement` where it printed `Tasks required`. A script that reads that line has to use the new label.
-- `truss doctor` can print two new optional warnings (`○`), which never make it fail.
+- `truss doctor` can print a new optional warning (`○`) about an empty `AGENTS.md`; it never makes `doctor` fail.
 
 ### Added
 - **`truss doctor` warns about an empty `AGENTS.md`.** When the guidance file the agent will read (the component's own, or the workspace one) exists and has nothing in it, `doctor` says so, and says when it replaces the workspace file: a component's empty `AGENTS.md` wins over the root one, so the agent got no guidance and nothing said so. It points to the `writing-for-agents` skill.
-- **`truss doctor` warns when the commands and the package manager disagree.** If a command starts with `npm` and `package.json` declares another manager (`packageManager`) or the project has another lockfile (`pnpm-lock.yaml`, `yarn.lock`, `bun.lock`), `doctor` tells you to list that manager's commands. It never changes the list.
 
 ### Changed
 - **`truss init` asks Git whether `.truss/` is ignored.** It used to read only `.gitignore`, so a project that ignored it through `.git/info/exclude` was told `○ no .gitignore detected` or `○ .truss/ is not ignored` while Git was ignoring it. It now uses `git check-ignore` and prints `● .truss/ ignored (via .git/info/exclude)` when the entry is in a private or global file. Outside a Git work tree it reads `.gitignore` as before.
