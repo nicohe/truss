@@ -50,6 +50,7 @@ A check marked *required* makes `doctor` fail when it does not pass. The others 
 | Core | .truss ignore | no | Git ignores `.truss/` (warns otherwise) |
 | Core | Config | yes | `.truss/config.yaml` exists and is valid; on failure the errors are listed |
 | Project | Components | yes | every configured component resolves (skipped if the config is invalid) |
+| Project | AGENTS.md, or AGENTS.md (component) | no | shown only when the effective guidance file exists and is empty: it is the component's own file, or the workspace one when the component has none. A component's empty file replaces the workspace one, so the agent gets no guidance. Add some, or remove the file; the `writing-for-agents` skill says what to put in it |
 | OpenSpec | CLI | yes | an OpenSpec CLI is found |
 | OpenSpec | Compatibility | yes | its version is within `>=1.0.0 <2.0.0` |
 | OpenSpec | Project | yes | the directory has an initialized `openspec/` project |

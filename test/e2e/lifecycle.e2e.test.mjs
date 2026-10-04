@@ -32,9 +32,13 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   assert.match(result.stdout, /proposal/);
   assert.match(result.stdout, /Run openspec instructions proposal --change add-retry-policy for its format and path\./);
   assert.match(result.stdout, /Use Grill first/);
+  assert.doesNotMatch(result.stdout, /traceable/, 'the proposal is where the decisions are written');
 
   // Planning: an artifact is done when its file exists, exactly as OpenSpec reports it.
   fs.writeFileSync(path.join(change, 'proposal.md'), '# Proposal\n');
+  result = run(root, ['continue'], { binDirs: [bin] });
+  assert.match(result.stdout, /Run openspec instructions specs --change add-retry-policy/);
+  assert.match(result.stdout, /Keep every requirement traceable to a decision in the proposal, and ask before adding/);
   fs.mkdirSync(path.join(change, 'specs'), { recursive: true });
   fs.writeFileSync(
     path.join(change, 'specs', 'retry.md'),

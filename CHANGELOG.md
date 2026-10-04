@@ -4,6 +4,20 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Upgrade notes
+- **Nothing that ran before changes.** Exit codes, `verify` and the files TRUSS writes are the same. The additions are warnings and wording.
+- `truss status` prints `Needed to implement` where it printed `Tasks required`. A script that reads that line has to use the new label.
+- `truss doctor` can print a new optional warning (`○`) about an empty `AGENTS.md`; it never makes `doctor` fail.
+
+### Added
+- **`truss doctor` warns about an empty `AGENTS.md`.** When the guidance file the agent will read (the component's own, or the workspace one) exists and has nothing in it, `doctor` says so, and says when it replaces the workspace file: a component's empty `AGENTS.md` wins over the root one, so the agent got no guidance and nothing said so. It points to the `writing-for-agents` skill.
+
+### Changed
+- **`truss init` asks Git whether `.truss/` is ignored.** It used to read only `.gitignore`, so a project that ignored it through `.git/info/exclude` was told `○ no .gitignore detected` or `○ .truss/ is not ignored` while Git was ignoring it. It now uses `git check-ignore` and prints `● .truss/ ignored (via .git/info/exclude)` when the entry is in a private or global file. Outside a Git work tree it reads `.gitignore` as before.
+- **`truss continue` shows the next task by a short title.** A task line longer than about 80 characters is cut with `…` and followed by `; the full text is in tasks.md`, instead of printing the whole line into the instruction.
+- **`truss continue` reminds the agent about traceability.** From the second artifact on, the instruction adds: keep every requirement traceable to a decision in the proposal, and ask before adding behavior it does not cover.
+- **`truss status` calls the line `Needed to implement`.** It showed `Tasks required   tasks`, which read as a count or a gate; it is the artifact OpenSpec needs before a task can be worked on.
+
 ### Documentation
 - **A first-change walkthrough with the prompts to give your agent (EN/ES).** `guides/first-change.md` goes from discovery to archive with a prompt for each step (discovery with a document, one artifact at a time, implementation, review, closing), and says what `openspec instructions` prints (read-only), how to write artifacts in another language (`SHALL`/`MUST` stay in English; a missing one is a warning), the difference between `validate` and `validate --strict` (exit 0 against 1), and that a `MODIFIED` requirement must carry the whole block (`validate` fails and `archive` refuses otherwise). The Discovery page explains how to ask for a breakdown into candidate changes.
 - **The Graphify page says what TRUSS does with the graph and what it does not (EN/ES).** TRUSS builds and refreshes the graph and reminds the agent in `continue`; it never runs a query or installs anything, so an agent searches as usual unless told to use the graph. The page lists what Graphify's own agent installers write (`claude install` and `codex install` write into the project, `hook install` adds git hooks and a `.gitattributes` line, `devin install` writes to your user account), how to query the graph, that `.truss/` must be ignored or the graph indexes TRUSS itself (51 files instead of 3 in a test), that freshness follows commits and not uncommitted edits, when to adopt it, and what `enabled: false` silences.

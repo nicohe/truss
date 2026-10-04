@@ -40,7 +40,7 @@ git check-ignore -v .truss/
 Two things to know:
 
 - `.git/info/exclude` is **per copy of the repository**. A fresh clone, another machine or a new worktree does not have it, so repeat the line there.
-- `truss init` only reads `.gitignore`. In a repository with `.git/info/exclude` and no entry in `.gitignore`, it can print `○ no .gitignore detected` (when there is no `.gitignore` at all) or `○ .truss/ is not ignored` (when there is one without the entry), even though Git is ignoring the folder. Trust `truss doctor` and `git check-ignore`; the `init` line is only a note.
+- `truss init` asks Git, and says `● .truss/ ignored (via .git/info/exclude)` when the entry is there. Releases before 0.2.19 read only `.gitignore`: in a repository with `.git/info/exclude` and no entry in `.gitignore`, they can print `○ no .gitignore detected` (when there is no `.gitignore` at all) or `○ .truss/ is not ignored` (when there is one without the entry), even though Git is ignoring the folder. Trust `truss doctor` and `git check-ignore`; the `init` line is only a note.
 
 Add the other local files to the same place:
 

@@ -44,6 +44,7 @@ test('contract: lifecycle phases and the tasks gate follow the real OpenSpec tas
   r = run(root, ['status']);
   assert.match(out(r), /Phase\s+implementation/);
   assert.match(out(r), /Tasks\s+1\/2 complete/);
+  assert.match(out(r), /Needed to implement\s+tasks/);
   assert.match(out(run(root, ['continue'])), /first incomplete task \("1\.2 Add tests"\)/);
 
   r = run(root, ['verify', '--trust']);
