@@ -4,6 +4,12 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Upgrade notes
+- **`verification.commands` now starts empty.** `truss init` writes `commands: []` instead of four `npm` commands, and a configuration that omits `verification.commands` gets the empty list instead of those four. With an empty list `truss verify` fails (`× no verification commands configured`, exit code `1`), as it always did. **If your `.truss/config.yaml` has no `verification.commands` and relied on the old default, list your checks there.** A configuration that lists its commands is not affected.
+
+### Changed
+- **TRUSS no longer assumes an `npm` project.** The default `verification.commands` was `npm test --if-present` and three more; it failed in any project without a `package.json` and tied TRUSS to one toolchain. `init` now leaves the list empty, prints `Verification  ○ no commands yet: list yours under verification.commands in .truss/config.yaml`, and `doctor` says `none configured; list your checks under verification.commands`. `init` has no list to approve, so the first `verify` after you write yours asks for approval. The getting started guide, the examples, the reference and the troubleshooting tables follow.
+
 ### Changed
 - **The stale-evidence warning names the files.** `○ stale: …` in `status` and `continue` now lists up to five files that were edited, added or removed since the last passing `verify`, then `… and N more`. `verify` writes their content ids to `.truss/verification/working-tree.json`, apart from `latest.json`; if that file is missing the warning appears as before, without names. See the amendment to [ADR 0002](docs/en/development/decisions/0002-stale-evidence-warning.md).
 

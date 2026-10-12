@@ -11,11 +11,7 @@ development:
   bdd: true
   tdd: true
 verification:
-  commands:
-    - npm test --if-present
-    - npm run lint --if-present
-    - npm run typecheck --if-present
-    - npm run build --if-present
+  commands: []
 integrations:
   graphify:
     enabled: true
@@ -24,7 +20,7 @@ components: {}
 ```
 
 ## A project that is not Node
-The default commands call `npm`, which fails when there is no `package.json`. List the checks of your own project instead:
+The list starts empty. List the checks of your own project:
 ```yaml
 verification:
   commands:
@@ -34,7 +30,7 @@ verification:
 Because you edited the list, the first `truss verify` asks you to approve it (see [`truss verify`](../reference/verify.md#trust)).
 
 ## A TypeScript project with pnpm and Vitest
-The default list calls `npm`. In a project that uses pnpm, list its scripts instead:
+In a project that uses pnpm, list its scripts:
 ```yaml
 verification:
   commands:

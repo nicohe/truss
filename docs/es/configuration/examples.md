@@ -13,11 +13,7 @@ development:
   bdd: true
   tdd: true
 verification:
-  commands:
-    - npm test --if-present
-    - npm run lint --if-present
-    - npm run typecheck --if-present
-    - npm run build --if-present
+  commands: []
 integrations:
   graphify:
     enabled: true
@@ -26,7 +22,7 @@ components: {}
 ```
 
 ## Un proyecto que no es Node
-Los comandos por defecto llaman a `npm`, que falla cuando no hay `package.json`. Lista en su lugar las comprobaciones de tu proyecto:
+La lista empieza vacía. Lista las comprobaciones de tu proyecto:
 ```yaml
 verification:
   commands:
@@ -36,7 +32,7 @@ verification:
 Como editaste la lista, el primer `truss verify` te pide aprobarla (consulta [`truss verify`](../reference/verify.md#aprobación)).
 
 ## Un proyecto TypeScript con pnpm y Vitest
-La lista por defecto llama a `npm`. En un proyecto que usa pnpm, lista en su lugar sus scripts:
+En un proyecto que usa pnpm, lista sus scripts:
 ```yaml
 verification:
   commands:

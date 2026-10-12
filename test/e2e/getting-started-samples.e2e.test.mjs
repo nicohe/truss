@@ -61,11 +61,9 @@ function runGuide() {
     fs.writeFileSync(path.join(change, 'tasks.md'), '- [x] 1.1 Implement retry\n- [ ] 1.2 Add tests\n');
     outputs['continue-implementation'] = run('continue').out;
 
-    // Editing the command list makes `verify` ask for approval again.
+    // The guide has the reader list their checks; a list `verify` has not seen asks for approval.
     const config = path.join(project, '.truss', 'config.yaml');
-    const edited = fs
-      .readFileSync(config, 'utf8')
-      .replace('    - npm test --if-present\n', '    - npm test --if-present\n    - echo extra\n');
+    const edited = fs.readFileSync(config, 'utf8').replace('  commands: []\n', '  commands:\n    - echo check\n');
     fs.writeFileSync(config, edited);
     outputs['verify-untrusted'] = run('verify').out;
     return outputs;

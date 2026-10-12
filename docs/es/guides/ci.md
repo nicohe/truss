@@ -54,4 +54,4 @@ El job falla cuando `verify` sale con `1` o `2` (consulta los [códigos de salid
 | `Not trusted; nothing was executed.` y código de salida `1` | no hay terminal ni aprobación | define `TRUSS_TRUST: "1"` en el paso, tras revisar la lista |
 | `TRUSS config not found: .truss/config.yaml` | no se copió la configuración | añade el paso `cp` antes de `verify` |
 | `Tests required` con `could not evaluate` | el checkout es superficial, así que no hay rama base con la que comparar | usa `fetch-depth: 0` |
-| `× failed [1/4] npm test --if-present` con `Could not read package.json` | los comandos por defecto suponen un proyecto Node | lista tus propios comandos en el archivo de referencia (consulta los [ejemplos](../configuration/examples.md#un-proyecto-que-no-es-node)) |
+| `× no verification commands configured` o `× failed [1/4] npm test` con `Could not read package.json` | la lista está vacía, o llama a una herramienta que la máquina de CI no tiene | lista tus propios comandos en el archivo de referencia (consulta los [ejemplos](../configuration/examples.md#un-proyecto-que-no-es-node)) |

@@ -59,13 +59,14 @@ node .truss/bin/truss.mjs init
 Config          ● created .truss/config.yaml
 OpenSpec       ● initialized with --tools none
 Git ignore      ● .truss/ ignored
+Verification    ○ no commands yet: list yours under verification.commands in .truss/config.yaml
 
 TRUSS initialization verified.
 Run again safely at any time: truss init
 Next: truss doctor
 ```
 
-`init` crea `.truss/config.yaml` e inicializa OpenSpec, sin sobrescribir nada que ya exista, así que puedes volver a ejecutarlo sin riesgo. Después comprueba el entorno:
+`init` crea `.truss/config.yaml` e inicializa OpenSpec, sin sobrescribir nada que ya exista, así que puedes volver a ejecutarlo sin riesgo. La línea `Verification` es un recordatorio: TRUSS no adivina tu toolchain, así que `verification.commands` empieza vacía y tú listas tus comprobaciones en el paso 6. Después comprueba el entorno:
 
 ```bash
 node .truss/bin/truss.mjs doctor
@@ -194,14 +195,22 @@ Cuando la fase pasa a `implementation`, el agente recorre `tasks.md` y cambia `-
 node .truss/bin/truss.mjs verify
 ```
 
-`verify` ejecuta, en orden, los comandos de `verification.commands` en `.truss/config.yaml` y se detiene en el primer fallo. Registra lo ocurrido en `.truss/verification/latest.json`. La lista por defecto ejecuta tus scripts `npm test`, `lint`, `typecheck` y `build` cuando existen. Ese valor por defecto supone un proyecto Node: sin `package.json`, `npm` falla en el primer comando. En cualquier otro proyecto, sustituye antes la lista por tus propias comprobaciones (por ejemplo `pytest -q`); consulta [la lista de comandos por defecto](reference/verify.md#la-lista-de-comandos-por-defecto).
+`verify` ejecuta, en orden, los comandos de `verification.commands` en `.truss/config.yaml` y se detiene en el primer fallo. Registra lo ocurrido en `.truss/verification/latest.json`. La lista empieza vacía, porque TRUSS no conoce tu toolchain, y con una lista vacía `verify` falla con `× no verification commands configured`. Lista antes las comprobaciones de tu proyecto, sea cual sea su lenguaje o herramienta:
 
-Como esos comandos se ejecutan a través de tu shell, TRUSS pregunta antes de ejecutar una lista que no ha visto para este proyecto. `init` aprueba la lista por defecto que escribe; si editas la lista, la siguiente ejecución se detiene:
+```yaml
+verification:
+  commands:
+    - <your test command>
+    - <your lint command>
+```
+
+Consulta [los ejemplos](configuration/examples.md) para proyectos Node, Python y pnpm, y [la lista de comandos](reference/verify.md#la-lista-de-comandos).
+
+Como esos comandos se ejecutan a través de tu shell, TRUSS pregunta antes de ejecutar una lista que no ha visto para este proyecto. La primera ejecución, y cada una después de editar la lista, se detiene:
 
 ```text
 ○ These verification commands are not trusted for this project yet.
   They run through your shell with your permissions. Review them first:
-    npm test --if-present
     ...
 × Not trusted; nothing was executed.
 Review .truss/config.yaml, then re-run with --trust (or TRUSS_TRUST=1).
@@ -258,7 +267,8 @@ Las rutas de los componentes deben existir y quedar dentro del proyecto. Consult
 | `invalid config` (código de salida 2) | `config.yaml` incumple el schema | ejecuta `truss config` para ver los errores exactos |
 | `TRUSS installation is incomplete: config schema not found` | el clon de `.truss/` está dañado | vuelve a clonar TRUSS |
 | `Not trusted; nothing was executed.` | la lista de comandos cambió | revísala y luego usa `--trust` |
-| `× failed  [1/4] npm test --if-present`, con `npm error … Could not read package.json` | la lista de comandos por defecto supone un proyecto Node y este no tiene `package.json` | sustituye `verification.commands` por las comprobaciones propias de tu proyecto y aprueba la lista nueva |
+| `× no verification commands configured` | `verification.commands` está vacía, que es como la deja `init` | lista las comprobaciones de tu proyecto en `verification.commands` y aprueba la lista |
+| `× failed  [1/4] npm test`, con `npm error … Could not read package.json` | la lista llama a `npm` y este proyecto no tiene `package.json` | sustituye `verification.commands` por las comprobaciones propias de tu proyecto y aprueba la lista nueva |
 | `Unknown component "x"` | ese nombre no está declarado en `components` | decláralo u omite `--component` |
 | `OpenSpec project is not initialized` | no existe el directorio `openspec/` | ejecuta `truss init` |
 

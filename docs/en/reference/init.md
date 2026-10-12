@@ -14,7 +14,7 @@ TRUSS initialization verified.
 
 1. **Configuration.** Creates `.truss/config.yaml` from the TRUSS defaults if it does not exist. If it exists, it is validated and **adopted**, never overwritten. The project only ever gets its own files; the schema, skills, policies and workflows come from the [TRUSS installation](project-structure.md).
 2. **OpenSpec.** Adopts an existing initialized OpenSpec project, or initializes a missing one with `openspec init <project> --tools none`, and only when a compatible OpenSpec CLI is available.
-3. **Approval.** When `init` *creates* the configuration, it also approves the default `verification.commands` it just wrote, so the first `truss verify` needs no confirmation. An **adopted** configuration is not approved: its first `verify` asks (see [`truss verify`](verify.md#trust)).
+3. **Approval.** When `init` *creates* the configuration, it writes `verification.commands: []` and prints a `Verification` reminder, because TRUSS does not guess your toolchain. Once you list your checks, the first `truss verify` asks you to approve the list, as it does for an **adopted** configuration (see [`truss verify`](verify.md#trust)).
 4. **Git.** Asks Git whether `.truss/` is ignored (`git check-ignore`) and warns when it is not. When the entry is in a private file such as `.git/info/exclude`, it says so: `● .truss/ ignored (via .git/info/exclude)`. Outside a Git work tree it reads `.gitignore`. It never rewrites `.gitignore`. Releases before 0.2.19 read only `.gitignore`.
 
 It does not create an `AGENTS.md`, install an agent, or change your Git history.
