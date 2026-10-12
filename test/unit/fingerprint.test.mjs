@@ -158,3 +158,23 @@ test('a submodule is kept as the commit the index holds, and does not break the 
     cleanup(outer);
   }
 });
+
+test('many untracked files, and names with spaces or a line break, are read and tell apart', () => {
+  const root = repo();
+  try {
+    for (let i = 0; i < 300; i += 1) write(root, `gen/f${i}.txt`, `${i}\n`);
+    write(root, 'my file.txt', 'one\n');
+    fs.writeFileSync(path.join(root, 'two\nlines.txt'), 'two\n');
+    const before = workingTreeFingerprint(root);
+    assert.equal(before.files, 1 + 300 + 2, 'src/a.ts, the generated files and the two odd names');
+    assert.notEqual(before.ids['my file.txt'], before.ids['two\nlines.txt']);
+    fs.appendFileSync(path.join(root, 'two\nlines.txt'), 'more\n');
+    fs.appendFileSync(path.join(root, 'gen', 'f7.txt'), 'more\n');
+    const after = workingTreeFingerprint(root);
+    assert.notEqual(after.fingerprint, before.fingerprint);
+    const changed = Object.keys(after.ids).filter((file) => after.ids[file] !== before.ids[file]);
+    assert.deepEqual(changed.sort(), ['gen/f7.txt', 'two\nlines.txt']);
+  } finally {
+    cleanup(root);
+  }
+});

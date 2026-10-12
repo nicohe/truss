@@ -49,7 +49,7 @@ No dice nada cuando no hay evidencia, cuando la última ejecución falló (el fa
 - ⚠️ Desde la enmienda nombra los archivos; sin el archivo de la lista, solo dice que cambiaron.
 - ⚠️ Una carpeta que Git no ignora y que algo regenera fuera de `verify` (una de build o de cobertura) marca la evidencia como desactualizada. Ignora esa carpeta.
 - ⚠️ Un cambio en los archivos de un submódulo no se ve: la huella contiene el commit que el índice registra para él.
-- ⚠️ Coste: unas llamadas a `git` y una lectura de cada archivo modificado o nuevo, en cada `status` y `continue`. Tardó 0,12 s en un repositorio de 172 archivos; no se ha medido en uno grande.
+- ⚠️ Coste: unas llamadas a `git` y una lectura de cada archivo modificado o nuevo, en cada `status` y `continue`. Tardó 0,12 s en un repositorio de 172 archivos y 0,11 s en uno de 20.000; con 2.000 archivos sin seguimiento tardó 0,16 s (13 s antes de calcular los hashes con una sola llamada a `git hash-object --stdin-paths` en vez de un proceso por archivo).
 - La evidencia escrita por una release anterior no tiene huella y no produce aviso hasta el siguiente `verify`.
 
 ## Enmienda: el aviso nombra los archivos (0.2.21)
