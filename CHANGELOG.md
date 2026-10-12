@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **The stale-evidence warning names the files.** `○ stale: …` in `status` and `continue` now lists up to five files that were edited, added or removed since the last passing `verify`, then `… and N more`. `verify` writes their content ids to `.truss/verification/working-tree.json`, apart from `latest.json`; if that file is missing the warning appears as before, without names. See the amendment to [ADR 0002](docs/en/development/decisions/0002-stale-evidence-warning.md).
+
 ## [0.2.20] - 2026-10-12
 
 Patch release. `truss status` and `truss continue` now warn when the files changed after the last passing `truss verify`, so a `passed` that no longer matches the code does not go unnoticed.

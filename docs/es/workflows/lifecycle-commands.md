@@ -108,7 +108,11 @@ Cuando el último `verify` pasó y los archivos cambiaron después, `status` añ
 
 ```text
 Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+                edited lib/a.mjs
+                added src/retry.js
 ```
+
+Nombra hasta cinco archivos (`edited`, `added`, `removed`) y luego `… and N more`.
 
 Compara una huella del contenido de los archivos que Git ve, registrada por `verify`, con los archivos actuales. `.truss/`, cualquier carpeta `openspec/` y lo que Git ignora quedan fuera, así que marcar una tarea no la activa; commitear el mismo contenido tampoco. Solo avisa: nunca bloquea ni cambia un código de salida. No dice nada cuando no hay evidencia, cuando la última ejecución falló o cuando la evidencia es anterior a la huella. Consulta el [ADR 0002](../development/decisions/0002-stale-evidence-warning.md).
 

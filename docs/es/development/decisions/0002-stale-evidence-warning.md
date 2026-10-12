@@ -39,15 +39,28 @@ No dice nada cuando no hay evidencia, cuando la última ejecución falló (el fa
 | Solo el commit (`HEAD`) | no ve las ediciones sin commitear, que es el caso que importa |
 | `git stash create`, o `git write-tree` con un índice temporal | escribe objetos en `.git` en un comando que solo debería leer |
 | La salida de `git status` | no distingue dos ediciones sucesivas del mismo archivo |
-| Una lista de cada archivo y su hash en la evidencia | permitiría que el aviso nombrara los archivos, a costa de una evidencia más grande. Se deja como posible paso posterior |
+| Una lista de cada archivo y su hash dentro de `latest.json` | hace grande el archivo de evidencia para la persona o el agente que lo lee. Se guarda en un archivo aparte (consulta la Enmienda) |
 | Solo archivos con extensión de código | no ve `package.json` ni `tsconfig.json`, que pueden romper una verificación |
 
 ## Consecuencias
 
 - ✅ Un `verify` que pasó deja de parecer válido cuando el código se mueve. Sin dependencias nuevas, sin escribir en `.git` ni en el árbol de trabajo.
 - ✅ El aviso sigue el contenido: un commit o un `git add` de los mismos archivos no lo activa.
-- ⚠️ Dice que los archivos cambiaron, no cuáles. Nombrarlos es el posible paso posterior.
+- ⚠️ Desde la enmienda nombra los archivos; sin el archivo de la lista, solo dice que cambiaron.
 - ⚠️ Una carpeta que Git no ignora y que algo regenera fuera de `verify` (una de build o de cobertura) marca la evidencia como desactualizada. Ignora esa carpeta.
 - ⚠️ Un cambio en los archivos de un submódulo no se ve: la huella contiene el commit que el índice registra para él.
 - ⚠️ Coste: unas llamadas a `git` y una lectura de cada archivo modificado o nuevo, en cada `status` y `continue`. Tardó 0,12 s en un repositorio de 172 archivos; no se ha medido en uno grande.
 - La evidencia escrita por una release anterior no tiene huella y no produce aviso hasta el siguiente `verify`.
+
+## Enmienda: el aviso nombra los archivos (0.2.21)
+
+`verify` también escribe `.truss/verification/working-tree.json`: la huella y el identificador de contenido de cada archivo, como `{ fingerprint, ids }`. Está separado de `latest.json` para que la evidencia siga siendo corta. `status` y `continue` comparan los identificadores y listan hasta cinco archivos bajo el aviso, y luego `… and N more`:
+
+```text
+Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+                edited lib/a.mjs
+                added src/retry.js
+                removed old.js
+```
+
+La lista solo se usa cuando su huella es la de `latest.json`. Si el archivo falta, está dañado o es de otra ejecución, el aviso aparece como antes, sin nombres. El archivo guarda rutas y hashes, nunca contenidos, y vive en `.truss/`, que se ignora. En un repositorio grande son unos 100 bytes por archivo.
