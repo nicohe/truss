@@ -4,6 +4,10 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.20] - 2026-10-12
+
+Patch release. `truss status` and `truss continue` now warn when the files changed after the last passing `truss verify`, so a `passed` that no longer matches the code does not go unnoticed.
+
 ### Upgrade notes
 - **Nothing that ran before changes.** `verify` runs the same commands with the same exit codes. `latest.json` of a passing run gains a field, `workingTree`, which is additive; evidence written by an earlier release has none and produces no warning until the next `verify`.
 - `status` and `continue` can print a new `○` line, `Evidence  ○ stale: …`. It is a warning: it does not block and does not change an exit code.
