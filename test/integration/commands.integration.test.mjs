@@ -708,6 +708,8 @@ test('status and continue say when the files changed after the last passing veri
   fs.writeFileSync(path.join(root, 'src', 'retry.js'), 'export const retry = 1;\n');
   const [status, next] = both();
   assert.match(status, stale);
+  assert.match(status, /\n {16}added src\/retry\.js\n/, 'status names the file');
+  assert.match(next, /\n {2}added src\/retry\.js\n/, 'so does continue');
   assert.match(next, /Phase\s+complete/);
   assert.match(
     next,

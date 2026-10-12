@@ -95,7 +95,10 @@ test('evidence is stale after an edit, and a new verification makes it fresh aga
     const { evidence } = pass(d);
     assert.equal(staleEvidence(d), null, 'nothing changed since the verify');
     fs.appendFileSync(path.join(d, 'a.js'), 'two\n');
-    assert.deepEqual(staleEvidence(d), { finishedAt: evidence.finishedAt });
+    assert.deepEqual(staleEvidence(d), {
+      finishedAt: evidence.finishedAt,
+      files: { changed: ['a.js'], added: [], removed: [] },
+    });
     pass(d);
     assert.equal(staleEvidence(d), null);
   } finally {
@@ -118,6 +121,24 @@ test('evidence says nothing when there is none, when the run failed, or when it 
     assert.equal(staleEvidence(d), null, 'evidence from before the fingerprint');
     fs.writeFileSync(file, '{not json');
     assert.equal(staleEvidence(d), null);
+  } finally {
+    cleanup(d);
+  }
+});
+
+test('the warning names the files edited, added and removed, and still warns when the list is gone', () => {
+  const d = gitProject();
+  try {
+    fs.writeFileSync(path.join(d, 'b.js'), 'b\n');
+    pass(d);
+    fs.appendFileSync(path.join(d, 'a.js'), 'two\n');
+    fs.writeFileSync(path.join(d, 'c.js'), 'c\n');
+    fs.rmSync(path.join(d, 'b.js'));
+    assert.deepEqual(staleEvidence(d).files, { changed: ['a.js'], added: ['c.js'], removed: ['b.js'] });
+    fs.rmSync(path.join(d, '.truss', 'verification', 'working-tree.json'));
+    assert.equal(staleEvidence(d).files, null, 'stale all the same, without names');
+    fs.writeFileSync(path.join(d, '.truss', 'verification', 'working-tree.json'), '{"fingerprint":"other","ids":{}}');
+    assert.equal(staleEvidence(d).files, null, 'a list from another run is not used');
   } finally {
     cleanup(d);
   }

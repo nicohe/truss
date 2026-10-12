@@ -106,7 +106,11 @@ When the last `verify` passed and the files changed after it, `status` adds a li
 
 ```text
 Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+                edited lib/a.mjs
+                added src/retry.js
 ```
+
+It names up to five files (`edited`, `added`, `removed`), then `… and N more`.
 
 It compares a fingerprint of the content of the files Git sees, recorded by `verify`, with the files now. `.truss/`, any `openspec/` folder and what Git ignores are left out, so ticking a task does not raise it; committing the same content does not either. It only warns: it never blocks and never changes an exit code. It says nothing when there is no evidence, when the last run failed or when the evidence comes from before the fingerprint. See [ADR 0002](../development/decisions/0002-stale-evidence-warning.md).
 

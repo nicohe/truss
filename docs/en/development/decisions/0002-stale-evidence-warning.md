@@ -37,15 +37,28 @@ It says nothing when there is no evidence, when the last run failed (the failure
 | The commit (`HEAD`) only | misses uncommitted edits, which is the case that matters |
 | `git stash create`, or `git write-tree` with a temporary index | writes objects into `.git` in a command that should only read |
 | `git status` output | cannot tell two successive edits of the same file apart |
-| A list of every file and its hash in the evidence | would let the warning name the files, at the cost of a larger evidence file. Kept as a possible later step |
+| A list of every file and its hash inside `latest.json` | makes the evidence file large for a person or an agent that reads it. Kept in its own file instead (see Amendment) |
 | Only files with a code extension | misses `package.json` or `tsconfig.json`, which can break a verification |
 
 ## Consequences
 
 - ✅ A passing `verify` stops looking valid after the code moves. No new dependency, no write to `.git` or to the work tree.
 - ✅ The warning follows the content: a commit or a `git add` of the same files does not raise it.
-- ⚠️ It says that the files changed, not which. Naming them is the possible later step.
+- ⚠️ Since the amendment it names the files; without the list file it only says that they changed.
 - ⚠️ A folder that Git does not ignore and that something regenerates outside `verify` (a build or coverage folder) marks the evidence stale. Ignore that folder.
 - ⚠️ A change to the files of a submodule is not seen: the fingerprint holds the commit the index records for it.
 - ⚠️ Cost: a few `git` calls and one read of each modified or untracked file, for every `status` and `continue`. It took 0.12 s on a 172-file repository; it has not been measured on a large one.
 - Evidence written by an earlier release has no fingerprint and produces no warning until the next `verify`.
+
+## Amendment: the warning names the files (0.2.21)
+
+`verify` also writes `.truss/verification/working-tree.json`: the fingerprint and the content id of every file, as `{ fingerprint, ids }`. It is separate from `latest.json` so the evidence stays short. `status` and `continue` compare the ids and list up to five files under the warning, then `… and N more`:
+
+```text
+Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+                edited lib/a.mjs
+                added src/retry.js
+                removed old.js
+```
+
+The list is only used when its fingerprint is the one in `latest.json`. When the file is missing, damaged or from another run, the warning appears as before, without names. The file holds paths and hashes, never contents, and lives in `.truss/`, which is ignored. For a large repository it is about 100 bytes per file.
