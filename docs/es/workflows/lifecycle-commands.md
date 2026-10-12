@@ -104,6 +104,14 @@ Next: truss continue
 
 Los marcadores junto a cada artefacto son `●` hecho, `◐` listo para escribirse y `○` bloqueado hasta que exista otro artefacto. `Needed to implement` nombra el artefacto que OpenSpec necesita antes de poder trabajar en una tarea (las releases anteriores a la 0.2.19 llamaban a esta línea `Tasks required`). Mientras la planificación está sin terminar, la línea `Tasks` no aparece, porque aún no hay tareas.
 
+Cuando el último `verify` pasó y los archivos cambiaron después, `status` añade una línea, y `continue` añade una sección `Evidence` en las fases `implementation` y `complete`:
+
+```text
+Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+```
+
+Compara una huella del contenido de los archivos que Git ve, registrada por `verify`, con los archivos actuales. `.truss/`, cualquier carpeta `openspec/` y lo que Git ignora quedan fuera, así que marcar una tarea no la activa; commitear el mismo contenido tampoco. Solo avisa: nunca bloquea ni cambia un código de salida. No dice nada cuando no hay evidencia, cuando la última ejecución falló o cuando la evidencia es anterior a la huella. Consulta el [ADR 0002](../development/decisions/0002-stale-evidence-warning.md).
+
 Sin cambio activo lo dice y señala el siguiente paso:
 
 ```text

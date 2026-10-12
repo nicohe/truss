@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Upgrade notes
+- **Nothing that ran before changes.** `verify` runs the same commands with the same exit codes. `latest.json` of a passing run gains a field, `workingTree`, which is additive; evidence written by an earlier release has none and produces no warning until the next `verify`.
+- `status` and `continue` can print a new `○` line, `Evidence  ○ stale: …`. It is a warning: it does not block and does not change an exit code.
+
+### Added
+- **`status` and `continue` warn when the files changed after the last passing `verify`.** The evidence of a passing run said `passed` for ever, even after the code moved. `verify` now records a fingerprint of the content of the files Git sees (`workingTree: { fingerprint, files }`), and `status` and `continue` compare it with the files now: `○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.` The fingerprint follows content, not commits: a second edit of the same file changes it, and staging or committing the same content does not. `.truss/`, any `openspec/` folder and what Git ignores are left out, so ticking a task does not raise it. `continue` shows it in the `implementation` and `complete` phases. It says nothing when there is no evidence, when the last run failed, or when the evidence predates the fingerprint. It reads Git only and writes nothing. See [ADR 0002](docs/en/development/decisions/0002-stale-evidence-warning.md).
+
 ## [0.2.19] - 2026-10-04
 
 Patch release of warnings and wording, from using TRUSS on a TypeScript project in a shared repository. `truss doctor` warns about an empty `AGENTS.md`, `truss init` recognizes `.git/info/exclude`, and `continue` and `status` read more clearly. Six new guides and pages cover using TRUSS in a shared repository, choosing where it lives, a TypeScript, pnpm and Vitest example, skills and the review flow, Graphify, and a first change with prompts.

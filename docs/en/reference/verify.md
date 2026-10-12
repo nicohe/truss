@@ -87,3 +87,5 @@ The result is stored under `tasksComplete` in the evidence file.
 ## Evidence
 
 The local evidence file contains the ordered commands actually executed, their result, exit code/signal and duration. Because TRUSS is local tooling, `.truss/verification/` is ephemeral harness state rather than product source.
+
+A passing run also records `workingTree`: `{ "fingerprint": "…", "files": 172 }`, a hash of the content of the files Git sees, taken once the commands have finished. `.truss/` and any `openspec/` folder are left out, and so is what Git ignores. [`truss status`](../workflows/lifecycle-commands.md#truss-status) and `truss continue` compare it with the files now and print `○ stale` when they differ; see [ADR 0002](../development/decisions/0002-stale-evidence-warning.md). Evidence from an earlier release has no `workingTree` and gives no warning.

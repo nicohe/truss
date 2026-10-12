@@ -688,6 +688,52 @@ test('continue shows a long task by a short title and points to tasks.md; status
   assert.doesNotMatch(status, /Tasks required/);
 });
 
+test('status and continue say when the files changed after the last passing verify', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n- [ ] two\n');
+  const stale =
+    /Evidence\s+○ stale: the files changed after the last passing verify \(\d{4}-\d\d-\d\d \d\d:\d\d UTC\)\. Run truss verify\./;
+  const both = () => [out(run(root, ['status'], { binDirs: [bin] })), out(run(root, ['continue'], { binDirs: [bin] }))];
+
+  for (const text of both()) assert.doesNotMatch(text, /stale/, 'never verified: nothing to compare');
+
+  assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
+  for (const text of both()) assert.doesNotMatch(text, /stale/, 'just verified');
+
+  fs.writeFileSync(path.join(root, 'tasks-ticked.txt'), 'x\n');
+  fs.writeFileSync(path.join(root, 'openspec', 'changes', 'add-retry', 'tasks.md'), '- [x] one\n- [x] two\n');
+  fs.rmSync(path.join(root, 'tasks-ticked.txt'));
+  for (const text of both()) assert.doesNotMatch(text, /stale/, 'ticking a task is not a change to the code');
+
+  fs.mkdirSync(path.join(root, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'src', 'retry.js'), 'export const retry = 1;\n');
+  const [status, next] = both();
+  assert.match(status, stale);
+  assert.match(next, /Phase\s+complete/);
+  assert.match(
+    next,
+    /Evidence\n○ stale: the files changed after the last passing verify \(/,
+    'continue shows it under its own heading',
+  );
+
+  assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
+  for (const text of both()) assert.doesNotMatch(text, /stale/, 'a new verify makes it fresh again');
+});
+
+test('continue shows stale evidence while implementing, and not while planning', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
+  fs.writeFileSync(path.join(root, 'app.js'), 'changed\n');
+  const implementing = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(implementing, /Phase\s+implementation/);
+  assert.match(implementing, /Evidence\n○ stale/);
+  assert.ok(implementing.indexOf('Evidence\n') < implementing.indexOf('Context to load'));
+
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry', 'tasks.md'));
+  const planning = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(planning, /Phase\s+spec/);
+  assert.doesNotMatch(planning, /stale/, 'nothing to verify yet');
+});
+
 test('tasks_complete block: open tasks fail verify, list what is left and run no command', () => {
   const { root, bin } = tasksWorkspace('block', '- [x] one\n- [ ] add the tests\n- [ ] update the docs\n');
   const marker = 'command-ran';
