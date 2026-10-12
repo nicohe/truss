@@ -14,9 +14,9 @@
 - Records machine-readable evidence in `.truss/verification/latest.json`.
 - Never reports success when no verification commands are configured.
 
-## The default command list
+## The command list
 
-`truss init` writes `npm test --if-present`, `npm run lint --if-present`, `npm run typecheck --if-present` and `npm run build --if-present`. `--if-present` skips a script the project does not define, but `npm` itself needs a `package.json`: in a project without one (Python, Go, or the root of a monorepo whose packages live in subdirectories) the first command fails with `npm error … Could not read package.json` and `verify` stops. Replace the list with your own checks in `.truss/config.yaml`; see the [examples](../configuration/examples.md#a-project-that-is-not-node).
+`truss init` writes `commands: []`: TRUSS does not guess your language or your tools. With an empty list `verify` prints `× no verification commands configured`, records `not_configured` and exits `1`; it never reports success without having run something. List your project's checks in `.truss/config.yaml`; see the [examples](../configuration/examples.md). In 0.2.20 and earlier the list started with four `npm` commands, and a configuration that omitted `verification.commands` fell back to them; now it falls back to the empty list.
 
 Each command runs through your shell with your terminal attached (inherited standard input and output), so a command that waits for input or watches for file changes keeps `verify` waiting. Use the single-run form of your test runner, such as `vitest run` rather than `vitest`. A pnpm and Vitest example is in [the configuration examples](../configuration/examples.md#a-typescript-project-with-pnpm-and-vitest).
 
@@ -35,7 +35,7 @@ Each command runs through your shell with your terminal attached (inherited stan
 - The first time, and whenever the list changes, it prints the commands and asks `Run and trust these commands? [y/N]`. Approval is remembered.
 - Without a terminal (CI, agents) it refuses and exits `1`, unless you pass `truss verify --trust` or set `TRUSS_TRUST=1`. Use these only after reading `.truss/config.yaml`.
 - Approvals are stored per project path in `$TRUSS_HOME/trusted.json` (default `~/.config/truss/`, or `$XDG_CONFIG_HOME/truss/`), never in the repository.
-- `truss init` trusts the default list it writes; adopted or edited configs need approval.
+- Every list needs approval the first time, including the one you write after `init`; there is nothing to approve while the list is empty.
 - `truss doctor` reports the current trust state.
 
 See the trust model in [`SECURITY.md`](../../../SECURITY.md), and [environment variables](environment.md) for `TRUSS_TRUST` and `TRUSS_HOME`.

@@ -35,7 +35,7 @@ test('loadConfig applies defaults', () => {
     const x = loadConfig(d);
     assert.equal(x.config.spec.mode, 'anchored');
     assert.equal(x.config.development.tdd, true);
-    assert.equal(x.config.verification.commands.length, 4);
+    assert.deepEqual(x.config.verification.commands, [], 'TRUSS does not guess the toolchain');
   } finally {
     cleanup(d);
   }

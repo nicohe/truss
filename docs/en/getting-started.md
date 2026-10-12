@@ -57,13 +57,14 @@ node .truss/bin/truss.mjs init
 Config          ● created .truss/config.yaml
 OpenSpec       ● initialized with --tools none
 Git ignore      ● .truss/ ignored
+Verification    ○ no commands yet: list yours under verification.commands in .truss/config.yaml
 
 TRUSS initialization verified.
 Run again safely at any time: truss init
 Next: truss doctor
 ```
 
-`init` creates `.truss/config.yaml` and initializes OpenSpec, without overwriting anything that already exists, so it is safe to run again. Then check the environment:
+`init` creates `.truss/config.yaml` and initializes OpenSpec, without overwriting anything that already exists, so it is safe to run again. The `Verification` line is a reminder: TRUSS does not guess your toolchain, so `verification.commands` starts empty and you list your checks in step 6. Then check the environment:
 
 ```bash
 node .truss/bin/truss.mjs doctor
@@ -192,14 +193,22 @@ Once the phase is `implementation`, the agent works through `tasks.md` and chang
 node .truss/bin/truss.mjs verify
 ```
 
-`verify` runs the commands listed under `verification.commands` in `.truss/config.yaml`, in order, and stops at the first failure. It records what happened in `.truss/verification/latest.json`. The default list runs your `npm test`, `lint`, `typecheck` and `build` scripts when they exist. That default assumes a Node project: without a `package.json`, `npm` fails on the first command. In any other project, replace the list with your own checks first (for example `pytest -q`); see [the default command list](reference/verify.md#the-default-command-list).
+`verify` runs the commands listed under `verification.commands` in `.truss/config.yaml`, in order, and stops at the first failure. It records what happened in `.truss/verification/latest.json`. The list starts empty, because TRUSS does not know your toolchain, and with an empty list `verify` fails with `× no verification commands configured`. List the checks of your project first, whichever language or tool it uses:
 
-Because those commands run through your shell, TRUSS asks before running a list it has not seen for this project. `init` approves the default list it writes; if you edit the list, the next run stops:
+```yaml
+verification:
+  commands:
+    - <your test command>
+    - <your lint command>
+```
+
+See [the examples](configuration/examples.md) for Node, Python and pnpm projects, and [the command list](reference/verify.md#the-command-list).
+
+Because those commands run through your shell, TRUSS asks before running a list it has not seen for this project. The first run, and every run after you edit the list, stops:
 
 ```text
 ○ These verification commands are not trusted for this project yet.
   They run through your shell with your permissions. Review them first:
-    npm test --if-present
     ...
 × Not trusted; nothing was executed.
 Review .truss/config.yaml, then re-run with --trust (or TRUSS_TRUST=1).
@@ -256,7 +265,8 @@ Component paths must exist and stay inside the project. See [component resolutio
 | `invalid config` (exit code 2) | `config.yaml` breaks the schema | run `truss config` for the exact errors |
 | `TRUSS installation is incomplete: config schema not found` | the `.truss/` clone is damaged | clone TRUSS again |
 | `Not trusted; nothing was executed.` | the command list changed | review it, then `--trust` |
-| `× failed  [1/4] npm test --if-present`, with `npm error … Could not read package.json` | the default command list assumes a Node project and this one has no `package.json` | replace `verification.commands` with your project's own checks, then approve the new list |
+| `× no verification commands configured` | `verification.commands` is empty, which is how `init` leaves it | list your project's checks under `verification.commands`, then approve the list |
+| `× failed  [1/4] npm test`, with `npm error … Could not read package.json` | the list calls `npm` and this project has no `package.json` | replace `verification.commands` with your project's own checks, then approve the new list |
 | `Unknown component "x"` | that name is not declared under `components` | declare it, or omit `--component` |
 | `OpenSpec project is not initialized` | no `openspec/` directory | run `truss init` |
 

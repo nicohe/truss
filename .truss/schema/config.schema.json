@@ -60,12 +60,7 @@
             "type": "string",
             "minLength": 1
           },
-          "default": [
-            "npm test --if-present",
-            "npm run lint --if-present",
-            "npm run typecheck --if-present",
-            "npm run build --if-present"
-          ]
+          "default": []
         },
         "tests_required": {
           "type": "string",

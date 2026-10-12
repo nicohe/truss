@@ -1575,3 +1575,19 @@ test('tasks_complete block: an archived change is reported and does not stop ver
   assert.equal(evidence.status, 'passed');
   assert.equal(evidence.tasksComplete.status, 'archived');
 });
+
+test('init and doctor say that no verification commands are listed, and verify fails instead of guessing', () => {
+  const empty = workspace({ config: 'version: 1\n' });
+  const bin = fakeOpenSpec(empty);
+  assert.match(
+    out(run(empty, ['init'], { binDirs: [bin] })),
+    /Verification\s+○ no commands yet: list yours under verification\.commands/,
+  );
+  assert.match(out(run(empty, ['doctor'], { binDirs: [bin] })), /none configured; list your checks under/);
+  const verify = run(empty, ['verify'], { binDirs: [bin] });
+  assert.equal(verify.status, 1);
+  assert.match(out(verify), /no verification commands configured/);
+
+  const listed = workspace({ config: validConfig });
+  assert.doesNotMatch(out(run(listed, ['init'], { binDirs: [fakeOpenSpec(listed)] })), /no commands yet/);
+});

@@ -32,7 +32,7 @@ TRUSS runs local, deterministic tooling on your behalf. Treat the project's `.tr
 - `truss verify` runs every entry in `verification.commands` through the system shell (`shell: true`) with your user's permissions and environment. Whoever controls that file controls what runs.
 - **Approval gate.** `truss verify` shows the command list and asks for confirmation before running it, then remembers the approval for that project. It asks again whenever the list changes. Without a terminal it refuses to run (exit `1`) unless you pass `--trust` or set `TRUSS_TRUST=1`.
 - The approval lives in a user-level file (`$TRUSS_HOME/trusted.json`, default `~/.config/truss/trusted.json`), keyed by project path and a SHA-256 of the command list. It is deliberately outside the repository, so a cloned project cannot ship its own approval.
-- `truss init` trusts the default command list it writes itself; a config you adopt or edit is not trusted until you approve it.
+- `truss init` writes an empty command list; any list you write or adopt is not trusted until you approve it.
 - The gate protects against *unreviewed* commands, not against a command you approve. Read the list before answering yes, and do the same when a pull request changes `.truss/config.yaml`. It also does not stop you (or an agent) from running the same commands by hand or with `--trust`.
 - TRUSS never downloads or installs OpenSpec or Graphify; it only executes the CLIs already present on your `PATH` (or at `TRUSS_OPENSPEC_PATH`).
 - Local state under `.truss/` (`state.json`, `verification/`, `handoffs/`, logs, caches) is ignored by Git and is not a trust boundary.

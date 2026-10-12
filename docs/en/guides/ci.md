@@ -52,4 +52,4 @@ The job fails when `verify` exits with `1` or `2` (see the [exit codes](../refer
 | `Not trusted; nothing was executed.` and exit code `1` | there is no terminal and no approval | set `TRUSS_TRUST: "1"` on the step, after reviewing the list |
 | `TRUSS config not found: .truss/config.yaml` | the configuration was not copied | add the `cp` step before `verify` |
 | `Tests required` with `could not evaluate` | the checkout is shallow, so there is no base branch to compare with | use `fetch-depth: 0` |
-| `× failed [1/4] npm test --if-present` with `Could not read package.json` | the default commands assume a Node project | list your own commands in the reference file (see the [examples](../configuration/examples.md#a-project-that-is-not-node)) |
+| `× no verification commands configured` or `× failed [1/4] npm test` with `Could not read package.json` | the list is empty, or it calls a tool the CI machine lacks | list your own commands in the reference file (see the [examples](../configuration/examples.md#a-project-that-is-not-node)) |
