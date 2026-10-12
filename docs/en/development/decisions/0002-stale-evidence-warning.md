@@ -1,0 +1,51 @@
+# ADR 0002: `status` and `continue` warn when the files changed after the last verify
+
+- **Status:** accepted, 2026-10-12.
+- **Decision by:** the maintainer.
+
+## Context
+
+`truss verify` writes `.truss/verification/latest.json` with the result of the commands. That result describes the files as they were at that moment. When the code is edited afterwards, the evidence still says `passed`, and nothing says it no longer applies. In a case seen in practice, a reviewer and an implementer worked on code that had changed after the last verify, and neither `status` nor `continue` mentioned it.
+
+It is the same kind of mistake as a Graphify graph that stays `fresh` while the work tree has uncommitted edits: a state that looks valid and no longer matches the files.
+
+## Decision
+
+`verify` records a **fingerprint of the files Git sees**, and `status` and `continue` compare the current one with it and print one warning line when they differ. It only warns.
+
+**The fingerprint** is a SHA-256 of every (path, content id) pair, where the content id is the one Git would give the file (`git hash-object`, without writing it). It is built from Git's read-only commands: the index (`git ls-files -s`), minus the files deleted from the work tree (`-d`), with the modified (`-m`) and untracked-but-not-ignored (`-o --exclude-standard`) files read from disk. It follows content, not commits: editing a file changes it, a second edit of the same file changes it again, and staging or committing the same content does not.
+
+**Left out**, always: `.truss/`, because it holds the evidence itself, and any `openspec/` folder, because ticking a task or fixing a spec after a verify is normal and is not the code. What Git ignores is out by definition.
+
+**Recorded** in `latest.json` as `workingTree: { fingerprint, files }`, once the commands have finished, so it includes what they wrote. It is only written for a passing run.
+
+**Shown** as one line, only when the last evidence is `passed` and carries a fingerprint that differs from the current one:
+
+```text
+Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+```
+
+`status` prints it with the summary. `continue` prints it under its own `Evidence` heading, in the `implementation` and `complete` phases (in `spec` there is nothing to verify yet). It never changes an exit code and never blocks.
+
+It says nothing when there is no evidence, when the last run failed (the failure is the news), when the evidence predates the fingerprint, or when Git cannot say. `doctor` and `handoff` are unchanged.
+
+## Options considered
+
+| Option | Why not |
+|---|---|
+| File modification times against `latest.json` | `git checkout`, `touch`, formatters and clocks give false positives and misses |
+| The commit (`HEAD`) only | misses uncommitted edits, which is the case that matters |
+| `git stash create`, or `git write-tree` with a temporary index | writes objects into `.git` in a command that should only read |
+| `git status` output | cannot tell two successive edits of the same file apart |
+| A list of every file and its hash in the evidence | would let the warning name the files, at the cost of a larger evidence file. Kept as a possible later step |
+| Only files with a code extension | misses `package.json` or `tsconfig.json`, which can break a verification |
+
+## Consequences
+
+- ✅ A passing `verify` stops looking valid after the code moves. No new dependency, no write to `.git` or to the work tree.
+- ✅ The warning follows the content: a commit or a `git add` of the same files does not raise it.
+- ⚠️ It says that the files changed, not which. Naming them is the possible later step.
+- ⚠️ A folder that Git does not ignore and that something regenerates outside `verify` (a build or coverage folder) marks the evidence stale. Ignore that folder.
+- ⚠️ A change to the files of a submodule is not seen: the fingerprint holds the commit the index records for it.
+- ⚠️ Cost: a few `git` calls and one read of each modified or untracked file, for every `status` and `continue`. It took 0.12 s on a 172-file repository; it has not been measured on a large one.
+- Evidence written by an earlier release has no fingerprint and produces no warning until the next `verify`.
