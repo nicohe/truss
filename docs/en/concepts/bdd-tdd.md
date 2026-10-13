@@ -11,6 +11,13 @@ Work is cut into **vertical slices**: the smallest piece that demonstrates behav
 
 `development.bdd` and `development.tdd` (both `true` by default) turn the loops on. They are instructions to the agent; TRUSS does not orchestrate them in v0.2, and only says so: `truss continue` tells the agent when one is off. Turning `bdd` off can be reasonable for refactors or tooling with no new observable behavior; it does not disable existing tests or `truss verify`.
 
+## What the policies ask for
+
+- **TDD** (`tdd.md`): one test per behavior, and a RED you have seen fail for the right reason; the minimum code to go GREEN; one slice at a time, never a batch of tests written ahead; refactor only on green. Tests go through the public interface and use expected values written as literals. Mock only system boundaries (external services, the clock, randomness, and when needed the database or file system), never code the application owns.
+- **BDD** (`bdd.md`): a scenario is a concrete example in the language of the domain: `Given` a known state (no user interaction), `When` one event, `Then` an outcome someone can see. Three to five steps, no clicks, HTTP calls or database rows in it; that detail lives in the step code.
+
+They are instructions to the agent. Read the files for the full wording.
+
 ## What TRUSS can check, and what it cannot
 
 TRUSS cannot see whether a test was written before the code. It can check facts around it:

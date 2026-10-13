@@ -63,6 +63,22 @@ Esta lista se ejecutó en verde con pnpm 12, Vitest 5, ESLint 10 y Prettier 3. C
 
 Para dejar la comprobación propia de OpenSpec en la evidencia, añádela a la lista: `openspec validate --all --strict --no-interactive` valida todos los cambios y specs, y termina con código `1` si alguno está mal formado. También falla en un cambio que aún no tiene deltas de spec, así que añádela cuando las specs ya existan, no mientras un cambio sea solo una proposal. Sin ella, `latest.json` registra solo los comandos que listas, y un revisor no puede ver que el cambio se validó.
 
+## Llevar una regla al agente a través de OpenSpec
+
+El propio OpenSpec puede entregar una regla al agente en el momento de aplicar o archivar un cambio. Añade `operations` a `openspec/config.yaml`:
+
+```yaml
+operations:
+  apply:
+    guidance:
+      - Follow the TRUSS tdd and bdd policies before writing code
+  archive:
+    guidance:
+      - Sync the specs before archiving
+```
+
+`openspec instructions apply --change <id>` (y `archive`) imprime entonces una sección `Operation Guidance (advisory)`, y `--json` la devuelve como `operationGuidance`. Es orientativa: OpenSpec se la muestra al agente y no la hace cumplir, y TRUSS no la lee. Sirve porque el agente ya ejecuta esos comandos, así que la regla llega junto con las instrucciones en vez de depender de una línea en `AGENTS.md`. Comprobado con OpenSpec 1.13.2 y 1.14.1; una versión anterior puede no conocer la clave.
+
 ## Spec-as-Source estricto
 ```yaml
 spec:

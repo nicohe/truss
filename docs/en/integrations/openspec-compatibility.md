@@ -18,4 +18,6 @@ TRUSS treats OpenSpec as an independently owned required dependency. It detects 
 
 A newer 1.x release is accepted by the v0.2 contract. A future major version is deliberately fail-closed because it may change commands, project layout, or artifact semantics.
 
+The contract job of the continuous integration installs the newest 1.x on every run, with the real CLI. It last ran against 1.14.1.
+
 TRUSS does not silently run `openspec update` and does not silently install a different version. The user remains in control of OpenSpec lifecycle changes.

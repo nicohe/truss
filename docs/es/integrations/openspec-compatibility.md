@@ -20,4 +20,6 @@ TRUSS trata OpenSpec como una dependencia obligatoria con dueño independiente. 
 
 Una versión 1.x más reciente la acepta el contrato de v0.2. Una futura versión mayor se rechaza a propósito (fail-closed), porque puede cambiar comandos, la estructura del proyecto o la semántica de los artefactos.
 
+El job de contrato de la integración continua instala en cada ejecución la 1.x más reciente, con el CLI real. La última vez se ejecutó con la 1.14.1.
+
 TRUSS no ejecuta `openspec update` en silencio ni instala en silencio otra versión. El usuario conserva el control de los cambios en el ciclo de vida de OpenSpec.

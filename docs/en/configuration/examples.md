@@ -61,6 +61,22 @@ This list ran green with pnpm 12, Vitest 5, ESLint 10 and Prettier 3. Four thing
 
 To keep OpenSpec's own check in the evidence, add it to the list: `openspec validate --all --strict --no-interactive` validates every change and spec, and exits `1` if one is malformed. It also fails for a change that has no spec deltas yet, so add it once the specs exist, not while a change is still a proposal. Without it, `latest.json` records only the commands you list, and a reviewer cannot see that the change was validated.
 
+## Carry a rule to the agent through OpenSpec
+
+OpenSpec itself can hand a rule to the agent at the moment it applies or archives a change. Add `operations` to `openspec/config.yaml`:
+
+```yaml
+operations:
+  apply:
+    guidance:
+      - Follow the TRUSS tdd and bdd policies before writing code
+  archive:
+    guidance:
+      - Sync the specs before archiving
+```
+
+`openspec instructions apply --change <id>` (and `archive`) then prints an `Operation Guidance (advisory)` section, and `--json` returns it as `operationGuidance`. It is advisory: OpenSpec shows it to the agent and does not enforce it, and TRUSS does not read it. It is useful because the agent already runs these commands, so the rule arrives with the instructions instead of depending on a line in `AGENTS.md`. Checked with OpenSpec 1.13.2 and 1.14.1; an older release may not know the key.
+
 ## Strict spec-as-source
 ```yaml
 spec:
