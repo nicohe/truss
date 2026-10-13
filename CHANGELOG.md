@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.22] - 2026-10-13
+
+Patch release. `truss status` and `truss continue` stay fast when many files changed, and `truss help` says that `verification.commands` starts empty.
+
+### Upgrade notes
+- **None.** Nothing that ran before changes: the fingerprint is the same, only computed faster.
+
 ### Fixed
 - **`status` and `continue` are fast when many files changed.** The fingerprint behind the stale-evidence warning started one `git hash-object` process per modified or untracked file: 13 s for 2,000 untracked files in a 20,000-file repository. It now hashes them in one call (0.16 s). The result is the same.
 
