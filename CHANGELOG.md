@@ -4,6 +4,12 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **The TDD and BDD policies say more.** `tdd.md` now asks for one behavior per test, a RED seen failing for the right reason, vertical slices instead of a batch of tests written ahead, refactoring only on green, expected values written as literals, tests through the public interface, and mocks only at system boundaries. `bdd.md` now describes how to write a scenario: `Given` a known state without user interaction, one `When`, an observable `Then`, three to five steps in the language of the domain. `truss continue` points the agent at these files as before. Both are instructions to the agent; `truss verify` checks the same things as before.
+
+### Documentation
+- A recipe to carry a rule to the agent with OpenSpec's `operations` guidance (`openspec instructions apply|archive` prints it as advisory), checked with OpenSpec 1.13.2 and 1.14.1. The compatibility page notes that the contract job runs against the newest 1.x (last 1.14.1).
+
 ## [0.2.22] - 2026-10-13
 
 Patch release. `truss status` and `truss continue` stay fast when many files changed, and `truss help` says that `verification.commands` starts empty.

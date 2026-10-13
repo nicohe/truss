@@ -13,6 +13,13 @@ El trabajo se corta en **vertical slices**: la pieza más pequeña que demuestra
 
 `development.bdd` y `development.tdd` (ambos `true` por defecto) activan los bucles. Son instrucciones para el agente; TRUSS no las orquesta en v0.2 y solo lo dice: `truss continue` le avisa al agente cuando uno está desactivado. Desactivar `bdd` puede ser razonable en refactors o tooling sin comportamiento observable nuevo; no desactiva los tests existentes ni `truss verify`.
 
+## Qué piden las políticas
+
+- **TDD** (`tdd.md`): un test por comportamiento y un RED que has visto fallar por la razón correcta; el mínimo código para llegar a GREEN; un corte cada vez, nunca un lote de tests escritos por adelantado; refactor solo en verde. Los tests pasan por la interfaz pública y usan valores esperados escritos como literales. Se simulan solo los límites del sistema (servicios externos, el reloj, la aleatoriedad y, si hace falta, la base de datos o el sistema de archivos), nunca código que la aplicación posee.
+- **BDD** (`bdd.md`): un escenario es un ejemplo concreto en el lenguaje del dominio: `Given` un estado conocido (sin interacción del usuario), `When` un evento, `Then` un resultado que alguien puede ver. De tres a cinco pasos, sin clics, llamadas HTTP ni filas de base de datos; ese detalle vive en el código de los pasos.
+
+Son instrucciones para el agente. Lee los archivos para ver el texto completo.
+
 ## Qué puede comprobar TRUSS y qué no
 
 TRUSS no puede ver si un test se escribió antes que el código. Sí puede comprobar hechos a su alrededor:
