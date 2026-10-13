@@ -47,7 +47,7 @@ It says nothing when there is no evidence, when the last run failed (the failure
 - ⚠️ Since the amendment it names the files; without the list file it only says that they changed.
 - ⚠️ A folder that Git does not ignore and that something regenerates outside `verify` (a build or coverage folder) marks the evidence stale. Ignore that folder.
 - ⚠️ A change to the files of a submodule is not seen: the fingerprint holds the commit the index records for it.
-- ⚠️ Cost: a few `git` calls and one read of each modified or untracked file, for every `status` and `continue`. It took 0.12 s on a 172-file repository; it has not been measured on a large one.
+- ⚠️ Cost: a few `git` calls and one read of each modified or untracked file, for every `status` and `continue`. It took 0.12 s on a 172-file repository, and 0.11 s on a 20,000-file one; with 2,000 untracked files it took 0.16 s (13 s before the files were hashed in one `git hash-object --stdin-paths` call instead of one process each).
 - Evidence written by an earlier release has no fingerprint and produces no warning until the next `verify`.
 
 ## Amendment: the warning names the files (0.2.21)
