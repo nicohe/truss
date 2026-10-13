@@ -36,6 +36,7 @@ Respuestas paso a paso a una tarea.
 - [Tu primer cambio, de punta a punta](guides/first-change.md): los prompts que darle a tu agente en cada paso y qué hace OpenSpec con ellos.
 - [Usar TRUSS en un repositorio compartido](guides/shared-repo.md): mantener TRUSS y tu guía para el agente en local con `.git/info/exclude`, y qué hace Prettier con `.truss/`.
 - [Elegir dónde vive TRUSS](guides/where-to-put-truss.md): un TRUSS con componentes, uno por carpeta de proyecto o uno por módulo, y qué hace cada uno.
+- [Ejecuta los escenarios de tus specs como tests](guides/executable-specs.md): Gherkin en las specs, ejecutado por un ejecutor que eliges y enchufado en `verify`.
 - [Usar TRUSS en CI](guides/ci.md): una instalación fijada, la configuración, la aprobación y un workflow de ejemplo.
 - [Actualizar o desinstalar TRUSS](guides/update-and-remove.md): fijar una release y qué no borrar.
 - [Solución de problemas](guides/troubleshooting.md): qué imprime TRUSS cuando algo va mal, qué significa y qué hacer.
