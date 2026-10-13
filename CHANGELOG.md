@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.23] - 2026-10-13
+
+Patch release of guidance. The TDD and BDD policies the agent reads are fuller, and two new documentation pieces explain how to carry a rule through OpenSpec and how to run the scenarios of the specs as tests. No command changes.
+
+### Upgrade notes
+- **None.** The CLI behaves as in 0.2.22. The policy files (`.truss/policies/tdd.md` and `bdd.md`) have more text, which `truss continue` points the agent to as before.
+
 ### Changed
 - **The TDD and BDD policies say more.** `tdd.md` now asks for one behavior per test, a RED seen failing for the right reason, vertical slices instead of a batch of tests written ahead, refactoring only on green, expected values written as literals, tests through the public interface, and mocks only at system boundaries. `bdd.md` now describes how to write a scenario: `Given` a known state without user interaction, one `When`, an observable `Then`, three to five steps in the language of the domain. `truss continue` points the agent at these files as before. Both are instructions to the agent; `truss verify` checks the same things as before.
 
