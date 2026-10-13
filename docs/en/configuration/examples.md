@@ -78,6 +78,7 @@ operations:
 `openspec instructions apply --change <id>` (and `archive`) then prints an `Operation Guidance (advisory)` section, and `--json` returns it as `operationGuidance`. It is advisory: OpenSpec shows it to the agent and does not enforce it, and TRUSS does not read it. It is useful because the agent already runs these commands, so the rule arrives with the instructions instead of depending on a line in `AGENTS.md`. Checked with OpenSpec 1.13.2 and 1.14.1; an older release may not know the key.
 
 ## Strict spec-as-source
+To have a runner execute the scenarios of the specs as part of `verify`, see [run the scenarios of your specs as tests](../guides/executable-specs.md).
 ```yaml
 spec:
   mode: source
