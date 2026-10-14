@@ -114,6 +114,16 @@ It names up to five files (`edited`, `added`, `removed`), then `… and N more`.
 
 It compares a fingerprint of the content of the files Git sees, recorded by `verify`, with the files now. `.truss/`, any `openspec/` folder and what Git ignores are left out, so ticking a task does not raise it; committing the same content does not either. It only warns: it never blocks and never changes an exit code. It says nothing when there is no evidence, when the last run failed or when the evidence comes from before the fingerprint. See [ADR 0002](../development/decisions/0002-stale-evidence-warning.md).
 
+With `spec.zone_guard: true`, both commands also warn when the work tree has uncommitted changes in the specs (`openspec/`) and in the code at once; `continue` shows it under a `Zones` heading, in every phase:
+
+```text
+Zones           ○ uncommitted changes in the specs (openspec/) and in the code at once. Commit one zone before working on the other.
+                specs: openspec/changes/add-retry/specs/retry/spec.md
+                code:  src/retry.ts, src/retry.test.ts
+```
+
+It lists up to three paths of each zone, then `… and N more`. `tasks.md`, `openspec/changes/archive/` and `.truss/` count in neither zone. It reads `git status`, so it sees staged, unstaged and untracked files, and it only warns: it never blocks and never changes an exit code. Nothing prevents the agent from editing the other zone; the line says it happened. See [ADR 0003](../development/decisions/0003-zone-warning.md).
+
 With no active change it says so and points at the next step:
 
 ```text

@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- **`spec.zone_guard: true` now has an effect TRUSS produces.** `status` and `continue` warn, without blocking, when the work tree has uncommitted changes in the specs (`openspec/`) and in the code at once: `Zones  ○ uncommitted changes in the specs (openspec/) and in the code at once. Commit one zone before working on the other.`, with up to three paths of each. `tasks.md` under `openspec/`, `openspec/changes/archive/` and `.truss/` count in neither zone. It reads `git status` only, and says nothing when the option is off, the tree is clean or touches one zone, or the project is not a Git work tree. It cannot stop the agent from editing the other zone. See [ADR 0003](docs/en/development/decisions/0003-zone-warning.md).
+
 ## [0.2.23] - 2026-10-13
 
 Patch release of guidance. The TDD and BDD policies the agent reads are fuller, and two new documentation pieces explain how to carry a rule through OpenSpec and how to run the scenarios of the specs as tests. No command changes.

@@ -17,7 +17,7 @@ Enforcement v0.2: **AGENT policy**. While the agent implements, `truss continue`
 Type: boolean. Default: `true`. When true, observable acceptance behavior should be expressed as Gherkin scenarios where appropriate. When false, structured non-Gherkin acceptance criteria are allowed. Enforcement v0.2: **AGENT**.
 
 ## `spec.zone_guard`
-Type: boolean. Default: `false`. When true, separate Spec Zone and Code Zone behavior is expected. Recommended mainly with `mode: source`. Enforcement v0.2: **AGENT/DECLARATIVE**; `truss continue` reminds the agent while it implements, and runtime enforcement is future work.
+Type: boolean. Default: `false`. When true, separate Spec Zone and Code Zone behavior is expected. Recommended mainly with `mode: source`. Enforcement v0.2: **AGENT/DECLARATIVE**; `truss continue` reminds the agent while it implements, and `status` and `continue` print a `Zones` warning when the work tree has uncommitted changes in both zones (see [ADR 0003](../development/decisions/0003-zone-warning.md)). The warning never blocks. Runtime enforcement is future work.
 
 ## `development.bdd`
 Type: boolean. Default: `true`. Enables the BDD macro-loop in `execute-change`: acceptance behavior RED → implementation → acceptance GREEN. Enforcement v0.2: **AGENT**; with `false`, `truss continue` tells the agent the loop is not mandatory.

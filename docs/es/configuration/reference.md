@@ -18,7 +18,7 @@ Enforcement en v0.2: **policy del AGENT**. Mientras el agente implementa, `truss
 Tipo: booleano. Por defecto: `true`. Con `true`, el comportamiento de aceptación observable debería expresarse como escenarios Gherkin cuando corresponda. Con `false` se admiten criterios de aceptación estructurados sin Gherkin. Enforcement en v0.2: **AGENT**.
 
 ## `spec.zone_guard`
-Tipo: booleano. Por defecto: `false`. Con `true` se espera una separación de comportamiento entre Spec Zone y Code Zone. Se recomienda sobre todo con `mode: source`. Enforcement en v0.2: **AGENT/DECLARATIVE**; `truss continue` se lo recuerda al agente mientras implementa, y el enforcement por runtime es trabajo futuro.
+Tipo: booleano. Por defecto: `false`. Con `true` se espera una separación de comportamiento entre Spec Zone y Code Zone. Se recomienda sobre todo con `mode: source`. Enforcement en v0.2: **AGENT/DECLARATIVE**; `truss continue` se lo recuerda al agente mientras implementa, y `status` y `continue` imprimen un aviso `Zones` cuando el árbol de trabajo tiene cambios sin confirmar en ambas zonas (consulta el [ADR 0003](../development/decisions/0003-zone-warning.md)). El aviso nunca bloquea. El enforcement por runtime es trabajo futuro.
 
 ## `development.bdd`
 Tipo: booleano. Por defecto: `true`. Activa el macro-loop BDD en `execute-change`: comportamiento de aceptación RED → implementación → aceptación GREEN. Enforcement en v0.2: **AGENT**; con `false`, `truss continue` le dice al agente que el bucle no es obligatorio.

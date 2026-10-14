@@ -45,7 +45,7 @@ TRUSS v0.2 separa garantías implementadas de instrucciones para agentes y compo
 
 **[ADAPTER]** v0.2 no garantiza invocación automática del coding agent, reviewer aislado, routing de subagents/teams, zone guard técnico, hooks, MCP, worktrees automáticos ni routing por capabilities.
 
-**[DECLARATIVE]** `spec.zone_guard` declara el comportamiento Spec Zone / Code Zone, pero v0.2 no impide escrituras por sí mismo.
+**[DECLARATIVE]** `spec.zone_guard` declara el comportamiento Spec Zone / Code Zone, pero v0.2 no impide escrituras por sí mismo. `status` y `continue` solo avisan cuando el árbol de trabajo tiene cambios sin confirmar en ambas zonas.
 
 ## Distinción importante: Graphify
 

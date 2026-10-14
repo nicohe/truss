@@ -1,6 +1,6 @@
 # ADR 0003: `status` and `continue` warn when spec files and code files are both changed and uncommitted
 
-- **Status:** proposed, 2026-10-13. Nothing is implemented yet.
+- **Status:** accepted, 2026-10-13.
 - **Decision by:** the maintainer.
 
 ## Context
@@ -11,17 +11,20 @@ The [intent-driven-template](https://github.com/intent-driven-dev/intent-driven-
 
 TRUSS can state one fact about this without running the agent: whether the work tree has uncommitted changes in both zones at this moment.
 
-## Decision (proposed)
+## Decision
 
 When `spec.zone_guard` is `true`, `status` and `continue` print one warning if the uncommitted changes touch both zones. It only warns.
 
 **The check** reads Git, read-only: `git status --porcelain=v1 -z`, with renames counted by both paths. It runs from the project root, and sees staged, unstaged and untracked files. What Git ignores is out by definition.
 
-**The spec zone** is every path under an `openspec/` folder at any depth (the same rule as the [fingerprint of ADR 0002](0002-stale-evidence-warning.md)), except:
-- any file named `tasks.md`, because ticking a task is how the work is recorded and is done from either zone;
-- `openspec/changes/archive/`, whose contents are produced by `openspec archive` and should be committed as a unit with the sync it comes with.
+**The spec zone** is every path under an `openspec/` folder at any depth (the same rule as the [fingerprint of ADR 0002](0002-stale-evidence-warning.md)).
 
-**The code zone** is every other path, except `.truss/` (the local clone and its evidence, normally ignored).
+**The code zone** is every other path.
+
+**In neither zone:**
+- any file named `tasks.md` under `openspec/`, because ticking a task is how the work is recorded and is done from either zone;
+- `openspec/changes/archive/`, whose contents are produced by `openspec archive` and should be committed as a unit with the sync it comes with;
+- `.truss/` (the local clone and its evidence, normally ignored).
 
 **Shown** as one line only when both zones have at least one changed path, with up to three paths of each:
 
@@ -54,8 +57,8 @@ It says nothing when `zone_guard` is off, when the tree is clean or touches one 
 - ⚠️ The code zone is "everything else", so a change to the README counts as code. This is the template's rule. Exempting documentation would need a list that TRUSS cannot know for every project.
 - ⚠️ Cost: one `git status` for each `status` and `continue` when the option is on.
 
-## Open points
+## Decisions on the open points
 
-1. Whether to exempt more than `tasks.md` and the archive folder. The proposal is not to, and to let the warning be imperfect.
-2. Whether the line should appear in the `spec` phase. The proposal is yes.
-3. Whether to also gate on `spec.mode: source` when `zone_guard` is unset. The proposal is no.
+1. Nothing is exempted beyond `tasks.md`, the archive folder and `.truss/`; the warning is allowed to be imperfect.
+2. The line appears in every phase, `spec` included.
+3. The warning needs `spec.zone_guard: true`; `spec.mode: source` alone does not turn it on.

@@ -31,4 +31,4 @@ Terms are listed alphabetically.
 - **Verification:** deterministic, executable evidence: the commands you configured, run in order.
 - **Vertical slice:** the smallest piece of a change that demonstrates behavior on its own, from the outside in. "The database" is a horizontal layer; "a user can retry a failed request" is a vertical slice. See [BDD and TDD](../concepts/bdd-tdd.md).
 - **Workflow:** a coordination of steps, skills and policies, such as [`execute-change`](../workflows/execute-change.md).
-- **Zone guard:** the declared intent (`spec.zone_guard`) to keep spec work and code work apart. It does not itself prevent writes.
+- **Zone guard:** the declared intent (`spec.zone_guard`) to keep spec work and code work apart. It does not itself prevent writes; `status` and `continue` warn when specs and code both have uncommitted changes.
