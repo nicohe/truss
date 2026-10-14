@@ -2,7 +2,7 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../en/skills/overview.md).
 
-TRUSS v0.2 incluye ocho skills portables para agentes. Son contratos de instrucciones, no comandos de un vendor concreto: Claude Code, Codex, Devin u otro agente pueden leer la misma definición.
+TRUSS v0.2 incluye nueve skills portables para agentes. Son contratos de instrucciones, no comandos de un vendor concreto: Claude Code, Codex, Devin u otro agente pueden leer la misma definición.
 
 | Skill | Propósito | Cuándo usarla |
 |---|---|---|
@@ -13,6 +13,7 @@ TRUSS v0.2 incluye ocho skills portables para agentes. Son contratos de instrucc
 | handoff | Transferir el estado vivo mínimo entre límites de contexto. | Un cambio de agente, runtime, sesión o reviewer. |
 | writing-for-agents | Mantener pequeño y fiable el contexto del repositorio pensado para agentes. | `AGENTS.md`, specs, ADRs, workflows y documentación. |
 | caveman | Comprimir la comunicación efímera del agente sin cambiar su significado. | Actualizaciones de estado, handoffs y mensajes operativos. |
+| retro | Revisar una sesión y proponer mejoras al entorno del agente, no al código. | Después de una sesión más difícil de lo que debería. |
 | pr | Redactar la descripción de una pull request sobre la que un revisor pueda actuar rápido. | Cuando un cambio verificado está listo para abrirse como pull request. |
 
 No hace falta usar todas las skills en cada cambio: carga una skill cuando surja su situación y ninguna en caso contrario (consulta la [gestión de contexto](../concepts/context-management.md)). Para las dos skills de Grill y `prototype`, consulta [Descubrimiento](../workflows/discovery.md).
@@ -28,6 +29,14 @@ Una skill de TRUSS es un archivo Markdown que el agente lee. No está registrada
 ### `code-review` y el `/code-review` de Claude Code
 
 Son dos cosas distintas con el mismo nombre. La skill de TRUSS es el archivo de arriba: una revisión en tres ejes (Spec, Standards, Risk) que parte de la spec activa y de la evidencia de verificación. El comando `/code-review` de Claude Code es un comando integrado que revisa el diff actual en busca de errores de corrección, con niveles de esfuerzo y `--fix` ([comandos](https://code.claude.com/docs/en/commands)). No lee tu cambio de OpenSpec salvo que se lo digas. Para ejecutar la revisión de TRUSS en Claude Code, señala la ruta de la skill como en el prompt de arriba; `/code-review` es una pasada extra útil, no un reemplazo.
+
+### `retro`
+
+`retro` es manual: TRUSS nunca la pide. La pides después de una sesión que fue mal, y lee el registro de la sesión y propone cambios al entorno en el que trabaja el agente, no al código. Cada propuesta debe rastrearse a un momento concreto de esa sesión y cae en una categoría: un puntero que ayude a encontrar cosas, una comprobación automática, un estándar para el revisor, un `AGENTS.md` más pequeño, una herramienta más barata, una línea inútil eliminada o más acceso a información. No cambia nada hasta que eliges.
+
+Un error que una herramienta puede detectar se convierte en una comprobación, y el lugar natural es `verification.commands`, que `truss verify` ejecuta y registra. Un juicio que ninguna herramienta puede decidir se convierte en guía escrita para el revisor. Un error recurrente no merece una línea en `AGENTS.md`, porque ese archivo se carga en todas las sesiones.
+
+> Haz una retro de la última sesión con la skill de `.truss/.truss/skills/retro.SKILL.md`. Rastrea cada propuesta a un momento de la sesión y lee las comprobaciones que ya existen en el proyecto antes de proponer una nueva.
 
 ### `pr`
 
