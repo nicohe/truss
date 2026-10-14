@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.25] - 2026-10-14
+
+Documentation-only patch release. No code changed.
+
+### Upgrade notes
+- **Nothing changes in behavior.** Only the executable-specs guide and the version references differ.
+
 ### Changed
 - **The executable-specs guide now reports a real run** ([executable specs](docs/en/guides/executable-specs.md)): the template's extractor and both runners (cucumber-js, behave) were run in a scratch project with OpenSpec 1.13.2. Scenario failures point at the `spec.md` line, `MODIFIED` deltas replace the old scenarios, archived specs are read, and `truss verify` records the run. The guide now says what the run found: a delta needs a `# <capability>` title, and Python needs `behave-html-formatter`.
 
