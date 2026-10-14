@@ -5,6 +5,7 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Added
+- **A `pr` skill** (`.truss/skills/pr.SKILL.md`): how to write a pull request description a reviewer can act on quickly, in three sections (a summary in the fastest form to read, the evidence with what was not verified, and the merge risk: whether reverting restores the earlier state and where to look first). It is manual: TRUSS never asks for it and does not open the pull request. The repository's own pull request template now has the same sections. Written from scratch; the idea of the three sections comes from the `/pr` skill described at aihero.dev. `truss skills` now lists eight skills.
 - **`spec.zone_guard: true` now has an effect TRUSS produces.** `status` and `continue` warn, without blocking, when the work tree has uncommitted changes in the specs (`openspec/`) and in the code at once: `Zones  ○ uncommitted changes in the specs (openspec/) and in the code at once. Commit one zone before working on the other.`, with up to three paths of each. `tasks.md` under `openspec/`, `openspec/changes/archive/` and `.truss/` count in neither zone. It reads `git status` only, and says nothing when the option is off, the tree is clean or touches one zone, or the project is not a Git work tree. It cannot stop the agent from editing the other zone. See [ADR 0003](docs/en/development/decisions/0003-zone-warning.md).
 
 ## [0.2.23] - 2026-10-13
