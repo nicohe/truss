@@ -1,6 +1,14 @@
 ## Summary
 
-<!-- What problem does this solve, and how? -->
+<!-- What changes and why, in the form that is quickest to read: pseudocode, a call tree, a diagram or a before/after table. Name the OpenSpec change if there is one. -->
+
+## Evidence
+
+<!-- What shows that it works, before and after: a test that failed and now passes, command output, the `truss verify` result. Say what you did not verify. -->
+
+## Merge risk
+
+<!-- Two-way door (reverting restores the earlier state) or one-way door (a migration, a release, a message sent, an effect outside the repository)? Who or what is affected if it is wrong, and what should the reviewer look at first? -->
 
 ## Checklist
 

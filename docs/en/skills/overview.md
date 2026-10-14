@@ -1,6 +1,6 @@
 # TRUSS Skills
 
-TRUSS v0.2 ships seven portable agent skills. They are instruction contracts, not vendor-specific commands.
+TRUSS v0.2 ships eight portable agent skills. They are instruction contracts, not vendor-specific commands.
 
 | Skill | Purpose | When to use it |
 |---|---|---|
@@ -11,6 +11,7 @@ TRUSS v0.2 ships seven portable agent skills. They are instruction contracts, no
 | handoff | Transfer minimal live state across context boundaries. | A change of agent, runtime, session or reviewer. |
 | writing-for-agents | Keep agent-facing repository context small and reliable. | `AGENTS.md`, specs, ADRs, workflows and docs. |
 | caveman | Compress ephemeral agent communication without changing meaning. | Status updates, handoffs and operational messages. |
+| pr | Write a pull request description a reviewer can act on quickly. | When a verified change is ready to be opened as a pull request. |
 
 You do not need every skill on every change: load a skill when its situation arises, and none otherwise (see [context management](../concepts/context-management.md)). For the two Grill skills and `prototype`, see [Discovery](../workflows/discovery.md).
 
@@ -25,6 +26,14 @@ A TRUSS skill is a Markdown file the agent reads. It is not registered in any ag
 ### `code-review` and Claude Code's `/code-review`
 
 They are two different things with the same name. The TRUSS skill is the file above: a review across three axes (Spec, Standards, Risk) that starts from the active spec and the verification evidence. The `/code-review` command of Claude Code is a built-in command that reviews the current diff for correctness bugs, with effort levels and `--fix` ([commands](https://code.claude.com/docs/en/commands)). It does not read your OpenSpec change unless you tell it to. To run the TRUSS review in Claude Code, point to the skill's path as in the prompt above; `/code-review` is a useful extra pass, not a replacement.
+
+### `pr`
+
+`pr` is manual too: TRUSS never asks for it, and it does not open the pull request. You ask for it when the change is verified and reviewed, and it writes the body: a summary in the quickest form (pseudocode, a diagram or a before/after table), the evidence that it works and what was not verified, and the merge risk, meaning whether reverting restores the earlier state and what to look at first.
+
+> Write the description of the pull request for `add-retry-policy` with the skill in `.truss/.truss/skills/pr.SKILL.md`. Use the `truss verify` result as evidence and say what you did not check.
+
+The repository's own pull request template has the same three sections.
 
 ### `caveman`
 
