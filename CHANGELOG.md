@@ -4,6 +4,13 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.24] - 2026-10-14
+
+Minor-feature patch release. `spec.zone_guard` now has an effect TRUSS produces itself (a warning in `status` and `continue`), and two new skills, `pr` and `retro`, come with a pull request template that follows the first.
+
+### Upgrade notes
+- **Nothing that ran before changes.** The new `Zones` line appears only with `spec.zone_guard: true`, which is `false` by default, and it never blocks or changes an exit code. `truss skills` lists two more skills. The repository's pull request template has new sections.
+
 ### Added
 - **A `retro` skill** (`.truss/skills/retro.SKILL.md`): look back over a session and propose improvements to the environment the agent works in, not to the code. Every proposal must trace to a moment of the session and falls in one category (navigation, automated checks, standards, guidance size, tool economy, no-ops, information access). A mistake a tool can catch becomes a check, preferably in `verification.commands`; a judgement call becomes guidance for the reviewer; a recurring mistake does not go into `AGENTS.md`. It is manual and changes nothing until the user chooses. Written from scratch; the idea comes from the `retro` skill of mattpocock/skills (MIT). `truss skills` now lists nine skills.
 - **A `pr` skill** (`.truss/skills/pr.SKILL.md`): how to write a pull request description a reviewer can act on quickly, in three sections (a summary in the fastest form to read, the evidence with what was not verified, and the merge risk: whether reverting restores the earlier state and where to look first). It is manual: TRUSS never asks for it and does not open the pull request. The repository's own pull request template now has the same sections. Written from scratch; the idea of the three sections comes from the `/pr` skill described at aihero.dev. `truss skills` now lists eight skills.
