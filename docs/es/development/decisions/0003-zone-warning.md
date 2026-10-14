@@ -2,7 +2,7 @@
 
 > Traducción al español. La referencia canónica es [la versión en inglés](../../../en/development/decisions/0003-zone-warning.md).
 
-- **Estado:** propuesta, 2026-10-13. Todavía no hay nada implementado.
+- **Estado:** aceptada, 2026-10-13.
 - **Decisión de:** el mantenedor.
 
 ## Contexto
@@ -13,17 +13,20 @@ El [intent-driven-template](https://github.com/intent-driven-dev/intent-driven-t
 
 TRUSS puede afirmar un hecho sobre esto sin ejecutar al agente: si el árbol de trabajo tiene ahora mismo cambios sin confirmar en ambas zonas.
 
-## Decisión (propuesta)
+## Decisión
 
 Cuando `spec.zone_guard` es `true`, `status` y `continue` imprimen un aviso si los cambios sin confirmar tocan ambas zonas. Solo avisa.
 
 **La comprobación** lee Git, solo lectura: `git status --porcelain=v1 -z`, y los renombrados cuentan por sus dos rutas. Se ejecuta desde la raíz del proyecto y ve archivos en staging, modificados y sin seguimiento. Lo que Git ignora queda fuera por definición.
 
-**La zona de specs** es toda ruta bajo una carpeta `openspec/` a cualquier profundidad (la misma regla que la [huella del ADR 0002](0002-stale-evidence-warning.md)), salvo:
-- cualquier archivo llamado `tasks.md`, porque marcar una tarea es como se registra el trabajo y se hace desde cualquier zona;
-- `openspec/changes/archive/`, cuyo contenido lo produce `openspec archive` y debería confirmarse como una unidad junto con la sincronización que lo acompaña.
+**La zona de specs** es toda ruta bajo una carpeta `openspec/` a cualquier profundidad (la misma regla que la [huella del ADR 0002](0002-stale-evidence-warning.md)).
 
-**La zona de código** es toda otra ruta, salvo `.truss/` (el clon local y su evidencia, normalmente ignorados).
+**La zona de código** es toda otra ruta.
+
+**En ninguna zona:**
+- cualquier archivo llamado `tasks.md` bajo `openspec/`, porque marcar una tarea es como se registra el trabajo y se hace desde cualquier zona;
+- `openspec/changes/archive/`, cuyo contenido lo produce `openspec archive` y debería confirmarse como una unidad junto con la sincronización que lo acompaña;
+- `.truss/` (el clon local y su evidencia, normalmente ignorados).
 
 **Se muestra** como una línea solo cuando ambas zonas tienen al menos una ruta cambiada, con hasta tres rutas de cada una:
 
@@ -56,8 +59,8 @@ No dice nada cuando `zone_guard` está desactivado, cuando el árbol está limpi
 - ⚠️ La zona de código es "todo lo demás", así que un cambio en el README cuenta como código. Es la regla de la plantilla. Eximir la documentación exigiría una lista que TRUSS no puede conocer en cada proyecto.
 - ⚠️ Coste: un `git status` en cada `status` y `continue` cuando la opción está activada.
 
-## Puntos abiertos
+## Decisiones sobre los puntos abiertos
 
-1. Si eximir algo más que `tasks.md` y la carpeta de archivo. La propuesta es no hacerlo y dejar que el aviso sea imperfecto.
-2. Si la línea debe aparecer en la fase `spec`. La propuesta es que sí.
-3. Si activarlo también con `spec.mode: source` cuando `zone_guard` no está definido. La propuesta es que no.
+1. No se exime nada más que `tasks.md`, la carpeta de archivo y `.truss/`; se admite que el aviso sea imperfecto.
+2. La línea aparece en todas las fases, también en `spec`.
+3. El aviso necesita `spec.zone_guard: true`; `spec.mode: source` por sí solo no lo activa.

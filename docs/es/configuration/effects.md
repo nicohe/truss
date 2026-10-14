@@ -8,7 +8,7 @@
 | `spec.mode: source` | Los cambios de comportamiento vuelven a la spec antes de seguir implementando; `truss continue` lo dice mientras el agente implementa | AGENT |
 | `spec.gherkin: true` | Se prefieren o esperan escenarios de aceptación en Gherkin | AGENT |
 | `spec.gherkin: false` | Se permiten criterios de aceptación estructurados sin Gherkin | AGENT |
-| `spec.zone_guard: true` | Se espera separación entre Spec Zone y Code Zone; `truss continue` se lo recuerda al agente mientras implementa | AGENT / DECLARATIVE |
+| `spec.zone_guard: true` | Se espera separación entre Spec Zone y Code Zone; `truss continue` se lo recuerda al agente mientras implementa; `status` y `continue` avisan cuando specs y código tienen cambios sin confirmar | AGENT / DECLARATIVE |
 | `development.bdd: true` | `execute-change` aplica el macro-loop de aceptación RED → GREEN | AGENT |
 | `development.bdd: false` | El macro-loop BDD deja de ser obligatorio; `truss continue` se lo dice al agente mientras implementa | AGENT |
 | `development.tdd: true` | `execute-change` aplica RED → GREEN mínimo → refactor | AGENT |

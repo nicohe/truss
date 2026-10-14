@@ -45,7 +45,7 @@ TRUSS v0.2 separates implemented guarantees from agent instructions and future a
 
 **[ADAPTER]** Runtime-specific enforcement is not guaranteed by v0.2. This includes automatic coding-agent invocation, isolated reviewer contexts, subagent/team routing, write-zone enforcement, hooks, MCP orchestration, automatic worktree management, and capability-based runtime routing.
 
-**[DECLARATIVE]** `spec.zone_guard` declares desired Spec Zone / Code Zone behavior in v0.2; it does not itself prevent writes.
+**[DECLARATIVE]** `spec.zone_guard` declares desired Spec Zone / Code Zone behavior in v0.2; it does not itself prevent writes. `status` and `continue` only warn when the work tree has uncommitted changes in both zones.
 
 ## Important distinction: Graphify
 

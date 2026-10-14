@@ -1355,7 +1355,7 @@ function continueWithSpec(settings, tasks = '- [ ] one\n') {
 const SOURCE =
   /The spec is authoritative \(spec\.mode: source\): treat it as read-only while you implement\. If the behavior has to change, stop, go back to the spec \(update its specs and tasks\) and only then resume\./;
 const ZONES =
-  /Zone guard is on \(spec\.zone_guard\): keep spec work and code work in separate steps\. TRUSS does not enforce it\./;
+  /Zone guard is on \(spec\.zone_guard\): keep spec work and code work in separate steps\. TRUSS only warns \(Zones\) when both have uncommitted changes\./;
 
 test('continue: the default spec settings add nothing to what the agent is told', () => {
   const text = continueWithSpec({});
@@ -1590,4 +1590,42 @@ test('init and doctor say that no verification commands are listed, and verify f
 
   const listed = workspace({ config: validConfig });
   assert.doesNotMatch(out(run(listed, ['init'], { binDirs: [fakeOpenSpec(listed)] })), /no commands yet/);
+});
+
+test('status and continue warn about uncommitted spec and code changes only when zone_guard is on', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  const config = path.join(root, '.truss', 'config.yaml');
+  fs.writeFileSync(config, tasksConfig('off').replace('zone_guard: false', 'zone_guard: true'));
+  const commit = (...paths) => {
+    gateGit(root, 'add', '-A', '--', ...paths);
+    gateGit(root, 'commit', '-qm', 'step');
+  };
+  const both = () => [out(run(root, ['status'], { binDirs: [bin] })), out(run(root, ['continue'], { binDirs: [bin] }))];
+
+  commit('.', ':!openspec');
+  for (const text of both())
+    assert.doesNotMatch(text, /uncommitted changes in the specs/, 'only the specs are uncommitted');
+
+  fs.mkdirSync(path.join(root, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'src', 'retry.js'), 'export const retry = 1;\n');
+  const [status, next] = both();
+  assert.match(status, /Zones\s+○ uncommitted changes in the specs \(openspec\/\) and in the code at once\./);
+  assert.match(
+    status,
+    /\n {16}specs: openspec\/changes\/add-retry\/[^\n]*, … and 2 more\n/,
+    'three paths, then the rest',
+  );
+  assert.match(status, /\n {16}code: {2}src\/retry\.js/);
+  assert.match(next, /\nZones\n○ uncommitted changes in the specs/, 'continue shows it under its own heading');
+  assert.match(next, /\n {2}code: {2}src\/retry\.js/);
+
+  fs.writeFileSync(config, tasksConfig('off'));
+  for (const text of both()) assert.doesNotMatch(text, /uncommitted changes in the specs/, 'zone_guard is off');
+
+  fs.writeFileSync(config, tasksConfig('off').replace('zone_guard: false', 'zone_guard: true'));
+  commit('.');
+  fs.writeFileSync(path.join(root, 'openspec', 'changes', 'add-retry', 'tasks.md'), '- [x] one\n');
+  fs.appendFileSync(path.join(root, 'src', 'retry.js'), '// more\n');
+  for (const text of both())
+    assert.doesNotMatch(text, /uncommitted changes in the specs/, 'ticking a task is in neither zone');
 });

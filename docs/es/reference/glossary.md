@@ -31,4 +31,4 @@ Los términos están en orden alfabético.
 - **Verificación (verification):** evidencia ejecutable determinística: los comandos que configuraste, ejecutados en orden.
 - **Vertical slice:** la pieza más pequeña de un cambio que demuestra un comportamiento por sí sola, de fuera hacia dentro. «La base de datos» es una capa horizontal; «un usuario puede reintentar una petición fallida» es una vertical slice. Consulta [BDD y TDD](../concepts/bdd-tdd.md).
 - **Workflow:** una coordinación de pasos, skills y policies, como [`execute-change`](../workflows/execute-change.md).
-- **Zone guard:** la intención declarada (`spec.zone_guard`) de mantener separado el trabajo de spec y el de código. Por sí sola no impide escrituras.
+- **Zone guard:** la intención declarada (`spec.zone_guard`) de mantener separado el trabajo de spec y el de código. Por sí sola no impide escrituras; `status` y `continue` avisan cuando specs y código tienen cambios sin confirmar.

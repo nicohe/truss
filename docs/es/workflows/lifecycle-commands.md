@@ -116,6 +116,16 @@ Nombra hasta cinco archivos (`edited`, `added`, `removed`) y luego `… and N mo
 
 Compara una huella del contenido de los archivos que Git ve, registrada por `verify`, con los archivos actuales. `.truss/`, cualquier carpeta `openspec/` y lo que Git ignora quedan fuera, así que marcar una tarea no la activa; commitear el mismo contenido tampoco. Solo avisa: nunca bloquea ni cambia un código de salida. No dice nada cuando no hay evidencia, cuando la última ejecución falló o cuando la evidencia es anterior a la huella. Consulta el [ADR 0002](../development/decisions/0002-stale-evidence-warning.md).
 
+Con `spec.zone_guard: true`, ambos comandos también avisan cuando el árbol de trabajo tiene cambios sin confirmar en las specs (`openspec/`) y en el código a la vez; `continue` lo muestra bajo un encabezado `Zones`, en todas las fases:
+
+```text
+Zones           ○ uncommitted changes in the specs (openspec/) and in the code at once. Commit one zone before working on the other.
+                specs: openspec/changes/add-retry/specs/retry/spec.md
+                code:  src/retry.ts, src/retry.test.ts
+```
+
+Lista hasta tres rutas de cada zona y luego `… and N more`. `tasks.md`, `openspec/changes/archive/` y `.truss/` no cuentan en ninguna zona. Lee `git status`, así que ve archivos en staging, modificados y sin seguimiento, y solo avisa: nunca bloquea ni cambia un código de salida. Nada impide que el agente edite la otra zona; la línea dice que ocurrió. Consulta el [ADR 0003](../development/decisions/0003-zone-warning.md).
+
 Sin cambio activo lo dice y señala el siguiente paso:
 
 ```text
