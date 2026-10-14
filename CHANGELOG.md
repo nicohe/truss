@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **The executable-specs guide now reports a real run** ([executable specs](docs/en/guides/executable-specs.md)): the template's extractor and both runners (cucumber-js, behave) were run in a scratch project with OpenSpec 1.13.2. Scenario failures point at the `spec.md` line, `MODIFIED` deltas replace the old scenarios, archived specs are read, and `truss verify` records the run. The guide now says what the run found: a delta needs a `# <capability>` title, and Python needs `behave-html-formatter`.
+
 ## [0.2.24] - 2026-10-14
 
 Minor-feature patch release. `spec.zone_guard` now has an effect TRUSS produces itself (a warning in `status` and `continue`), and two new skills, `pr` and `retro`, come with a pull request template that follows the first.
