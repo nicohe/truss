@@ -1,6 +1,6 @@
 # TRUSS Skills
 
-TRUSS v0.2 ships eight portable agent skills. They are instruction contracts, not vendor-specific commands.
+TRUSS v0.2 ships nine portable agent skills. They are instruction contracts, not vendor-specific commands.
 
 | Skill | Purpose | When to use it |
 |---|---|---|
@@ -11,6 +11,7 @@ TRUSS v0.2 ships eight portable agent skills. They are instruction contracts, no
 | handoff | Transfer minimal live state across context boundaries. | A change of agent, runtime, session or reviewer. |
 | writing-for-agents | Keep agent-facing repository context small and reliable. | `AGENTS.md`, specs, ADRs, workflows and docs. |
 | caveman | Compress ephemeral agent communication without changing meaning. | Status updates, handoffs and operational messages. |
+| retro | Review a session and propose improvements to the agent's environment, not the code. | After a session that was harder than it should have been. |
 | pr | Write a pull request description a reviewer can act on quickly. | When a verified change is ready to be opened as a pull request. |
 
 You do not need every skill on every change: load a skill when its situation arises, and none otherwise (see [context management](../concepts/context-management.md)). For the two Grill skills and `prototype`, see [Discovery](../workflows/discovery.md).
@@ -26,6 +27,14 @@ A TRUSS skill is a Markdown file the agent reads. It is not registered in any ag
 ### `code-review` and Claude Code's `/code-review`
 
 They are two different things with the same name. The TRUSS skill is the file above: a review across three axes (Spec, Standards, Risk) that starts from the active spec and the verification evidence. The `/code-review` command of Claude Code is a built-in command that reviews the current diff for correctness bugs, with effort levels and `--fix` ([commands](https://code.claude.com/docs/en/commands)). It does not read your OpenSpec change unless you tell it to. To run the TRUSS review in Claude Code, point to the skill's path as in the prompt above; `/code-review` is a useful extra pass, not a replacement.
+
+### `retro`
+
+`retro` is manual: TRUSS never asks for it. You ask for it after a session that went badly, and it reads the record of the session and proposes changes to the environment the agent works in, not to the code. Each proposal must trace to a specific moment of that session, and falls in one category: a pointer to help find things, an automated check, a standard for the reviewer, a smaller `AGENTS.md`, a cheaper tool, a deleted no-op, or more access to information. It changes nothing until you choose.
+
+A mistake that a tool can catch becomes a check, and the natural place for it is `verification.commands`, which `truss verify` runs and records. A judgement call that no tool can decide becomes written guidance for the reviewer. A recurring mistake does not earn a line in `AGENTS.md`, because that file is loaded into every session.
+
+> Run a retro on the last session with the skill in `.truss/.truss/skills/retro.SKILL.md`. Trace each proposal to a moment of the session, and read the project's existing checks before proposing a new one.
 
 ### `pr`
 

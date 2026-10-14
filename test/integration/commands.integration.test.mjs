@@ -38,6 +38,7 @@ test('skills: lists the skills shipped with the TRUSS installation, whatever the
     'writing-for-agents',
     'caveman',
     'pr',
+    'retro',
   ]) {
     assert.match(out(r), new RegExp(`● ${skill}\\b`));
   }
