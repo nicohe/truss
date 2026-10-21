@@ -38,6 +38,7 @@ Step-by-step answers to a task.
 - [Choose where TRUSS lives](guides/where-to-put-truss.md): one TRUSS with components, one per project folder or one per module, and what each does.
 - [Run the scenarios of your specs as tests](guides/executable-specs.md): Gherkin in the specs, executed by a runner you choose and plugged into `verify`.
 - [Use TRUSS in CI](guides/ci.md): a pinned install, the configuration, approval and an example workflow.
+- [Install TRUSS: per project, once for the machine, or without Git](guides/install-options.md): three ways to install it and what each costs.
 - [Update or remove TRUSS](guides/update-and-remove.md): pinning a release, and what not to delete.
 - [Troubleshooting](guides/troubleshooting.md): what TRUSS prints when something is wrong, what it means and what to do.
 
