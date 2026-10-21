@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss continue` names the policy files** under "Context to load", instead of the `policies/` folder. It lists `bdd.md` and `tdd.md` unless that loop is off (`development.bdd: false`, `development.tdd: false`), and `spec-anchored.md` or `spec-as-source.md` for the spec mode. An agent that followed the folder line had to work out from `config.yaml` which files applied (seen in a test run with a subagent). The lines differ only in that part; TRUSS still does not make the agent read them.
+
 ## [0.2.25] - 2026-10-14
 
 Documentation-only patch release. No code changed.

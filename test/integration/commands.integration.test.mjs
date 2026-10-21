@@ -1450,6 +1450,19 @@ test('continue: lists the settings file as context, after the change', () => {
   );
 });
 
+test('continue: lists the policy files the settings ask for, not the folder', () => {
+  const both = continueWithSpec({});
+  const context = both.slice(both.indexOf('Context to load'));
+  assert.match(context, /policies[\\/]bdd\.md\n- .*policies[\\/]tdd\.md\n- .*policies[\\/]spec-anchored\.md/);
+  assert.doesNotMatch(context, /policies[\\/]\s/);
+
+  const off = continueWithSpec({ 'bdd: true': 'bdd: false', 'mode: anchored': 'mode: source' });
+  const offContext = off.slice(off.indexOf('Context to load'));
+  assert.doesNotMatch(offContext, /bdd\.md/);
+  assert.match(offContext, /tdd\.md/);
+  assert.match(offContext, /spec-as-source\.md/);
+});
+
 test('continue: a component with its own AGENTS.md lists that one, and falls back to the workspace one', () => {
   const root = workspace({
     config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
