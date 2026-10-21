@@ -43,10 +43,33 @@ Do not let an agent pass `--trust` for a list it did not show you: the prompt ex
 
 A review is better done by an agent that did not write the code, in a fresh session, so it judges the spec and the diff and not the implementer's reasoning ([who does what](../concepts/who-does-what.md#one-model-or-several)). Two sessions do not see each other, so how the findings travel matters:
 
-1. **Reviewer.** Start a new session and point it to the skill by path, with the change and the evidence: *Review the active change with `.truss/.truss/skills/code-review.SKILL.md`. Read the spec first, then the diff and `.truss/verification/latest.json`.* A subagent also works if your runtime has one; TRUSS does not assume it does. The `/code-review` command of Claude Code is a different tool; see [skills](../skills/overview.md#code-review-and-claude-codes-code-review).
-2. **The report is ephemeral.** It lives in the reviewer's session. Paste it, or save it to a file, and give it to the implementer in full. Do not give a compressed copy in place of the original; see [`caveman`](../skills/overview.md#caveman).
+1. **Reviewer.** Start a new session and point it to the skill by path, with the change and the evidence: *Review the active change with `.truss/.truss/skills/code-review.SKILL.md`. Read the spec first, then the diff and `.truss/verification/latest.json`. You only read: edit nothing and do not run `truss verify`. Write the full report to `.truss/handoffs/<change>-review.md`.* The report path is a suggestion of this guide: TRUSS neither creates nor reads that file, and `.truss/` is ignored by Git, so it stays local. A subagent also works if your runtime has one; TRUSS does not assume it does. The `/code-review` command of Claude Code is a different tool; see [skills](../skills/overview.md#code-review-and-claude-codes-code-review).
+2. **The report is ephemeral, and TRUSS does not keep it.** Either paste it, or have the reviewer write it to a file as above, and give it to the implementer in full. A fresh implementer given only the path of that file applied it in a test. Do not give a compressed copy in place of the original: `caveman` is manual, TRUSS never applies it, and a review report is what it is not for; see [`caveman`](../skills/overview.md#caveman).
 3. **What must survive goes into durable files.** A finding that changes behavior goes into the spec or the design; work to be done goes into `tasks.md` as a new task group (see [reopening a finished change](../workflows/lifecycle-commands.md#reopening-a-finished-change)); a finding you decide not to fix now is written down, for example as an open question in the design, so it is not lost when the session ends.
 4. **Implementer.** Back in the implementing session: *Apply the review findings. Register each fix as a task in `tasks.md`, update the spec if behavior changes, then run `truss verify`.* If the work moved to a new session, [`truss handoff`](../reference/handoff.md) carries the state.
+
+### When to review, and how many times
+
+TRUSS names the moment and does not require the review. When every task is checked off, `truss continue` says to run `truss verify`, then code review, then `openspec validate` and archive. Nothing checks that a review happened: `verify` does not look for one, and a review that says "not ready" blocks nothing. That is on purpose. A review is advice, and a gate that waited for an agent to say "ready" could loop for ever.
+
+- **Review once**, when the change is complete and `verify` passes.
+- **Review again only if the fixes changed behavior or code**, not for a wording correction. Limit the second review to the findings of the first and to what the fixes touched.
+- **Decide when to stop before you start.** In a test, a second review closed the three blocking findings of the first and found a new one that the first fix had caused: a sentence added to the spec promised more than the code did. A review can find something new every time. A recommendation, not a rule of TRUSS: after one re-review limited to the fixes, a person decides, and what is left goes to the design as an open question.
+- If you register the re-review as a task, the change is not `complete` until someone ticks it. Tick it when you decide, not when a reviewer says "ready".
+
+### What TRUSS does in these steps, and what it does not
+
+| Step | Who does it |
+|---|---|
+| Saying that review comes after `verify` and before archiving | TRUSS (`truss continue`) |
+| Opening the reviewer's session and giving it the prompt | you |
+| Writing the report and carrying it to the implementer | the reviewer and you; TRUSS stores nothing |
+| Deciding where each finding goes (spec, `tasks.md`, design) | the implementer, with you |
+| Going back from `complete` to `implementation` when you add a task group | TRUSS, from `tasks.md` |
+| Warning that the code changed after the last `verify` | TRUSS (`truss status` and `continue`, as stale evidence) |
+| Deciding whether to review again | you |
+
+Known limit: while the next task is a review, `truss continue` still says "Implement…". TRUSS has no phase for "waiting for a review".
 
 ## The agent's permission mode
 
