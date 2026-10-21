@@ -62,7 +62,11 @@ for (const [name, locate] of Object.entries(layouts)) {
       // Every path `continue` tells an agent to read must exist from the project's point of view.
       const listed = [...r.out.matchAll(/^- (\S+?)\/? ?(?:\(|$)/gm)].map((match) => match[1]);
       const harnessFiles = listed.filter((entry) => /workflows|policies/.test(entry));
-      assert.equal(harnessFiles.length, 2, `expected the workflow and policies paths in:\n${r.out}`);
+      assert.deepEqual(
+        harnessFiles.map((entry) => path.basename(entry)),
+        ['execute-change.md', 'bdd.md', 'tdd.md', 'spec-anchored.md'],
+        `expected the workflow and the policy files in:\n${r.out}`,
+      );
       for (const entry of harnessFiles) {
         assert.ok(fs.existsSync(path.resolve(project, entry)), `${entry} does not exist from ${project}`);
       }

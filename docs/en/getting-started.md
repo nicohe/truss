@@ -168,7 +168,9 @@ Context to load
 - openspec/changes/add-retry-policy
 - .truss/config.yaml (this project's settings: gates, verification commands, policies)
 - .truss/.truss/workflows/execute-change.md
-- .truss/.truss/policies/ (configured BDD/TDD/spec policies)
+- .truss/.truss/policies/bdd.md
+- .truss/.truss/policies/tdd.md
+- .truss/.truss/policies/spec-anchored.md
 ```
 
 `truss continue` always prints the real paths for your layout. `truss status` shows the same progress, and a change is `complete` only when every task in `tasks.md` is checked off. Phases and commands are in the [lifecycle](workflows/lifecycle-commands.md).

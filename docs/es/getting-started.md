@@ -170,7 +170,9 @@ Context to load
 - openspec/changes/add-retry-policy
 - .truss/config.yaml (this project's settings: gates, verification commands, policies)
 - .truss/.truss/workflows/execute-change.md
-- .truss/.truss/policies/ (configured BDD/TDD/spec policies)
+- .truss/.truss/policies/bdd.md
+- .truss/.truss/policies/tdd.md
+- .truss/.truss/policies/spec-anchored.md
 ```
 
 `truss continue` imprime siempre las rutas reales para tu disposición de archivos. `truss status` muestra el mismo progreso, y un cambio está `complete` solo cuando todas las tareas de `tasks.md` están marcadas. Las fases y los comandos están en los [comandos del ciclo de vida](workflows/lifecycle-commands.md).

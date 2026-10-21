@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import {
+  configuredPolicies,
   describeOpenChange,
   LifecycleError,
   openChanges,
@@ -152,4 +153,11 @@ test('shortTaskTitle keeps a short task and cuts a long one to a single line wit
   assert.ok(long.text.length <= 80, long.text);
   assert.ok(long.text.endsWith('…'));
   assert.ok(!long.text.endsWith(' …'), 'no space before the ellipsis');
+});
+
+test('configuredPolicies names the policy files the settings ask for', () => {
+  assert.deepEqual(configuredPolicies({}), ['bdd.md', 'tdd.md', 'spec-anchored.md']);
+  assert.deepEqual(configuredPolicies({ spec: { mode: 'source' } }), ['bdd.md', 'tdd.md', 'spec-as-source.md']);
+  assert.deepEqual(configuredPolicies({ development: { bdd: false } }), ['tdd.md', 'spec-anchored.md']);
+  assert.deepEqual(configuredPolicies({ development: { bdd: false, tdd: false } }), ['spec-anchored.md']);
 });
