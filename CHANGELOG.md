@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- **A guide to the ways of installing TRUSS** ([install options](docs/en/guides/install-options.md)): a clone per project (the quick start), one clone for the machine with a link on the `PATH`, and a tarball without Git. Run against the v0.2.25 release on GitHub: both new ways install and run `--version` and `init`; the central one also ran `doctor`, `status`, `new` and `continue`, and a subagent implemented a small change with it. Not checked: Windows, updating a tarball install, and CI with the central install.
+
 ## [0.2.25] - 2026-10-14
 
 Documentation-only patch release. No code changed.
