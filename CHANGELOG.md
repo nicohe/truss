@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- **A guide to the ways of installing TRUSS** ([install options](docs/en/guides/install-options.md)): a clone per project (the quick start), one clone for the machine with a link on the `PATH`, and a tarball without Git. Run against the v0.2.25 release on GitHub: both new ways install and run `--version` and `init`; the central one also ran `doctor`, `status`, `new` and `continue`, and a subagent implemented a small change with it. Not checked: Windows, updating a tarball install, and CI with the central install.
+
 ### Changed
 - **`truss continue` names the policy files** under "Context to load", instead of the `policies/` folder. It lists `bdd.md` and `tdd.md` unless that loop is off (`development.bdd: false`, `development.tdd: false`), and `spec-anchored.md` or `spec-as-source.md` for the spec mode. An agent that followed the folder line had to work out from `config.yaml` which files applied (seen in a test run with a subagent). The lines differ only in that part; TRUSS still does not make the agent read them.
 
