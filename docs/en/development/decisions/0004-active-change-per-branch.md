@@ -42,7 +42,7 @@ Today TRUSS keeps one record of the active change in `.truss/state.json` (the ch
 - with **several** open, they list them and the `truss use` command, and exit `0`, as for a fresh clone with no active change;
 - with **none** open, the failure of today stays (exit `1`).
 
-`handoff` and the tasks gate read the record without asking OpenSpec, so they do not choose.
+`handoff` asks OpenSpec for the phase of the recorded change and the tasks gate reads the record alone; neither chooses another change. (The first release of this behavior, 0.2.26, let `handoff` choose by mistake; see the changelog.)
 
 **3. The evidence is valid again when the files match a run that passed.** [ADR 0002](0002-stale-evidence-warning.md) gets an amendment: `verify` keeps the last ten passing runs, each with the fingerprint of the tree, in `.truss/verification/history.json`. If the tree matches any of them, the evidence is current, whatever the branch. `latest.json` also records the `branch` and the `commit`, and `status` says when the evidence comes from another branch. The files that changed are named only against the newest passing run, whose list of ids is the only one kept.
 

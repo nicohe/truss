@@ -44,7 +44,7 @@ Hoy TRUSS guarda un único registro del cambio activo en `.truss/state.json` (el
 - con **varios** abiertos, los listan junto con el comando `truss use` y salen con `0`, como en un clon nuevo sin cambio activo;
 - con **ninguno** abierto, el fallo de hoy se mantiene (salida `1`).
 
-`handoff` y la comprobación de tareas leen el registro sin preguntar a OpenSpec, así que no eligen.
+`handoff` pregunta a OpenSpec la fase del cambio registrado y la comprobación de tareas lee solo el registro; ninguna elige otro cambio. (La primera release con este comportamiento, la 0.2.26, dejó que `handoff` eligiera por error; consulta el registro de cambios.)
 
 **3. La evidencia vuelve a valer cuando los archivos coinciden con una ejecución que pasó.** La [ADR 0002](0002-stale-evidence-warning.md) recibe una enmienda: `verify` conserva las últimas diez ejecuciones que pasaron, cada una con la huella del árbol, en `.truss/verification/history.json`. Si el árbol coincide con alguna, la evidencia es vigente, sea cual sea la rama. `latest.json` también registra la `branch` y el `commit`, y `status` avisa cuando la evidencia viene de otra rama. Los archivos que cambiaron solo se nombran frente a la ejecución más reciente que pasó, cuya lista de ids es la única que se conserva.
 
