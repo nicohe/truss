@@ -74,7 +74,16 @@ Next: truss continue
 
 `use` creates and changes nothing in OpenSpec. It only moves the record of which change is active, so you can run it as often as you like, including on the change that is already active. The change has to be open: one that does not exist, or that was archived, is an error (exit code `1`), and the message lists the changes that are open, for example `There is no open change "nope" in openspec/changes. Open there: add-retry-policy, second-change.`
 
-A change in a component's own `openspec/` is found through that component: `truss use add-retry-policy --component api`. Without `--component`, `use` looks in the workspace's OpenSpec, and if the name exists in a component, the error says so and gives the command. No name, or a name that is not a change id (`../x`, `archive`), is a usage error (exit code `2`).
+A change in a component's own `openspec/` is found through that component: `truss use add-retry-policy --component api`. Without `--component`, `use` looks in the workspace's OpenSpec, and if the name exists in a component, the error says so and gives the command. `truss use` with no name at all lists the changes that are open and the command that picks each one, marks the active one, and exits `0`:
+
+```text
+Pick the change to work on. Open in OpenSpec:
+  truss use add-retry-policy  (the active change)
+  truss use second-change
+Usage: truss use <change> [--component name]
+```
+
+With nothing open it says so and points to `truss new`. An empty name, or a name that is not a change id (`../x`, `archive`), is a usage error (exit code `2`).
 
 `.truss/state.json` is local to each checkout, so a fresh clone or a CI machine has no active change even when OpenSpec has changes in flight. `use` is how it picks one up, and [`truss status`](#truss-status) lists what is open.
 

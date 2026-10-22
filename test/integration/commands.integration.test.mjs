@@ -960,16 +960,52 @@ test('use: goes back to a change that new left behind, and status follows it', (
   assert.equal(again.status, 0, 'naming the active change again is harmless');
 });
 
-test('use: without a name, or with something that is not a change id, it is a usage error', () => {
+test('use: with something that is not a change id, or an empty name, it is a usage error', () => {
   const { root, bin } = tasksWorkspace('off', '- [x] one\n');
-  const none = run(root, ['use'], { binDirs: [bin] });
-  assert.equal(none.status, 2);
-  assert.match(out(none), /Usage: truss use <change> \[--component name\]/);
-  for (const bad of ['../etc', 'archive', 'a/b', '.hidden']) {
+  for (const bad of ['', '../etc', 'archive', 'a/b', '.hidden']) {
     const r = run(root, ['use', bad], { binDirs: [bin] });
     assert.equal(r.status, 2, `"${bad}" is not a change id`);
-    assert.match(out(r), /is not a change id/);
+    assert.match(out(r), bad === '' ? /Usage: truss use <change> \[--component name\]/ : /is not a change id/);
   }
+});
+
+test('use: without a name it lists the open changes and the command for each, and exits 0', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  const one = run(root, ['use'], { binDirs: [bin] });
+  assert.equal(one.status, 0, out(one));
+  assert.match(
+    out(one),
+    /Pick the change to work on\. Open in OpenSpec:\n {2}truss use add-retry {2}\(the active change\)\nUsage: truss use <change> \[--component name\]/,
+  );
+
+  fs.mkdirSync(path.join(root, 'openspec', 'changes', 'second-change'), { recursive: true });
+  const two = run(root, ['use'], { binDirs: [bin] });
+  assert.equal(two.status, 0);
+  assert.match(out(two), /\n {2}truss use add-retry {2}\(the active change\)\n {2}truss use second-change\n/);
+
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'second-change'), { recursive: true });
+  const none = run(root, ['use'], { binDirs: [bin] });
+  assert.equal(none.status, 0);
+  assert.match(out(none), /Nothing is open in OpenSpec\. Start a change with: truss new "Change name"/);
+
+  const invalid = workspace({ config: 'version: 1\nunknown: true\n' });
+  const bad = run(invalid, ['use'], { binDirs: [fakeOpenSpec(invalid)] });
+  assert.equal(bad.status, 2, 'an invalid configuration is still reported');
+});
+
+test('use: with only --component it lists the changes of every component, with the command that finds each', () => {
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  fs.mkdirSync(path.join(root, 'apps', 'api', 'openspec'), { recursive: true });
+  assert.equal(run(root, ['new', 'Add retry', '--component', 'api'], { binDirs: [bin] }).status, 0);
+  assert.equal(run(root, ['new', 'Second change'], { binDirs: [bin] }).status, 0);
+  const r = run(root, ['use', '--component', 'api'], { binDirs: [bin] });
+  assert.equal(r.status, 0, out(r));
+  assert.match(out(r), /truss use second-change {2}\(the active change\)/);
+  assert.match(out(r), /truss use add-retry --component api/);
 });
 
 test('use: a change that does not exist lists what is open; an archived one says so', () => {

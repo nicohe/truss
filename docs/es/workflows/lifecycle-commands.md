@@ -76,7 +76,16 @@ Next: truss continue
 
 `use` no crea ni cambia nada en OpenSpec. Solo mueve el registro de cuál es el cambio activo, así que puedes ejecutarlo tantas veces como quieras, también sobre el cambio que ya está activo. El cambio tiene que estar abierto: uno que no existe, o que se archivó, es un error (código de salida `1`), y el mensaje lista los cambios que están abiertos, por ejemplo `There is no open change "nope" in openspec/changes. Open there: add-retry-policy, second-change.`
 
-Un cambio que vive en el `openspec/` propio de un componente se encuentra a través de ese componente: `truss use add-retry-policy --component api`. Sin `--component`, `use` busca en el OpenSpec del espacio de trabajo, y si el nombre existe en un componente, el error lo dice y da el comando. Ningún nombre, o un nombre que no es un id de cambio (`../x`, `archive`), es un error de uso (código de salida `2`).
+Un cambio que vive en el `openspec/` propio de un componente se encuentra a través de ese componente: `truss use add-retry-policy --component api`. Sin `--component`, `use` busca en el OpenSpec del espacio de trabajo, y si el nombre existe en un componente, el error lo dice y da el comando. `truss use` sin ningún nombre lista los cambios que están abiertos y el comando que elige cada uno, marca el activo y sale con `0`:
+
+```text
+Pick the change to work on. Open in OpenSpec:
+  truss use add-retry-policy  (the active change)
+  truss use second-change
+Usage: truss use <change> [--component name]
+```
+
+Sin ninguno abierto lo dice y apunta a `truss new`. Un nombre vacío, o un nombre que no es un id de cambio (`../x`, `archive`), es un error de uso (código de salida `2`).
 
 `.truss/state.json` es local a cada copia de trabajo, así que un clon nuevo o una máquina de CI no tiene cambio activo aunque OpenSpec tenga cambios en curso. `use` es la forma de retomar uno, y [`truss status`](#truss-status) lista los que están abiertos.
 
