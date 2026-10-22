@@ -89,7 +89,7 @@ Sin ninguno abierto lo dice y apunta a `truss new`. Un nombre vacío, o un nombr
 
 `.truss/state.json` es local a cada copia de trabajo, así que un clon nuevo o una máquina de CI no tiene cambio activo aunque OpenSpec tenga cambios en curso. `use` es la forma de retomar uno, y [`truss status`](#truss-status) lista los que están abiertos.
 
-El registro tampoco sigue a las ramas de Git. Si creas un cambio en una rama y vuelves a otra donde ese cambio no existe, `status` y `continue` fallan (código de salida `1`) con `The active change "x" is not in OpenSpec`, y el mensaje ahora lista lo que hay abierto en esta rama y el comando para elegir uno: `Open in OpenSpec: add-retry-policy.` y `Make it the active change with: truss use add-retry-policy`. El cambio que dejaste sigue intacto en su propia rama; volver a esa rama y ejecutar `truss use <cambio>` allí lo recupera.
+El registro sigue a las ramas de Git. `state.json` guarda una entrada por cada rama en la que se activó un cambio (`new`, `use`), así que al volver a una rama regresa el cambio que estaba activo allí, hagas lo que hagas en las otras. Una rama sin entrada usa el último cambio activado, que es como se comportaba antes, y en un HEAD desacoplado o sin Git solo se usa ese último. Las entradas de ramas que ya no existen se descartan la próxima vez que se escribe el archivo. Si el cambio registrado no existe en esta rama (se creó en otra que no está fusionada), `status` y `continue` siguen fallando (código de salida `1`) con `The active change "x" is not in OpenSpec`, y el mensaje lista lo que hay abierto aquí y el comando para elegir uno: `Open in OpenSpec: add-retry-policy.` y `Make it the active change with: truss use add-retry-policy`.
 
 ## `truss status`
 

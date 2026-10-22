@@ -24,7 +24,7 @@ El directorio en el que se ejecuta TRUSS. Solo recibe sus propios archivos, todo
 | Ruta | Qué es |
 |---|---|
 | `config.yaml` | La configuración del proyecto (la crea `truss init`). |
-| `state.json` | El puntero al cambio activo. |
+| `state.json` | El puntero al cambio activo, guardado para cada rama de Git en la que se activó un cambio. |
 | `verification/latest.json` | La evidencia del último `truss verify`. |
 | `handoffs/` | Notas de handoff locales. |
 
