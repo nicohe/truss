@@ -30,6 +30,7 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 node .truss/bin/truss.mjs help             # la lista de comandos (igual que ejecutar truss sin comando)
 node .truss/bin/truss.mjs verify --help    # uso, opciones y códigos de salida de un comando; no se ejecuta
 node .truss/bin/truss.mjs help verify      # lo mismo
+node .truss/bin/truss.mjs help concepts    # qué son un cambio, el cambio activo, una fase, la evidencia y un handoff
 node .truss/bin/truss.mjs --version        # truss 0.2.25
 ```
 

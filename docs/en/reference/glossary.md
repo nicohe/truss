@@ -4,6 +4,7 @@
 
 Terms are listed alphabetically.
 
+- **Active change:** the change TRUSS follows right now. It is remembered for each Git branch in `.truss/state.json`; `truss use` switches it, and `truss new` makes the new change the active one.
 - **Adapter:** a runtime-specific implementation, for example for Claude Code or Codex. Not part of the v0.2 core; see the [enforcement model](enforcement.md).
 - **ADR (architecture decision record):** a short document that records one architectural decision and why it was made. Write one only when a decision deserves to outlive the change; [ADR 0001](../development/decisions/0001-local-project-configuration.md) is an example.
 - **Agent:** the coding assistant that does the implementation work. TRUSS never runs one; it tells the agent what to do next.
@@ -11,7 +12,7 @@ Terms are listed alphabetically.
 - **Change:** one unit of work tracked by OpenSpec, with a proposal, specs, a design and tasks. `truss new` creates it.
 - **Component:** an addressable unit of a monorepo, declared under `components`.
 - **Discovery:** the work before the spec, where an unclear idea becomes explicit decisions. See *Grill*.
-- **Evidence:** the machine-readable record of a `truss verify` run, in `.truss/verification/latest.json`.
+- **Evidence:** the machine-readable record of a `truss verify` run, in `.truss/verification/latest.json`, plus the last ten passing runs in `history.json`. It is current while the files are those of a run that passed.
 - **Fail-fast:** stopping at the first failure instead of running what remains. `truss verify` does it: a failing command ends the run.
 - **Gate:** an opt-in check of `truss verify` that can report or refuse before any command runs: `tests_required` and `tasks_complete`.
 - **Gherkin:** the Given / When / Then format for describing behavior as scenarios. `spec.gherkin` says whether acceptance behavior is expected in it.
