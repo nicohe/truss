@@ -85,6 +85,6 @@ Kept for the record. These describe an earlier release, not how TRUSS behaves to
 
 - [Testing](development/testing.md), [end-to-end tests](development/e2e.md) and [continuous integration](development/ci.md)
 - [Releasing](development/releasing.md): the checklist for a version, a tag and a GitHub release.
-- [Design decisions](development/decisions/0001-local-project-configuration.md): ADR 0001, where the project configuration lives; [ADR 0002](development/decisions/0002-stale-evidence-warning.md), the warning when the files changed after the last verify; [ADR 0003](development/decisions/0003-zone-warning.md), the warning when spec and code are both changed and uncommitted.
+- [Design decisions](development/decisions/0001-local-project-configuration.md): ADR 0001, where the project configuration lives; [ADR 0002](development/decisions/0002-stale-evidence-warning.md), the warning when the files changed after the last verify; [ADR 0003](development/decisions/0003-zone-warning.md), the warning when spec and code are both changed and uncommitted; [ADR 0004](development/decisions/0004-active-change-per-branch.md), remembering the active change for each branch (proposed).
 - [Brand and logo usage](reference/brand.md)
 - See also [CONTRIBUTING](../../CONTRIBUTING.md), [SECURITY](../../SECURITY.md) and the [changelog](../../CHANGELOG.md).
