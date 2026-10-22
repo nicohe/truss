@@ -4,6 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.27] - 2026-10-22
+
+Patch release. It fixes a mistake of 0.2.26 in `truss handoff` and adds two small improvements that make skills easier to name in a prompt.
+
+### Upgrade notes
+- **If you ran `truss handoff` on 0.2.26 when the recorded change was not on the branch and exactly one other change was open,** the note may be about the wrong change and `.truss/state.json` may point to the other one. Run `truss use <change>` to go back to the change you meant, and delete the note if it is wrong (a note is never overwritten, so a new one starts by deleting it).
+- **`truss skills` changes shape:** each line is now `● name  path`. The `● name` prefix is the same, so anything that matched the names still matches.
+- **`truss handoff` prints two extra `Next:` lines after a new note** (the `handoff` skill and, optionally, `caveman`), each only if that skill file exists. No exit code changes.
+- Nothing else changes in behavior. The `pr` skill and `THIRD_PARTY.md` are text.
+
 ### Fixed
 - **`truss handoff` no longer chooses another change when the recorded one is not on this branch.** In 0.2.26, with the recorded change missing and exactly one other change open, `handoff` took that change as the active one: it rewrote `.truss/state.json` and wrote the note under the recorded id with the other change's phase. The note is now about the recorded change, with the phase "last recorded; OpenSpec could not be asked", and `state.json` is left alone. Only `status` and `continue` choose, as the 0.2.26 notes said. Found by two agents that were asked to describe the pull request of that change and read the code to do it; reproduced by hand and covered by a test that fails without the fix. If you ran `truss handoff` on 0.2.26 in that situation, run `truss use <change>` to go back to the change you meant.
 

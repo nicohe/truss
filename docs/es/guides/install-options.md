@@ -25,7 +25,7 @@ La primera forma es el [inicio rápido](../getting-started.md#2-añade-truss-a-t
 Clona una vez y enlaza el ejecutable en algún sitio de tu `PATH`:
 
 ```bash
-git clone --depth 1 --branch v0.2.26 https://github.com/nicohe/truss.git ~/.local/share/truss
+git clone --depth 1 --branch v0.2.27 https://github.com/nicohe/truss.git ~/.local/share/truss
 ln -s ~/.local/share/truss/bin/truss.mjs ~/.local/bin/truss
 truss --version
 ```
@@ -46,7 +46,7 @@ Para actualizar todos los proyectos a la vez, o volver atrás:
 
 ```bash
 git -C ~/.local/share/truss fetch --tags
-git -C ~/.local/share/truss checkout v0.2.27
+git -C ~/.local/share/truss checkout v0.2.28
 ```
 
 Para quitarlo, borra `~/.local/share/truss` y `~/.local/bin/truss`. Los proyectos conservan `openspec/` y `.truss/`.
@@ -63,11 +63,11 @@ Para un proyecto donde no quieres un clon de Git de TRUSS:
 
 ```bash
 mkdir -p .truss
-curl -L https://github.com/nicohe/truss/archive/refs/tags/v0.2.26.tar.gz | tar -xz --strip-components=1 -C .truss
+curl -L https://github.com/nicohe/truss/archive/refs/tags/v0.2.27.tar.gz | tar -xz --strip-components=1 -C .truss
 echo ".truss/" >> .gitignore
 ```
 
-GitHub pone todo en una carpeta superior llamada `truss-0.2.26`; `--strip-components=1` la quita. El resultado es la misma disposición que el clon, sin `.git`, así que `node .truss/bin/truss.mjs init` y lo demás funcionan como en el inicio rápido. No hay `git checkout` para actualizarlo: quita todo lo que haya en `.truss/` salvo `config.yaml`, `state.json`, `verification/` y `handoffs/` (los archivos propios del proyecto viven en la misma carpeta) y descomprime la release nueva.
+GitHub pone todo en una carpeta superior llamada `truss-0.2.27`; `--strip-components=1` la quita. El resultado es la misma disposición que el clon, sin `.git`, así que `node .truss/bin/truss.mjs init` y lo demás funcionan como en el inicio rápido. No hay `git checkout` para actualizarlo: quita todo lo que haya en `.truss/` salvo `config.yaml`, `state.json`, `verification/` y `handoffs/` (los archivos propios del proyecto viven en la misma carpeta) y descomprime la release nueva.
 
 ## Qué no se comprobó
 
