@@ -9,9 +9,10 @@ Los términos están en orden alfabético.
 - **Agente:** el asistente de código que hace el trabajo de implementación. TRUSS nunca ejecuta uno; le dice al agente qué hacer a continuación.
 - **Aprobación (trust):** tu confirmación de que una lista de `verification.commands` puede ejecutarse. Se guarda por proyecto y se vuelve a pedir cuando la lista cambia. Consulta [`truss verify`](verify.md).
 - **Cambio (change):** una unidad de trabajo registrada por OpenSpec, con proposal, specs, design y tasks. `truss new` la crea.
+- **Cambio activo (active change):** el cambio que TRUSS sigue ahora mismo. Se recuerda para cada rama de Git en `.truss/state.json`; `truss use` lo cambia, y `truss new` hace activo el cambio nuevo.
 - **Componente (component):** una unidad direccionable de un monorepo, declarada bajo `components`.
 - **Descubrimiento (discovery):** el trabajo previo a la spec, en el que una idea poco clara se convierte en decisiones explícitas. Consulta *Grill*.
-- **Evidencia (evidence):** el registro legible por máquina de una ejecución de `truss verify`, en `.truss/verification/latest.json`.
+- **Evidencia (evidence):** el registro legible por máquina de una ejecución de `truss verify`, en `.truss/verification/latest.json`, más las últimas diez ejecuciones que pasaron en `history.json`. Es vigente mientras los archivos sean los de una ejecución que pasó.
 - **Fail-fast:** detenerse en el primer fallo en lugar de ejecutar lo que queda. `truss verify` lo hace: un comando que falla termina la ejecución.
 - **Fase (phase):** en qué punto está un cambio: `spec` (faltan artefactos de planificación), `implementation` (planificado, con tareas abiertas) o `complete` (todas las tareas marcadas).
 - **Gate:** una comprobación opcional de `truss verify` que puede informar o negarse antes de ejecutar ningún comando: `tests_required` y `tasks_complete`.

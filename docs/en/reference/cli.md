@@ -28,6 +28,7 @@ TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands 
 node .truss/bin/truss.mjs help             # the command list (same as running truss with no command)
 node .truss/bin/truss.mjs verify --help    # usage, options and exit codes of one command; it is not run
 node .truss/bin/truss.mjs help verify      # the same
+node .truss/bin/truss.mjs help concepts    # what a change, the active change, a phase, the evidence and a handoff are
 node .truss/bin/truss.mjs --version        # truss 0.2.25
 ```
 

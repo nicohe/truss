@@ -31,6 +31,20 @@ test('no command, --help and -h list the commands and exit 0', () => {
   }
 });
 
+test('help concepts explains the words, with exit code 0 and without a project', () => {
+  const root = workspace();
+  const result = run(root, ['help', 'concepts']);
+  assert.equal(result.status, 0, result.stdout);
+  assert.match(result.stdout, /· concepts/);
+  for (const term of ['Change', 'Active change', 'Phase', 'Evidence', 'Handoff'])
+    assert.match(result.stdout, new RegExp(`\\n${term}\\n {2}\\S`), term);
+  assert.match(result.stdout, /never blocks your Git work/);
+  assert.equal(run(root, ['concepts']).status, 2, 'it is a topic of help, not a command');
+  const typo = run(root, ['help', 'conceps']);
+  assert.equal(typo.status, 2);
+  assert.match(typo.stdout, /× Unknown command "conceps"\.\nDid you mean "concepts"\?/);
+});
+
 test('an unknown command fails with exit code 2, names itself and suggests the closest command', () => {
   const root = workspace();
   const typo = run(root, ['verfy']);

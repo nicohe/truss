@@ -5,9 +5,11 @@ import test from 'node:test';
 import { createCommands } from '../../lib/commands.mjs';
 import {
   COMMAND_HELP,
+  CONCEPTS,
   HELP_GROUPS,
   optionProblem,
   renderCommandHelp,
+  renderConcepts,
   renderHelp,
   suggestCommand,
   unknownCommandMessage,
@@ -49,6 +51,34 @@ test('the command list is grouped by stage, each command once, and fits in 80 co
       .map(([name]) => name);
   assert.deepEqual(commands('Start'), ['init', 'doctor']);
   assert.deepEqual(commands('Work on a change'), ['new', 'use', 'status', 'continue']);
+});
+
+test('help concepts explains the five words, fits in 80 columns, and each word is in the glossary', () => {
+  const text = renderConcepts();
+  assert.deepEqual(
+    CONCEPTS.map(([term]) => term),
+    ['Change', 'Active change', 'Phase', 'Evidence', 'Handoff'],
+  );
+  for (const line of text.split('\n')) assert.ok(line.length <= 84, `too long (${line.length}): ${line}`);
+  for (const [term, lines] of CONCEPTS) {
+    assert.ok(lines.length >= 1 && lines.length <= 3, `${term} takes two or three lines`);
+    assert.ok(text.includes(`\n${term}\n`), `${term} is a heading`);
+  }
+  for (const language of ['en', 'es']) {
+    const glossary = fs.readFileSync(path.join(trussRoot, 'docs', language, 'reference', 'glossary.md'), 'utf8');
+    for (const [term] of CONCEPTS)
+      assert.ok(
+        glossary.includes(`**${term}:**`) || glossary.includes(`(${term.toLowerCase()})`),
+        `${term} is in the glossary (${language})`,
+      );
+  }
+  assert.doesNotMatch(text, /undefined/);
+});
+
+test('concepts is a topic of help, not a command', () => {
+  assert.equal(Object.hasOwn(COMMAND_HELP, 'concepts'), false);
+  assert.ok(!implemented().includes('concepts'));
+  assert.match(renderHelp(), /New here\? Run "truss help concepts"\./);
 });
 
 test('each command help has a synopsis, exit codes and a docs page that exists', () => {
