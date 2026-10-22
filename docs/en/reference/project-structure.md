@@ -24,7 +24,7 @@ The directory TRUSS runs in. It gets only its own files, all under `<project>/.t
 | Path | What it is |
 |---|---|
 | `config.yaml` | The project configuration (`truss init` creates it). |
-| `state.json` | The active change pointer. |
+| `state.json` | The active change pointer, kept for each Git branch where a change was made active. |
 | `verification/latest.json` | Evidence of the last `truss verify`. |
 | `handoffs/` | Local handoff notes. |
 

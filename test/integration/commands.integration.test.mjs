@@ -1413,6 +1413,65 @@ test('handoff: an archived change with another still open says which, and how to
   assert.equal(fs.existsSync(path.join(root, '.truss', 'handoffs', 'second-change.md')), false);
 });
 
+test('status and continue: changing branch brings back the change that was active on that branch', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  const git = (...args) => {
+    const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  const first = git('branch', '--show-current');
+  assert.equal(run(root, ['new', 'Add retry'], { binDirs: [bin] }).status, 0);
+  git('add', '-A');
+  git('commit', '-qm', 'add-retry');
+
+  git('checkout', '-q', '-b', 'feat/second');
+  assert.equal(run(root, ['new', 'Second change'], { binDirs: [bin] }).status, 0);
+  git('add', '-A');
+  git('commit', '-qm', 'second-change');
+  assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Change\s+second-change/);
+
+  // Back on the first branch, `second-change` does not exist there. Before the record was kept for each branch this
+  // failed with exit code 1.
+  git('checkout', '-q', first);
+  for (const command of ['status', 'continue']) {
+    const result = run(root, [command], { binDirs: [bin] });
+    assert.equal(result.status, 0, `${command}: ${out(result)}`);
+    assert.match(out(result), /Change\s+add-retry/);
+  }
+
+  git('checkout', '-q', 'feat/second');
+  assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Change\s+second-change/);
+
+  const saved = JSON.parse(fs.readFileSync(path.join(root, '.truss', 'state.json'), 'utf8'));
+  assert.equal(saved.change, 'second-change', 'the top level is still the change made active last');
+  assert.deepEqual(Object.keys(saved.branches).sort(), [first, 'feat/second'].sort());
+});
+
+test('use: makes the change active for the branch it is run on only', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  const git = (...args) => {
+    const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  const first = git('branch', '--show-current');
+  assert.equal(run(root, ['new', 'Add retry'], { binDirs: [bin] }).status, 0);
+  assert.equal(run(root, ['new', 'Second change'], { binDirs: [bin] }).status, 0);
+  git('checkout', '-q', '-b', 'other');
+  assert.equal(run(root, ['use', 'add-retry'], { binDirs: [bin] }).status, 0);
+  git('checkout', '-q', first);
+  assert.match(
+    out(run(root, ['status'], { binDirs: [bin] })),
+    /Change\s+second-change/,
+    'unchanged on the first branch',
+  );
+  git('checkout', '-q', 'other');
+  assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Change\s+add-retry/);
+});
+
 test('status and continue: a missing active change also lists what is open and how to pick one', () => {
   const { root, bin } = tasksWorkspace('off', '- [x] one\n');
   fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });

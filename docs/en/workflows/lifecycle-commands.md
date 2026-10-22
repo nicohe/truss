@@ -87,7 +87,7 @@ With nothing open it says so and points to `truss new`. An empty name, or a name
 
 `.truss/state.json` is local to each checkout, so a fresh clone or a CI machine has no active change even when OpenSpec has changes in flight. `use` is how it picks one up, and [`truss status`](#truss-status) lists what is open.
 
-The record does not follow Git branches either. If you create a change on one branch and go back to another where that change does not exist, `status` and `continue` fail (exit code `1`) with `The active change "x" is not in OpenSpec`, and the message now lists what is open on this branch and the command to pick one: `Open in OpenSpec: add-retry-policy.` and `Make it the active change with: truss use add-retry-policy`. The change you left is untouched on its own branch; going back to that branch and running `truss use <change>` there brings it back.
+The record follows Git branches. `state.json` keeps one entry for each branch where a change was made active (`new`, `use`), so going back to a branch brings back the change that was active there, whatever you did on the others. A branch with no entry uses the change last made active, which is how it behaved before, and in a detached HEAD or without Git only that last one is used. The entries of branches that no longer exist are dropped the next time the file is written. If the recorded change does not exist on this branch (it was created on another one that is not merged), `status` and `continue` still fail (exit code `1`) with `The active change "x" is not in OpenSpec`, and the message lists what is open here and the command to pick one: `Open in OpenSpec: add-retry-policy.` and `Make it the active change with: truss use add-retry-policy`.
 
 ## `truss status`
 
