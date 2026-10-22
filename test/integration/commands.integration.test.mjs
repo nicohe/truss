@@ -767,6 +767,89 @@ test('status and continue: going back to files that passed is not stale, and a r
   assert.match(named, /added more\.txt/);
 });
 
+test('status: "Where you are" gives the branch, the change, the phase and where the evidence stands', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n- [ ] two\n');
+  const git = (...args) => {
+    const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  const status = () => out(run(root, ['status'], { binDirs: [bin] }));
+  const first = git('branch', '--show-current');
+
+  const never = status();
+  assert.match(
+    never,
+    new RegExp(`\\nWhere you are\\n {2}Branch {8}${first}\\n {2}Change {8}add-retry\\n {2}Phase {9}implementation\\n`),
+  );
+  assert.match(
+    never,
+    /\n {2}Evidence {6}○ none: truss verify has not passed for this project yet\. Run truss verify\./,
+  );
+
+  assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
+  assert.match(
+    status(),
+    /\n {2}Evidence {6}● current: these exact files passed truss verify \(\d{4}-\d\d-\d\d \d\d:\d\d UTC\)\n/,
+  );
+
+  fs.writeFileSync(path.join(root, 'new.txt'), 'x\n');
+  const stale = status();
+  assert.match(stale, /\n {2}Evidence {6}○ stale: the files changed after the last passing verify/);
+  assert.match(stale, /\n {16}added new\.txt\n/, 'the files line up under the value');
+  fs.rmSync(path.join(root, 'new.txt'));
+
+  git('checkout', '-q', '-b', 'feat');
+  assert.match(status(), /Branch {8}feat/);
+  assert.match(status(), new RegExp(`● current: these exact files passed truss verify on branch "${first}"`));
+
+  git('checkout', '-q', '--detach');
+  assert.match(status(), /Branch {8}\(detached HEAD at [0-9a-f]{7}\)/);
+
+  fs.writeFileSync(
+    path.join(root, '.truss', 'verification', 'latest.json'),
+    JSON.stringify({
+      status: 'failed',
+      startedAt: '2026-10-12T22:33:00.000Z',
+      finishedAt: '2026-10-12T22:33:10.000Z',
+      commands: [],
+    }),
+  );
+  fs.writeFileSync(path.join(root, 'other.txt'), 'y\n');
+  assert.match(status(), /Evidence {6}○ last verify failed \(2026-10-12 22:33 UTC\)\. Fix it and run truss verify\./);
+});
+
+test('status: "Where you are" for a project that is not a work tree, with no change, and while planning', () => {
+  const root = workspace({ config: validConfig, git: false });
+  const none = out(run(root, ['status']));
+  assert.match(none, /Where you are\n {2}Branch {8}\(not a Git work tree\)\n\nNo active change\./);
+
+  const planning = tasksWorkspace('off', '- [ ] one\n');
+  fs.rmSync(path.join(planning.root, 'openspec', 'changes', 'add-retry', 'tasks.md'));
+  const text = out(run(planning.root, ['status'], { binDirs: [planning.bin] }));
+  assert.match(text, /Where you are\n {2}Branch/);
+  assert.doesNotMatch(text, /Evidence/, 'while planning, never having verified is not worth saying');
+});
+
+test('status: the Handoff row appears only when the note was written on another branch', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n- [ ] two\n');
+  const git = (...args) => {
+    const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  const first = git('branch', '--show-current');
+  const status = () => out(run(root, ['status'], { binDirs: [bin] }));
+  assert.doesNotMatch(status(), /Handoff/, 'no note, no row');
+  assert.equal(run(root, ['handoff'], { binDirs: [bin] }).status, 0);
+  assert.doesNotMatch(status(), /Handoff/, 'a note written here says nothing');
+  git('checkout', '-q', '-b', 'feat');
+  assert.match(
+    status(),
+    new RegExp(`\\n {2}Handoff {7}○ This note was written on branch "${first}" at [0-9a-f]{7}; you are on "feat" at`),
+  );
+});
+
 test('continue shows stale evidence while implementing, and not while planning', () => {
   const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
   assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
