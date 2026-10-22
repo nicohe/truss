@@ -40,7 +40,7 @@ Un error que una herramienta puede detectar se convierte en una comprobación, y
 
 ### `pr`
 
-`pr` también es manual: TRUSS nunca la pide y no abre la pull request. La pides cuando el cambio está verificado y revisado, y escribe el cuerpo: un resumen en la forma más rápida de leer (pseudocódigo, un diagrama o una tabla de antes y después), la evidencia de que funciona y lo que no se verificó, y el riesgo de fusión, es decir, si revertir restaura el estado anterior y qué mirar primero.
+`pr` también es manual: TRUSS nunca la pide y no abre la pull request. La pides cuando el cambio está verificado y revisado, y escribe el cuerpo: un resumen en la forma más rápida de leer según lo que cambió (pseudocódigo para una regla con ramas nuevas, un árbol de llamadas para saber quién llama a quién, un diagrama para piezas que se comunican, una tabla de antes y después para un comportamiento cambiado, un árbol de archivos para archivos movidos, o el fragmento más pequeño del diff para un cambio pequeño; una forma, dos como mucho, empezando por el cambio y no por una introducción), la evidencia de que funciona y lo que no se verificó, y el riesgo de fusión, es decir, si revertir restaura el estado anterior y qué mirar primero.
 
 > Escribe la descripción de la pull request de `add-retry-policy` con la skill de `.truss/.truss/skills/pr.SKILL.md`. Usa el resultado de `truss verify` como evidencia y di qué no comprobaste.
 
