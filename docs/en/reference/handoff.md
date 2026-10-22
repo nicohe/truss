@@ -20,7 +20,7 @@
 
   With nothing open it stays the one line. The same holds when the active change was archived with `openspec archive`: it says so, lists what is still open (or points to `truss new`), and writes nothing, because a finished change has nothing to hand off.
 - It writes `.truss/handoffs/<change>.md` and prints the path.
-- It fills in what TRUSS knows (the change, the component, the phase, the OpenSpec path and the current Git branch, or `unknown`) and leaves the rest empty. The phase is asked from OpenSpec when the note is written, so it is the one `truss status` would show now. If OpenSpec or the configuration cannot be used, `handoff` still writes the note, with the phase last recorded and a line saying so (`Phase: implementation (last recorded; OpenSpec could not be asked)`):
+- It fills in what TRUSS knows (the change, the component, the phase, the OpenSpec path, the current Git branch, or `unknown`, and the commit HEAD points to) and leaves the rest empty. The phase is asked from OpenSpec when the note is written, so it is the one `truss status` would show now. If OpenSpec or the configuration cannot be used, `handoff` still writes the note, with the phase last recorded and a line saying so (`Phase: implementation (last recorded; OpenSpec could not be asked)`):
 
 ```markdown
 # Handoff: add-retry-policy
@@ -29,6 +29,7 @@
 - Phase: implementation
 - OpenSpec: openspec/changes/add-retry-policy
 - Branch: main
+- Commit: 3f2a1bc9d0e4
 
 ## Completed
 
@@ -54,6 +55,7 @@ TRUSS writes the header; the agent writes the rest. A note for a change that mov
 - Phase: implementation
 - OpenSpec: openspec/changes/add-retry-policy
 - Branch: feature/add-retry-policy
+- Commit: 3f2a1bc9d0e4
 
 ## Completed
 - Tasks 1.1 to 1.4 done and checked off; `truss verify` passes (5 of 5 commands).
@@ -86,7 +88,13 @@ If a note for the change already exists, `truss handoff` leaves it exactly as it
   Edit it, or delete it to start a new note.
 ```
 
-The exit code is `0`, as for a note that was written. To start over, delete the file first. Releases up to 0.2.2 replaced an existing note with the empty template instead, and lost what was written in it.
+The exit code is `0`, as for a note that was written. When the note was written somewhere else, it also says so in one line, and only then:
+
+```text
+○ This note was written on branch "feat-b" at 3f2a1bc; you are on "main" at 9d41e02.
+```
+
+The other form is `This note was written at 3f2a1bc, which is not in the history of HEAD (9d41e02).`, for a note written on the same branch at a commit that an amend or a rebase has replaced. A new commit on the same branch is normal progress and says nothing. A note written before the `Commit` line existed is compared by branch only. This line never changes the exit code and never stops the command. To start over, delete the file first. Releases up to 0.2.2 replaced an existing note with the empty template instead, and lost what was written in it.
 
 ## Where the note lives
 

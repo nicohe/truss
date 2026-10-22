@@ -1248,6 +1248,51 @@ test('handoff: with no active change, lists what is open and points to truss use
   assert.ok(fs.existsSync(path.join(root, '.truss', 'handoffs', 'add-retry.md')));
 });
 
+test('handoff: the note records the branch and the commit, and says when it was written somewhere else', () => {
+  const root = workspace({ config: validConfig });
+  const git = (...args) => {
+    const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  fs.writeFileSync(
+    path.join(root, '.truss', 'state.json'),
+    JSON.stringify({ change: 'add-retry', phase: 'spec', path: 'openspec/changes/add-retry' }),
+  );
+  const file = path.join(root, '.truss', 'handoffs', 'add-retry.md');
+  const first = git('rev-parse', 'HEAD').slice(0, 12);
+  const branch = git('branch', '--show-current');
+  assert.equal(run(root, ['handoff']).status, 0);
+  assert.match(fs.readFileSync(file, 'utf8'), new RegExp(`- Branch: ${branch}\\n- Commit: ${first}\n`));
+
+  // New commits on the same branch are normal progress: nothing is said.
+  fs.writeFileSync(path.join(root, 'more.txt'), 'more\n');
+  git('add', 'more.txt');
+  git('commit', '-qm', 'more');
+  const sameBranch = run(root, ['handoff']);
+  assert.equal(sameBranch.status, 0);
+  assert.match(out(sameBranch), /already exists and was not changed/);
+  assert.doesNotMatch(out(sameBranch), /was written (on branch|at)/);
+
+  git('checkout', '-q', '-b', 'feat-b');
+  const other = run(root, ['handoff']);
+  assert.equal(other.status, 0, 'a note written elsewhere is never a failure');
+  assert.match(
+    out(other),
+    new RegExp(`This note was written on branch "${branch}" at ${first.slice(0, 7)}; you are on "feat-b"`),
+  );
+
+  // The same branch, but the commit the note was written at is replaced by an amend, so it is not in the history.
+  git('checkout', '-q', branch);
+  git('branch', '-D', 'feat-b');
+  const written = git('rev-parse', 'HEAD').slice(0, 12);
+  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(`Commit: ${first}`, `Commit: ${written}`));
+  git('commit', '--amend', '-qm', 'amended');
+  const amended = run(root, ['handoff']);
+  assert.equal(amended.status, 0);
+  assert.match(out(amended), /which is not in the history of HEAD/);
+});
+
 test('handoff: with no active change and nothing open it stays one line, and a bad configuration does not stop it', () => {
   const empty = workspace({ config: validConfig });
   const none = run(empty, ['handoff']);
