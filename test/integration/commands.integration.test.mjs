@@ -1516,23 +1516,72 @@ test('use: makes the change active for the branch it is run on only', () => {
   assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Change\s+add-retry/);
 });
 
-test('status and continue: a missing active change also lists what is open and how to pick one', () => {
+test('status and continue: a missing active change with exactly one change open uses it and says so', () => {
   const { root, bin } = tasksWorkspace('off', '- [x] one\n');
   fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
   fs.mkdirSync(path.join(root, 'openspec', 'changes', 'second-change'), { recursive: true });
+  const line = /Using "second-change", the only change open here: the recorded "add-retry" is not on this branch\./;
+
+  const status = run(root, ['status'], { binDirs: [bin] });
+  assert.equal(status.status, 0, out(status));
+  assert.match(out(status), line);
+  assert.match(out(status), /Change\s+second-change/);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(root, '.truss', 'state.json'), 'utf8')).change, 'second-change');
+
+  const again = run(root, ['status'], { binDirs: [bin] });
+  assert.equal(again.status, 0);
+  assert.doesNotMatch(out(again), /Using "/, 'said once: the next run already has it as the active change');
+  assert.match(out(again), /Change\s+second-change/);
+
+  // `continue` does the same from the other starting point.
+  const second = tasksWorkspace('off', '- [x] one\n');
+  fs.rmSync(path.join(second.root, 'openspec', 'changes', 'add-retry'), { recursive: true });
+  fs.mkdirSync(path.join(second.root, 'openspec', 'changes', 'other'), { recursive: true });
+  const next = run(second.root, ['continue'], { binDirs: [second.bin] });
+  assert.equal(next.status, 0, out(next));
+  assert.match(out(next), /Using "other", the only change open here/);
+  assert.match(out(next), /Change\s+other/);
+});
+
+test('status and continue: a missing active change with several open lists them and exits 0', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
+  for (const name of ['second-change', 'third-change'])
+    fs.mkdirSync(path.join(root, 'openspec', 'changes', name), { recursive: true });
   for (const command of ['status', 'continue']) {
     const result = run(root, [command], { binDirs: [bin] });
-    assert.equal(result.status, 1, `${command} still fails`);
+    assert.equal(result.status, 0, `${command}: ${out(result)}`);
     assert.match(
       out(result),
-      /is missing\)\. It may belong to another branch\.\nOpen in OpenSpec: second-change\.\nMake it the active change with: truss use second-change, or start a new one with: truss new "Change name"/,
+      /The recorded change "add-retry" is not on this branch \(openspec[\\/]changes[\\/]add-retry is missing\)\./,
     );
+    assert.match(out(result), /Open (changes|in OpenSpec:) +second-change, third-change/);
+    assert.match(out(result), /truss use <change>/);
+    assert.doesNotMatch(out(result), /Using "/);
   }
-  fs.mkdirSync(path.join(root, 'openspec', 'changes', 'third-change'), { recursive: true });
-  assert.match(
-    out(run(root, ['status'], { binDirs: [bin] })),
-    /Open in OpenSpec: second-change, third-change\.\nMake one of them the active change with: truss use <change>, or/,
+  assert.equal(
+    JSON.parse(fs.readFileSync(path.join(root, '.truss', 'state.json'), 'utf8')).change,
+    'add-retry',
+    "nothing was chosen on the person's behalf",
   );
+});
+
+test('status: a missing active change whose only open change lives in a component names the component', () => {
+  const root = workspace({
+    config: validConfig.replace('components: {}', 'components:\n  api:\n    path: ./apps/api'),
+  });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  fs.mkdirSync(path.join(root, 'apps', 'api', 'openspec'), { recursive: true });
+  assert.equal(run(root, ['new', 'Add retry', '--component', 'api'], { binDirs: [bin] }).status, 0);
+  assert.equal(run(root, ['new', 'Second change'], { binDirs: [bin] }).status, 0);
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'second-change'), { recursive: true });
+  const result = run(root, ['status'], { binDirs: [bin] });
+  assert.equal(result.status, 0, out(result));
+  assert.match(
+    out(result),
+    /Using "add-retry" \(component api\), the only change open here: the recorded "second-change"/,
+  );
+  assert.match(out(result), /Component\s+api/);
 });
 
 test('status: an active change that OpenSpec lost without archiving it fails with a clear message', () => {
