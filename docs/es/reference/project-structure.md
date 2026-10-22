@@ -26,6 +26,8 @@ El directorio en el que se ejecuta TRUSS. Solo recibe sus propios archivos, todo
 | `config.yaml` | La configuración del proyecto (la crea `truss init`). |
 | `state.json` | El puntero al cambio activo, guardado para cada rama de Git en la que se activó un cambio. |
 | `verification/latest.json` | La evidencia del último `truss verify`. |
+| `verification/working-tree.json` | El identificador de contenido de cada archivo en el último `verify` que pasó, para que el aviso pueda nombrar lo que cambió. |
+| `verification/history.json` | Las últimas diez ejecuciones que pasaron, cada una con la huella de sus archivos. |
 | `handoffs/` | Notas de handoff locales. |
 
 `openspec/` contiene los artefactos durables de los cambios cuando se usa OpenSpec. El estado local lo ignora Git; las specs, los tests y la documentación se confirman. El código de aplicación del proyecto debe seguir siendo utilizable si se elimina `.truss/`.

@@ -723,6 +723,50 @@ test('status and continue say when the files changed after the last passing veri
   for (const text of both()) assert.doesNotMatch(text, /stale/, 'a new verify makes it fresh again');
 });
 
+test('status and continue: going back to files that passed is not stale, and a run on another branch is named', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n- [ ] two\n');
+  const git = (...args) => {
+    const r = spawnSync('git', args, { cwd: root, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  const first = git('branch', '--show-current');
+  const both = () => [out(run(root, ['status'], { binDirs: [bin] })), out(run(root, ['continue'], { binDirs: [bin] }))];
+  assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
+
+  git('checkout', '-q', '-b', 'feat');
+  fs.mkdirSync(path.join(root, 'src'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'src', 'retry.js'), 'export const retry = 1;\n');
+  const [onFeat, nextOnFeat] = both();
+  assert.match(
+    onFeat,
+    new RegExp(`stale: the last passing verify was on branch "${first}" \\(.*\\) and the files differ`),
+  );
+  assert.match(nextOnFeat, /Evidence\n○ stale: the last passing verify was on branch/);
+  assert.doesNotMatch(onFeat, /added src/, 'files are named only against a run on this branch');
+
+  assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
+  for (const text of both()) assert.doesNotMatch(text, /stale/);
+
+  // Back on the first branch the files are those of the first run, which is still in the history.
+  fs.rmSync(path.join(root, 'src'), { recursive: true });
+  git('checkout', '-q', first);
+  for (const text of both())
+    assert.doesNotMatch(text, /stale/, 'the files are the ones that passed on the first branch');
+
+  // An edit here: the newest passing run was made on `feat`, so that is what the warning says.
+  fs.writeFileSync(path.join(root, 'edited.txt'), 'x\n');
+  const [edited] = both();
+  assert.match(edited, /stale: the last passing verify was on branch "feat"/);
+
+  // Verified here, the newest run is on this branch again and the files are named.
+  assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);
+  fs.writeFileSync(path.join(root, 'more.txt'), 'x\n');
+  const [named] = both();
+  assert.match(named, /stale: the files changed after the last passing verify/);
+  assert.match(named, /added more\.txt/);
+});
+
 test('continue shows stale evidence while implementing, and not while planning', () => {
   const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
   assert.equal(run(root, ['verify', '--trust'], { binDirs: [bin] }).status, 0);

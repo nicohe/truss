@@ -21,6 +21,7 @@ Si un futuro compañero o agente estaría peor sin ello, pertenece aquí.
 |---|---|
 | El puntero al cambio activo | `.truss/state.json` |
 | La evidencia del último `truss verify` | `.truss/verification/latest.json` |
+| Lo que vio el último `verify` que pasó y las últimas diez ejecuciones que pasaron | `.truss/verification/working-tree.json`, `.truss/verification/history.json` |
 | Las notas de handoff que escribe `truss handoff` | `.truss/handoffs/` |
 | Cualquier otro estado de sesión, cachés o logs | donde los guarde el runtime de tu agente |
 | Un índice de Graphify | `graphify-out/` |
