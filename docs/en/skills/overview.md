@@ -38,7 +38,7 @@ A mistake that a tool can catch becomes a check, and the natural place for it is
 
 ### `pr`
 
-`pr` is manual too: TRUSS never asks for it, and it does not open the pull request. You ask for it when the change is verified and reviewed, and it writes the body: a summary in the quickest form (pseudocode, a diagram or a before/after table), the evidence that it works and what was not verified, and the merge risk, meaning whether reverting restores the earlier state and what to look at first.
+`pr` is manual too: TRUSS never asks for it, and it does not open the pull request. You ask for it when the change is verified and reviewed, and it writes the body: a summary in the quickest form for what changed (pseudocode for a rule that gained branches, a call tree for who calls whom, a diagram for pieces that talk to each other, a before and after table for a changed behavior, a file tree for moved files, or the smallest diff fragment for a small change; one form, two at most, starting with the change itself and not with an introduction), the evidence that it works and what was not verified, and the merge risk, meaning whether reverting restores the earlier state and what to look at first.
 
 > Write the description of the pull request for `add-retry-policy` with the skill in `.truss/.truss/skills/pr.SKILL.md`. Use the `truss verify` result as evidence and say what you did not check.
 

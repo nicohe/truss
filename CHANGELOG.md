@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **The `pr` skill says which form the Summary should take, and how to start.** A table maps what changed to a form (pseudocode for a rule that gained branches, a call tree, a Mermaid diagram or text tree, a before and after table, a file tree, or the smallest diff fragment), with new rules: one form, two at most; a visual of more than about twenty lines is a sign that the change is too big; start with the change itself, not an introduction; use the names of the spec. Written in our own words. `THIRD_PARTY.md` now credits where the ideas came from (mattpocock/skills, MIT, which credits Dex Horthy's `show-me`; intent-driven-template, MIT), and says that nothing was copied.
+
 ## [0.2.26] - 2026-10-22
 
 Minor-feature release. TRUSS now follows Git branches: it remembers the active change for each one, reuses evidence when the files go back to a run that passed, and says where you are. `truss help` explains itself to someone who runs it for the first time. The design is [ADR 0004](docs/en/development/decisions/0004-active-change-per-branch.md) and the amendment to [ADR 0002](docs/en/development/decisions/0002-stale-evidence-warning.md).
