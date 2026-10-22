@@ -1675,6 +1675,30 @@ test('status: a missing active change whose only open change lives in a componen
   assert.match(out(result), /Component\s+api/);
 });
 
+test('handoff: with the recorded change missing and another open, the note is about the recorded one and nothing is chosen', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'openspec', 'changes', 'second-change'), { recursive: true });
+  const stateFile = path.join(root, '.truss', 'state.json');
+  const before = fs.readFileSync(stateFile, 'utf8');
+
+  const result = run(root, ['handoff'], { binDirs: [bin] });
+  assert.equal(result.status, 0, out(result));
+  const note = fs.readFileSync(path.join(root, '.truss', 'handoffs', 'add-retry.md'), 'utf8');
+  assert.match(note, /# Handoff: add-retry\n/);
+  assert.doesNotMatch(note, /second-change/);
+  assert.match(
+    note,
+    /last recorded; OpenSpec could not be asked/,
+    'the phase is the recorded one, and the note says so',
+  );
+  assert.equal(fs.readFileSync(stateFile, 'utf8'), before, 'handoff did not move the active change');
+  assert.equal(fs.existsSync(path.join(root, '.truss', 'handoffs', 'second-change.md')), false);
+
+  // `status` still chooses the only open change; the choice is its, not handoff's.
+  assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Using "second-change"/);
+});
+
 test('status: an active change that OpenSpec lost without archiving it fails with a clear message', () => {
   const { root, bin } = tasksWorkspace('off', '- [x] one\n');
   fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
