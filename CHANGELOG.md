@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **`truss handoff` no longer chooses another change when the recorded one is not on this branch.** In 0.2.26, with the recorded change missing and exactly one other change open, `handoff` took that change as the active one: it rewrote `.truss/state.json` and wrote the note under the recorded id with the other change's phase. The note is now about the recorded change, with the phase "last recorded; OpenSpec could not be asked", and `state.json` is left alone. Only `status` and `continue` choose, as the 0.2.26 notes said. Found by two agents that were asked to describe the pull request of that change and read the code to do it; reproduced by hand and covered by a test that fails without the fix. If you ran `truss handoff` on 0.2.26 in that situation, run `truss use <change>` to go back to the change you meant.
+
 ## [0.2.26] - 2026-10-22
 
 Minor-feature release. TRUSS now follows Git branches: it remembers the active change for each one, reuses evidence when the files go back to a run that passed, and says where you are. `truss help` explains itself to someone who runs it for the first time. The design is [ADR 0004](docs/en/development/decisions/0004-active-change-per-branch.md) and the amendment to [ADR 0002](docs/en/development/decisions/0002-stale-evidence-warning.md).
