@@ -98,9 +98,13 @@ El registro sigue a las ramas de Git. `state.json` guarda una entrada por cada r
 ```text
 △ TRUSS · status
 
-Change          add-retry-policy
+Where you are
+  Branch        main
+  Change        add-retry-policy
+  Phase         implementation
+  Evidence      ● current: these exact files passed truss verify (2026-10-12 22:33 UTC)
+
 Component       workspace
-Phase           implementation
 OpenSpec        openspec/changes/add-retry-policy
 Planning        4/4 artifacts complete
 Tasks           1/2 complete
@@ -115,10 +119,18 @@ Next: truss continue
 
 Los marcadores junto a cada artefacto son `●` hecho, `◐` listo para escribirse y `○` bloqueado hasta que exista otro artefacto. `Needed to implement` nombra el artefacto que OpenSpec necesita antes de poder trabajar en una tarea (las releases anteriores a la 0.2.19 llamaban a esta línea `Tasks required`). Mientras la planificación está sin terminar, la línea `Tasks` no aparece, porque aún no hay tareas.
 
-Cuando el último `verify` pasó y los archivos cambiaron después, `status` añade una línea, y `continue` añade una sección `Evidence` en las fases `implementation` y `complete`:
+El bloque `Where you are` va primero: la rama (`main`, `(detached HEAD at 9d41e02)` o `(not a Git work tree)`), el cambio, su fase y en qué punto está la evidencia. La fila `Evidence` dice una de estas cosas:
+
+- `● current: these exact files passed truss verify (…)`, y `on branch "x"` cuando esa ejecución fue en otra rama;
+- `○ stale: …`, cuando los archivos no son los de ninguna ejecución que pasó;
+- `○ last verify failed (…). Fix it and run truss verify.`;
+- `○ none: truss verify has not passed for this project yet.`, solo en las fases `implementation` y `complete`;
+- ninguna fila cuando Git no puede decirlo, o mientras se planifica sin nada verificado.
+
+Una fila `Handoff` aparece solo cuando la nota de este cambio se escribió en otra rama o en un commit que ya no está en el historial de `HEAD` (consulta [`truss handoff`](../reference/handoff.md)). Cuando los archivos cambiaron después de un `verify` que pasó, `continue` añade una sección `Evidence` en las fases `implementation` y `complete`, y la fila de `status` lista los archivos:
 
 ```text
-Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+  Evidence      ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
                 edited lib/a.mjs
                 added src/retry.js
 ```
@@ -142,6 +154,9 @@ Sin cambio activo lo dice y señala el siguiente paso:
 ```text
 △ TRUSS · status
 
+Where you are
+  Branch        main
+
 No active change.
 Next: truss new "Change name"
 ```
@@ -150,6 +165,9 @@ Cuando hay cambios abiertos en OpenSpec, `status` los lista y señala primero [`
 
 ```text
 △ TRUSS · status
+
+Where you are
+  Branch        main
 
 No active change.
 Open changes    add-retry-policy, second-change
@@ -163,11 +181,14 @@ Cuando el cambio se archivó, lo dice en su lugar, seguido de las mismas dos lí
 ```text
 △ TRUSS · status
 
+Where you are
+  Branch        main
+
 The active change "add-retry-policy" was archived (openspec/changes/archive/2026-09-30-add-retry-policy).
 Next: truss new "Change name"
 ```
 
-Si OpenSpec ha perdido el cambio activo sin archivarlo (por ejemplo, se borró su carpeta), `status` falla con código de salida `1` y nombra la carpeta que falta.
+Si OpenSpec ha perdido el cambio activo sin archivarlo (por ejemplo, se borró su carpeta, o está en otra rama), TRUSS usa el único cambio abierto o los lista (consulta arriba). Solo con nada abierto `status` falla, con código de salida `1`, nombrando la carpeta que falta.
 
 ## `truss continue`
 

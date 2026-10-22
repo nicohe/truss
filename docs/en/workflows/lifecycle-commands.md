@@ -96,9 +96,13 @@ Use it whenever you want to know where the change stands, before you hand it to 
 ```text
 △ TRUSS · status
 
-Change          add-retry-policy
+Where you are
+  Branch        main
+  Change        add-retry-policy
+  Phase         implementation
+  Evidence      ● current: these exact files passed truss verify (2026-10-12 22:33 UTC)
+
 Component       workspace
-Phase           implementation
 OpenSpec        openspec/changes/add-retry-policy
 Planning        4/4 artifacts complete
 Tasks           1/2 complete
@@ -113,17 +117,25 @@ Next: truss continue
 
 The markers next to each artifact are `●` done, `◐` ready to be written and `○` blocked until another artifact exists. `Needed to implement` names the artifact OpenSpec needs before a task can be worked on (releases before 0.2.19 called this line `Tasks required`). While planning is unfinished the `Tasks` line is absent, because there are no tasks yet.
 
-When the last `verify` passed and the files changed after it, `status` adds a line, and `continue` adds an `Evidence` section in the `implementation` and `complete` phases:
+The `Where you are` block comes first: the branch (`main`, `(detached HEAD at 9d41e02)` or `(not a Git work tree)`), the change, its phase and where the evidence stands. The `Evidence` row says one of:
+
+- `● current: these exact files passed truss verify (…)`, and `on branch "x"` when that run was on another branch;
+- `○ stale: …`, when the files are not those of any passing run;
+- `○ last verify failed (…). Fix it and run truss verify.`;
+- `○ none: truss verify has not passed for this project yet.`, only in the `implementation` and `complete` phases;
+- no row when Git cannot say, or while planning with nothing verified.
+
+A `Handoff` row appears only when the note of this change was written on another branch or at a commit that is no longer in the history of `HEAD` (see [`truss handoff`](../reference/handoff.md)). When the files changed after a passing `verify`, `continue` adds an `Evidence` section in the `implementation` and `complete` phases, and the `status` row lists the files:
 
 ```text
-Evidence        ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
+  Evidence      ○ stale: the files changed after the last passing verify (2026-10-12 22:33 UTC). Run truss verify.
                 edited lib/a.mjs
                 added src/retry.js
 ```
 
 It names up to five files (`edited`, `added`, `removed`), then `… and N more`.
 
-It compares a fingerprint of the content of the files Git sees, recorded by `verify`, with the files now. `.truss/`, any `openspec/` folder and what Git ignores are left out, so ticking a task does not raise it; committing the same content does not either. It only warns: it never blocks and never changes an exit code. It says nothing when there is no evidence, when the last run failed or when the evidence comes from before the fingerprint. See [ADR 0002](../development/decisions/0002-stale-evidence-warning.md).
+It compares a fingerprint of the content of the files Git sees, recorded by `verify`, with the files now. `.truss/`, any `openspec/` folder and what Git ignores are left out, so ticking a task does not raise it; committing the same content does not either. It only warns: it never blocks and never changes an exit code. Evidence from before the fingerprint gives no answer. See [ADR 0002](../development/decisions/0002-stale-evidence-warning.md).
 
 With `spec.zone_guard: true`, both commands also warn when the work tree has uncommitted changes in the specs (`openspec/`) and in the code at once; `continue` shows it under a `Zones` heading, in every phase:
 
@@ -140,6 +152,9 @@ With no active change it says so and points at the next step:
 ```text
 △ TRUSS · status
 
+Where you are
+  Branch        main
+
 No active change.
 Next: truss new "Change name"
 ```
@@ -148,6 +163,9 @@ When changes are open in OpenSpec, `status` lists them and points at [`truss use
 
 ```text
 △ TRUSS · status
+
+Where you are
+  Branch        main
 
 No active change.
 Open changes    add-retry-policy, second-change
@@ -161,11 +179,14 @@ After the change was archived, it says so instead, followed by the same two line
 ```text
 △ TRUSS · status
 
+Where you are
+  Branch        main
+
 The active change "add-retry-policy" was archived (openspec/changes/archive/2026-09-30-add-retry-policy).
 Next: truss new "Change name"
 ```
 
-If OpenSpec has lost the active change without archiving it (its folder was deleted, say), `status` fails with exit code `1` and names the missing folder.
+If OpenSpec has lost the active change without archiving it (its folder was deleted, or it lives on another branch), TRUSS uses the only change that is open or lists them (see above). Only with nothing open does `status` fail, with exit code `1`, naming the missing folder.
 
 ## `truss continue`
 
