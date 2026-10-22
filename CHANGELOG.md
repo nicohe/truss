@@ -4,6 +4,18 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.26] - 2026-10-22
+
+Minor-feature release. TRUSS now follows Git branches: it remembers the active change for each one, reuses evidence when the files go back to a run that passed, and says where you are. `truss help` explains itself to someone who runs it for the first time. The design is [ADR 0004](docs/en/development/decisions/0004-active-change-per-branch.md) and the amendment to [ADR 0002](docs/en/development/decisions/0002-stale-evidence-warning.md).
+
+### Upgrade notes
+- **`status` has a new shape.** It opens with a `Where you are` block (branch, change, phase, evidence) and Change, Phase and Evidence moved into it. `continue`, the output agents read, keeps its shape. Nothing in the repository parses `status`; if your scripts do, check them.
+- **The active change is remembered for each branch.** On a branch where you ran `truss new` or `truss use`, `status` and `continue` now show that branch's change, not the last one used anywhere. A branch with no entry behaves as before. Going back to an older TRUSS keeps working, but it drops the per-branch memory the next time it writes `.truss/state.json`.
+- **Two exit codes changed, both from an error to success.** `truss use` with no name lists the open changes and exits `0` (it exited `2`); an empty name (`truss use ""`) is still a usage error. When the recorded change is not on this branch, `status` and `continue` no longer exit `1` if a change is open: with exactly one they use it and say so once, which also moves the active change to it; with several they list them. With none open they fail as before.
+- **New and extended files, all under the ignored `.truss/`.** `verification/history.json` (the last ten passing runs, about 2 KB at most), `branch` and `commit` in `latest.json`, and a `- Commit:` line in new handoff notes. Nothing needs migrating.
+- **Reusing evidence is narrower than it sounds.** `current` means that your `verification.commands` passed on those exact files. The fingerprint leaves out `openspec/` and `.truss/`, and the `tests_required` and `tasks_complete` results are not evaluated again.
+- **Text that changed:** `truss help` is grouped by stage with new sentences; `truss handoff` on an existing note may add one line when the note was written on another branch or at a commit that is no longer in the history of `HEAD`; the `Context to load` of `continue` names the policy files instead of the `policies/` folder.
+
 ### Added
 - **A guide to the ways of installing TRUSS** ([install options](docs/en/guides/install-options.md)): a clone per project (the quick start), one clone for the machine with a link on the `PATH`, and a tarball without Git. Run against the v0.2.25 release on GitHub: both new ways install and run `--version` and `init`; the central one also ran `doctor`, `status`, `new` and `continue`, and a subagent implemented a small change with it. Not checked: Windows, updating a tarball install, and CI with the central install.
 
