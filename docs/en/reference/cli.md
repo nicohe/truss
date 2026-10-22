@@ -31,6 +31,8 @@ node .truss/bin/truss.mjs help verify      # the same
 node .truss/bin/truss.mjs --version        # truss 0.2.25
 ```
 
+The command list is grouped by the stage you are at: start (`init`, `doctor`), work on a change (`new`, `use`, `status`, `continue`), check (`verify`), hand off (`handoff`) and the rest, each with one plain sentence.
+
 `--help` never runs the command it is next to, so `truss verify --help` is always safe. A mistyped command fails with exit code `2`, so a script does not carry on as if it had worked, and suggests the closest name:
 
 ```text

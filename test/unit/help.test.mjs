@@ -5,6 +5,7 @@ import test from 'node:test';
 import { createCommands } from '../../lib/commands.mjs';
 import {
   COMMAND_HELP,
+  HELP_GROUPS,
   optionProblem,
   renderCommandHelp,
   renderHelp,
@@ -28,6 +29,26 @@ test('the command list mentions every command and how to get more help', () => {
   }
   assert.match(list, /truss <command> --help/);
   assert.doesNotMatch(list, /undefined/);
+});
+
+test('the command list is grouped by stage, each command once, and fits in 80 columns', () => {
+  for (const [name, entry] of Object.entries(COMMAND_HELP))
+    assert.ok(HELP_GROUPS.includes(entry.group), `${name} names a stage that does not exist: ${entry.group}`);
+  const lines = renderHelp().split('\n');
+  const headings = HELP_GROUPS.map((group) => lines.indexOf(group));
+  assert.ok(
+    headings.every((at, i) => at > 0 && (i === 0 || at > headings[i - 1])),
+    `the stages appear in order: ${headings}`,
+  );
+  for (const { list } of Object.values(COMMAND_HELP))
+    assert.equal(lines.filter((line) => line.startsWith(`  ${list}`)).length, 1, `${list} appears once`);
+  for (const line of lines) assert.ok(line.length <= 80, `too long (${line.length}): ${line}`);
+  const commands = (group) =>
+    Object.entries(COMMAND_HELP)
+      .filter(([, entry]) => entry.group === group)
+      .map(([name]) => name);
+  assert.deepEqual(commands('Start'), ['init', 'doctor']);
+  assert.deepEqual(commands('Work on a change'), ['new', 'use', 'status', 'continue']);
 });
 
 test('each command help has a synopsis, exit codes and a docs page that exists', () => {

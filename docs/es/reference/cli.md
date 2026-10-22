@@ -33,6 +33,8 @@ node .truss/bin/truss.mjs help verify      # lo mismo
 node .truss/bin/truss.mjs --version        # truss 0.2.25
 ```
 
+La lista de comandos está agrupada por la etapa en la que estás: empezar (`init`, `doctor`), trabajar en un cambio (`new`, `use`, `status`, `continue`), comprobar (`verify`), relevar (`handoff`) y el resto, cada uno con una frase clara.
+
 `--help` nunca ejecuta el comando que la acompaña, así que `truss verify --help` siempre es seguro. Un comando mal escrito falla con código de salida `2`, para que un script no siga como si hubiera funcionado, y sugiere el nombre más parecido. Los mensajes están en inglés:
 
 ```text
