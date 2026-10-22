@@ -85,6 +85,6 @@ Se conservan como registro. Describen una release anterior, no cómo se comporta
 
 - [Pruebas](development/testing.md), [pruebas end-to-end](development/e2e.md) e [integración continua](development/ci.md)
 - [Publicar una release](development/releasing.md): la lista de pasos para una versión, un tag y una release en GitHub.
-- [Decisiones de diseño](development/decisions/0001-local-project-configuration.md): ADR 0001, dónde vive la configuración del proyecto; [ADR 0002](development/decisions/0002-stale-evidence-warning.md), el aviso cuando los archivos cambiaron después del último verify; [ADR 0003](development/decisions/0003-zone-warning.md), el aviso cuando spec y código tienen cambios sin confirmar a la vez.
+- [Decisiones de diseño](development/decisions/0001-local-project-configuration.md): ADR 0001, dónde vive la configuración del proyecto; [ADR 0002](development/decisions/0002-stale-evidence-warning.md), el aviso cuando los archivos cambiaron después del último verify; [ADR 0003](development/decisions/0003-zone-warning.md), el aviso cuando spec y código tienen cambios sin confirmar a la vez; [ADR 0004](development/decisions/0004-active-change-per-branch.md), recordar el cambio activo de cada rama (aceptada).
 - [Marca y uso del logo](reference/brand.md)
 - Consulta también [CONTRIBUTING](../../CONTRIBUTING.md), [SECURITY](../../SECURITY.md) y el [changelog](../../CHANGELOG.md) *(en inglés)*.

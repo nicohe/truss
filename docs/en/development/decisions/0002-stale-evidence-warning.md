@@ -62,3 +62,11 @@ Evidence        ○ stale: the files changed after the last passing verify (2026
 ```
 
 The list is only used when its fingerprint is the one in `latest.json`. When the file is missing, damaged or from another run, the warning appears as before, without names. The file holds paths and hashes, never contents, and lives in `.truss/`, which is ignored. For a large repository it is about 100 bytes per file.
+
+## Amendment: a short history of passing runs (ADR 0004)
+
+`verify` keeps the last ten passing runs in `.truss/verification/history.json`, newest first: `{ version: 1, passed: [{ fingerprint, files, finishedAt, branch, commit, commands }] }`. `commands` is the first 12 characters of the digest of the command list. A run with the same fingerprint replaces its older entry, and only runs that passed and have a fingerprint are recorded, so repeating `verify` on one tree never pushes other trees out and a failed run adds nothing. The file is about 2.5 KB at most.
+
+The evidence is **current** when the tree matches the newest passing run (as before) or any run in the history, whatever the branch. An older run is accepted only if its command list has the same digest as the current one. `latest.json` also records the `branch` and the `commit` of the run, and the warning says when the last passing run was on another branch. The files that changed are named only against the newest passing run, because `working-tree.json` still holds the ids of that run alone: keeping them for every entry would cost about 2 MB per entry at 20,000 files. A match with an older run needs no names.
+
+This does not widen what the fingerprint covers (see the consequences of [ADR 0004](0004-active-change-per-branch.md)).
