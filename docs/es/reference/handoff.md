@@ -22,7 +22,7 @@
 
   Sin nada abierto se queda en esa única línea. Lo mismo ocurre cuando el cambio activo se archivó con `openspec archive`: lo dice, lista lo que sigue abierto (o señala `truss new`) y no escribe nada, porque un cambio terminado no tiene nada que traspasar.
 - Escribe `.truss/handoffs/<change>.md` e imprime la ruta.
-- Rellena lo que TRUSS sabe (el cambio, el componente, la fase, la ruta de OpenSpec y la rama actual de Git, o `unknown`) y deja vacío el resto. La fase se pregunta a OpenSpec al escribir la nota, así que es la que mostraría `truss status` ahora. Si OpenSpec o la configuración no se pueden usar, `handoff` escribe la nota igualmente, con la última fase registrada y una línea que lo dice (`Phase: implementation (last recorded; OpenSpec could not be asked)`):
+- Rellena lo que TRUSS sabe (el cambio, el componente, la fase, la ruta de OpenSpec, la rama actual de Git, o `unknown`, y el commit al que apunta HEAD) y deja vacío el resto. La fase se pregunta a OpenSpec al escribir la nota, así que es la que mostraría `truss status` ahora. Si OpenSpec o la configuración no se pueden usar, `handoff` escribe la nota igualmente, con la última fase registrada y una línea que lo dice (`Phase: implementation (last recorded; OpenSpec could not be asked)`):
 
 ```markdown
 # Handoff: add-retry-policy
@@ -31,6 +31,7 @@
 - Phase: implementation
 - OpenSpec: openspec/changes/add-retry-policy
 - Branch: main
+- Commit: 3f2a1bc9d0e4
 
 ## Completed
 
@@ -56,6 +57,7 @@ TRUSS escribe el encabezado; el agente escribe el resto. Una nota de un cambio q
 - Phase: implementation
 - OpenSpec: openspec/changes/add-retry-policy
 - Branch: feature/add-retry-policy
+- Commit: 3f2a1bc9d0e4
 
 ## Completed
 - Tasks 1.1 to 1.4 done and checked off; `truss verify` passes (5 of 5 commands).
@@ -88,7 +90,13 @@ Si ya existe una nota para el cambio, `truss handoff` la deja exactamente como e
   Edit it, or delete it to start a new note.
 ```
 
-El código de salida es `0`, igual que cuando se escribe una nota. Para empezar de nuevo, borra antes el archivo. Las releases hasta la 0.2.2 reemplazaban una nota existente por la plantilla vacía y perdían lo que se había escrito en ella.
+El código de salida es `0`, igual que cuando se escribe una nota. Cuando la nota se escribió en otro sitio, además lo dice en una línea, y solo entonces:
+
+```text
+○ This note was written on branch "feat-b" at 3f2a1bc; you are on "main" at 9d41e02.
+```
+
+La otra forma es `This note was written at 3f2a1bc, which is not in the history of HEAD (9d41e02).`, para una nota escrita en la misma rama en un commit que un amend o un rebase ha reemplazado. Un commit nuevo en la misma rama es progreso normal y no dice nada. Una nota escrita antes de que existiera la línea `Commit` se compara solo por rama. Esta línea nunca cambia el código de salida ni detiene el comando. Para empezar de nuevo, borra antes el archivo. Las releases hasta la 0.2.2 reemplazaban una nota existente por la plantilla vacía y perdían lo que se había escrito en ella.
 
 ## Dónde vive la nota
 
