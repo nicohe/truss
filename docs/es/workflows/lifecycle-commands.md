@@ -80,6 +80,8 @@ Un cambio que vive en el `openspec/` propio de un componente se encuentra a trav
 
 `.truss/state.json` es local a cada copia de trabajo, así que un clon nuevo o una máquina de CI no tiene cambio activo aunque OpenSpec tenga cambios en curso. `use` es la forma de retomar uno, y [`truss status`](#truss-status) lista los que están abiertos.
 
+El registro tampoco sigue a las ramas de Git. Si creas un cambio en una rama y vuelves a otra donde ese cambio no existe, `status` y `continue` fallan (código de salida `1`) con `The active change "x" is not in OpenSpec`, y el mensaje ahora lista lo que hay abierto en esta rama y el comando para elegir uno: `Open in OpenSpec: add-retry-policy.` y `Make it the active change with: truss use add-retry-policy`. El cambio que dejaste sigue intacto en su propia rama; volver a esa rama y ejecutar `truss use <cambio>` allí lo recupera.
+
 ## `truss status`
 
 Úsalo siempre que quieras saber en qué punto está el cambio, antes de dárselo a un agente o al retomarlo. No cambia nada, salvo refrescar la fase que recuerda.

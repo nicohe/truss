@@ -78,6 +78,8 @@ A change in a component's own `openspec/` is found through that component: `trus
 
 `.truss/state.json` is local to each checkout, so a fresh clone or a CI machine has no active change even when OpenSpec has changes in flight. `use` is how it picks one up, and [`truss status`](#truss-status) lists what is open.
 
+The record does not follow Git branches either. If you create a change on one branch and go back to another where that change does not exist, `status` and `continue` fail (exit code `1`) with `The active change "x" is not in OpenSpec`, and the message now lists what is open on this branch and the command to pick one: `Open in OpenSpec: add-retry-policy.` and `Make it the active change with: truss use add-retry-policy`. The change you left is untouched on its own branch; going back to that branch and running `truss use <change>` there brings it back.
+
 ## `truss status`
 
 Use it whenever you want to know where the change stands, before you hand it to an agent or when you come back to it. It changes nothing except refreshing the phase it remembers.
