@@ -19,6 +19,7 @@ If a future teammate or agent would be worse off without it, it belongs here.
 |---|---|
 | The active-change pointer | `.truss/state.json` |
 | Evidence of the last `truss verify` | `.truss/verification/latest.json` |
+| What the last passing `verify` saw, and the last ten passing runs | `.truss/verification/working-tree.json`, `.truss/verification/history.json` |
 | Handoff notes written by `truss handoff` | `.truss/handoffs/` |
 | Any other session state, caches or logs | wherever your agent runtime keeps them |
 | A Graphify index | `graphify-out/` |
