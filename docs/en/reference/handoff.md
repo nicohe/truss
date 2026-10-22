@@ -6,6 +6,9 @@
 △ TRUSS · handoff
 
 ● .truss/handoffs/add-retry-policy.md
+
+Next: fill in the sections. What a good note contains: .truss/.truss/skills/handoff.SKILL.md
+      To keep it short, ask your agent to use .truss/.truss/skills/caveman.SKILL.md (optional).
 ```
 
 ## What it does
@@ -74,6 +77,8 @@ TRUSS writes the header; the agent writes the rest. A note for a change that mov
 ## Next action
 - Review against the spec with `.truss/.truss/skills/code-review.SKILL.md`; start from the timeout question above.
 ```
+
+The two `Next:` lines after a new note give the real path of the `handoff` skill (what a good note contains) and of the optional `caveman` skill, each only if that file is in your installation; a note that already exists prints neither. TRUSS only prints the paths: it does not fill in the note and it never applies `caveman` itself, so shortening it is something you ask your agent for, naming that path in the prompt.
 
 Write it briefly: the [`caveman`](../skills/overview.md#caveman) skill applies to a note like this one, which is read once, and not to the spec or the review report. A handoff is for the boundary between the implementer and the reviewer; the reviewer's findings come back as a report, not as a handoff (see [review in a separate session](../guides/agents.md#review-in-a-separate-session-then-back-to-the-implementer)).
 
