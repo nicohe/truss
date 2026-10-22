@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss skills` prints the path of each skill, and `truss handoff` says what to do next.** A skill is a file your agent reads and a prompt names its path, which depends on the layout (`.truss/.truss/skills/` in the quick start, elsewhere with a central install); `skills` now lists `● name  path`, printed the way `continue` prints the workflow and the policies, and the `● name` prefix is unchanged. After writing a new handoff note, `handoff` adds two lines: `Next: fill in the sections. What a good note contains: <handoff skill>` and `To keep it short, ask your agent to use <caveman skill> (optional)`, each only if that skill file exists. Nothing is printed when the note already exists, no exit code changes, and TRUSS still never applies `caveman` itself. This is how to get a short handoff note through TRUSS: it names the file, you ask your agent to use it.
+
 ## [0.2.26] - 2026-10-22
 
 Minor-feature release. TRUSS now follows Git branches: it remembers the active change for each one, reuses evidence when the files go back to a run that passed, and says where you are. `truss help` explains itself to someone who runs it for the first time. The design is [ADR 0004](docs/en/development/decisions/0004-active-change-per-branch.md) and the amendment to [ADR 0002](docs/en/development/decisions/0002-stale-evidence-warning.md).

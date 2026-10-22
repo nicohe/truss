@@ -20,7 +20,7 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 | `truss continue` | Imprime la siguiente acción para el agente y los archivos que debe cargar | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
 | `truss verify [--trust]` | Ejecuta `verification.commands` en orden y se detiene en el primer fallo; ejecuta antes las comprobaciones opcionales; pregunta antes de ejecutar una lista de comandos nueva o modificada | [`verify`](verify.md) |
 | `truss handoff` | Escribe una nota de handoff breve para el cambio activo | [`handoff`](handoff.md) |
-| `truss skills` | Lista las skills portables que trae la instalación | [skills](../skills/overview.md) |
+| `truss skills` | Lista las skills portables que trae la instalación, cada una con la ruta de su archivo | [skills](../skills/overview.md) |
 | `truss version` | Imprime la versión de TRUSS instalada (`truss --version` y `truss -v` hacen lo mismo) | |
 | `truss help [command]` | Lista los comandos, o explica uno. Ejecutar `truss` sin comando hace lo mismo que `truss help` | [obtener ayuda](#obtener-ayuda) |
 

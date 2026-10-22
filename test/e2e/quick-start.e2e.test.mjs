@@ -43,6 +43,11 @@ for (const [name, locate] of Object.entries(layouts)) {
       assert.equal(r.status, 0);
       assert.match(r.out, /● grill-me/);
       assert.match(r.out, /● code-review/);
+      // The path next to each skill is the one a prompt refers to, so it has to open from the project in either layout.
+      const listedSkills = [...r.out.matchAll(/^● (\S+) +(\S+\.SKILL\.md)$/gm)];
+      assert.ok(listedSkills.length >= 9, r.out);
+      for (const [, skill, file] of listedSkills)
+        assert.ok(fs.existsSync(path.resolve(project, file)), `${skill}: ${file} does not exist from ${project}`);
 
       r = run('new', 'Add retry policy');
       assert.equal(r.status, 0, r.out);
@@ -87,6 +92,44 @@ test('a broken TRUSS installation fails clearly and init leaves no half-created 
     assert.equal(r.status, 2, r.out);
     assert.match(r.out, /installation is incomplete: config schema not found/);
     assert.equal(fs.existsSync(path.join(project, '.truss', 'config.yaml')), false, 'no config is left behind');
+  } finally {
+    cleanupAll(project);
+  }
+});
+
+test('truss handoff points to the skills that help fill the note, and says nothing of those it does not have', () => {
+  const project = newProject();
+  const install = path.join(project, '.truss');
+  installTruss(install);
+  const bin = fakeStatefulOpenSpec(project, { initialized: false });
+  const run = runner(project, install, bin);
+  try {
+    assert.equal(run('init').status, 0);
+    assert.equal(run('new', 'Add retry policy').status, 0);
+    const first = run('handoff');
+    assert.equal(first.status, 0, first.out);
+    const guide = first.out.match(/Next: fill in the sections\. What a good note contains: (\S+handoff\.SKILL\.md)/);
+    const brief = first.out.match(
+      /\n {6}To keep it short, ask your agent to use (\S+caveman\.SKILL\.md) \(optional\)\./,
+    );
+    assert.ok(guide && brief, first.out);
+    for (const file of [guide[1], brief[1]]) assert.ok(fs.existsSync(path.resolve(project, file)), `${file} opens`);
+
+    const again = run('handoff');
+    assert.match(again.out, /already exists and was not changed/);
+    assert.doesNotMatch(again.out, /Next:/, 'a note that exists already says what to do');
+
+    fs.rmSync(path.join(project, '.truss', 'handoffs'), { recursive: true });
+    fs.rmSync(path.join(install, '.truss', 'skills', 'caveman.SKILL.md'));
+    const noBrief = run('handoff');
+    assert.match(noBrief.out, /Next: fill in the sections/);
+    assert.doesNotMatch(noBrief.out, /caveman/);
+
+    fs.rmSync(path.join(project, '.truss', 'handoffs'), { recursive: true });
+    fs.rmSync(path.join(install, '.truss', 'skills'), { recursive: true });
+    const none = run('handoff');
+    assert.equal(none.status, 0);
+    assert.doesNotMatch(none.out, /Next:/);
   } finally {
     cleanupAll(project);
   }

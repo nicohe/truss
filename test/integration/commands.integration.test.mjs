@@ -43,6 +43,14 @@ test('skills: lists the skills shipped with the TRUSS installation, whatever the
     assert.match(out(r), new RegExp(`● ${skill}\\b`));
   }
   assert.doesNotMatch(out(r), /No TRUSS skills installed/);
+
+  // Each skill is followed by the path of its file, which is what a prompt refers to.
+  const lines = [...out(r).matchAll(/^● (\S+) +(\S+\.SKILL\.md)$/gm)];
+  assert.equal(lines.length, 9, out(r));
+  for (const [, skill, file] of lines) {
+    assert.equal(path.basename(file), `${skill}.SKILL.md`);
+    assert.ok(fs.existsSync(path.resolve(root, file)), `${skill}: ${file} opens from the project`);
+  }
 });
 
 test('components: resolves configured components and rejects unknown ones', () => {
