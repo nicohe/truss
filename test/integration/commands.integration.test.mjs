@@ -1332,6 +1332,25 @@ test('handoff: an archived change with another still open says which, and how to
   assert.equal(fs.existsSync(path.join(root, '.truss', 'handoffs', 'second-change.md')), false);
 });
 
+test('status and continue: a missing active change also lists what is open and how to pick one', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'openspec', 'changes', 'second-change'), { recursive: true });
+  for (const command of ['status', 'continue']) {
+    const result = run(root, [command], { binDirs: [bin] });
+    assert.equal(result.status, 1, `${command} still fails`);
+    assert.match(
+      out(result),
+      /is missing\)\. It may belong to another branch\.\nOpen in OpenSpec: second-change\.\nMake it the active change with: truss use second-change, or start a new one with: truss new "Change name"/,
+    );
+  }
+  fs.mkdirSync(path.join(root, 'openspec', 'changes', 'third-change'), { recursive: true });
+  assert.match(
+    out(run(root, ['status'], { binDirs: [bin] })),
+    /Open in OpenSpec: second-change, third-change\.\nMake one of them the active change with: truss use <change>, or/,
+  );
+});
+
 test('status: an active change that OpenSpec lost without archiving it fails with a clear message', () => {
   const { root, bin } = tasksWorkspace('off', '- [x] one\n');
   fs.rmSync(path.join(root, 'openspec', 'changes', 'add-retry'), { recursive: true });
