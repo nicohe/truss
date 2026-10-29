@@ -137,7 +137,7 @@ node .truss/bin/truss.mjs continue
 Change          add-retry-policy
 Phase           spec
 OpenSpec        openspec/changes/add-retry-policy
-Mode            agent-driven (TRUSS v0.2)
+Mode            agent-driven: TRUSS tells your agent what to do; it does not run it
 
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
@@ -164,7 +164,7 @@ Change          add-retry-policy
 Phase           implementation
 OpenSpec        openspec/changes/add-retry-policy
 Tasks           1/2 complete
-Mode            agent-driven (TRUSS v0.2)
+Mode            agent-driven: TRUSS tells your agent what to do; it does not run it
 
 Next action
 Implement add-retry-policy using .truss/.truss/workflows/execute-change.md. Read the active OpenSpec, start with the first incomplete task ("1.2 Add tests"), follow configured BDD/TDD policies, then run truss verify.
