@@ -1801,6 +1801,8 @@ test('continue: the Mode line says what agent-driven means and carries no hand-w
   const text = out(run(root, ['continue'], { binDirs: [bin] }));
   assert.match(text, /\nMode {12}agent-driven: TRUSS tells your agent what to do; it does not run it\n/);
   assert.doesNotMatch(text, /Mode.*\d+\.\d+/, 'a version is `truss --version`, not a line written by hand');
+});
+
 test('continue: while the artifacts are written it lists what to read, with the Grill skills and their real paths', () => {
   const root = workspace({ config: validConfig });
   const bin = fakeStatefulOpenSpec(root, { initialized: true });
