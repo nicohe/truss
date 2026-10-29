@@ -84,9 +84,10 @@ test('E2E: new workspace completes init -> new -> planning -> implementation -> 
   assert.match(result.stdout, /Phase\s+complete/);
   result = run(root, ['continue'], { binDirs: [bin] });
   assert.equal(result.status, 0);
+  assert.match(result.stdout, /2\. Code review, recommended and not required\./);
   assert.match(
     result.stdout,
-    /code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy\./,
+    /3\. Run openspec validate add-retry-policy\.\n4\. Once it passes, run openspec archive add-retry-policy\./,
   );
 });
 

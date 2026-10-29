@@ -250,8 +250,14 @@ Tasks           2/2 complete
 Mode            agent-driven: TRUSS tells your agent what to do; it does not run it
 
 Next action
-Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy.
+Implementation tasks for add-retry-policy are complete.
+1. Run truss verify.
+2. Code review, recommended and not required. In a new session, ideally with another agent, follow `truss skills code-review`: it only reads. Have it write its report to .truss/reviews/add-retry-policy.md (TRUSS does not create or read that file) and give the report to the implementer in full. A finding that changes behavior goes to the spec, the design or a new task group in tasks.md.
+3. Run openspec validate add-retry-policy.
+4. Once it passes, run openspec archive add-retry-policy.
 ```
+
+La revisión de código es una recomendación: nada en TRUSS comprueba que se haya hecho, y una revisión que dice «no lista» no bloquea nada. Su informe vive donde lo escriba el revisor; `.truss/reviews/<cambio>.md` es una sugerencia (Git ignora la carpeta con el resto de `.truss/`), y TRUSS ni la crea ni la lee. Consulta [usar TRUSS con un coding agent](../guides/agents.md#revisar-en-otra-sesión-y-volver-al-implementador).
 
 Mientras se escriben los artefactos de planificación, la salida también lista una sección **Context to load**: el cambio, el `.truss/config.yaml` del proyecto, el `AGENTS.md` cuando existe y las dos skills de Grill (`grill-me` y `grill-with-docs`) que menciona la instrucción, cada una como el comando que la imprime (`truss skills grill-me`), así que no hay que copiar ninguna ruta; una skill se lista solo si su archivo existe. Mientras hay tareas abiertas, la salida incluye además una sección **Context to load** con las rutas reales del workflow, las policies, el cambio y el `.truss/config.yaml` del proyecto, como muestra la guía de inicio. Lista el `AGENTS.md` del proyecto (el del componente, o si no el del espacio de trabajo) solo cuando existe: `init` no lo crea. Con Graphify activado, la salida termina con una sección **Code graph**: una frase que le dice al agente que use el grafo cuando está al día y qué ejecutar cuando está obsoleto, falta o está dañado (consulta el [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md)). No dice nada cuando Graphify está apagado, u opcional y no instalado. Un prompt que funciona con cualquier agente es: «Implementa el cambio activo de TRUSS. Ejecuta `truss continue` y sigue las instrucciones y los archivos que lista.»
 

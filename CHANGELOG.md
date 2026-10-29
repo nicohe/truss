@@ -5,6 +5,9 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Changed
+- **`truss continue` says in steps what to do when the tasks are done, and that the code review is optional.** It said "Run truss verify, then perform code review, then openspec validate …", which read as if the review were required, and did not say how or where its result goes. It now lists four steps: `truss verify`; the code review, *recommended and not required*, in a new session and ideally with another agent, following `truss skills code-review`, which only reads, with its report written to `.truss/reviews/<change>.md` (a suggestion: TRUSS neither creates nor reads that file) and given to the implementer in full, and a finding that changes behavior going to the spec, the design or a new task group; `openspec validate`; and `openspec archive` once it passes. The agents guide now suggests `.truss/reviews/<change>.md` instead of `.truss/handoffs/<change>-review.md`: that folder is for the notes of `truss handoff`, and a review report is not a handoff, which confused a real run. Nothing checks that a review happened and nothing blocks without one, as before. Suggested by the maintainer after using TRUSS on a real project.
+
+### Changed
 - **In the `spec` phase, `truss continue` names the Grill skills by the command that prints them.** The section listed the long path of `grill-me` and `grill-with-docs` and a last line about `truss skills`; it now lists `- truss skills grill-me (Grill: ask first if material ambiguity remains)` and `- truss skills grill-with-docs (Grill, when documents already exist)`, and the explanatory line is gone. The path of a skill depends on the layout and `truss skills` already prints it. Each skill is listed only if its file exists. Suggested by the maintainer.
 
 ## [0.2.29] - 2026-10-29
