@@ -6,6 +6,7 @@ All notable changes to TRUSS are documented here.
 
 ### Changed
 - **The `Mode` line of `truss continue` explains itself.** It said `agent-driven (TRUSS v0.2)`, written by hand: `v0.2` names the product line (the contract in which TRUSS tells your agent what to do and does not run it), but next to an installed 0.2.27 it looked like a wrong version. It now says `agent-driven: TRUSS tells your agent what to do; it does not run it`, which does not change with each release. `truss --version` gives the installed version. Noticed by the maintainer in a real run.
+- **`truss continue` lists what to read also while the planning artifacts are written.** In the `spec` phase the action says "follow the files it lists" and "use Grill first", but listed none. It now prints a **Context to load** section with the change, `.truss/config.yaml`, the `AGENTS.md` when there is one, and the real paths of the `grill-me` and `grill-with-docs` skills (each only if the file exists). The implementation workflow and the policies are not offered yet. Seen in a real run on a project of the maintainer, where an agent had no file to start from.
 
 ## [0.2.27] - 2026-10-22
 
