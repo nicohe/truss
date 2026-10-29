@@ -226,6 +226,12 @@ Mode            agent-driven (TRUSS v0.2)
 
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
+
+Context to load
+- openspec/changes/add-retry-policy
+- .truss/config.yaml (this project's settings, including spec.mode and spec.gherkin)
+- .truss/.truss/skills/grill-me.SKILL.md (Grill: ask first if material ambiguity remains)
+- .truss/.truss/skills/grill-with-docs.SKILL.md (Grill, when documents already exist)
 ```
 
 La instrucción para los artefactos posteriores a la proposal añade una frase de trazabilidad: *Keep every requirement traceable to a decision in the proposal, and ask before adding behavior it does not cover.* Durante la implementación, la primera tarea incompleta se muestra por su título, cortado en unos 80 caracteres con `…` y seguido de `; the full text is in tasks.md` cuando se cortó, para que una línea de tarea larga no inunde la salida.
@@ -245,7 +251,7 @@ Next action
 Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy.
 ```
 
-Mientras hay tareas abiertas, la salida incluye además una sección **Context to load** con las rutas reales del workflow, las policies, el cambio y el `.truss/config.yaml` del proyecto, como muestra la guía de inicio. Lista el `AGENTS.md` del proyecto (el del componente, o si no el del espacio de trabajo) solo cuando existe: `init` no lo crea. Con Graphify activado, la salida termina con una sección **Code graph**: una frase que le dice al agente que use el grafo cuando está al día y qué ejecutar cuando está obsoleto, falta o está dañado (consulta el [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md)). No dice nada cuando Graphify está apagado, u opcional y no instalado. Un prompt que funciona con cualquier agente es: «Implementa el cambio activo de TRUSS. Ejecuta `truss continue` y sigue las instrucciones y los archivos que lista.»
+Mientras se escriben los artefactos de planificación, la salida también lista una sección **Context to load**: el cambio, el `.truss/config.yaml` del proyecto, el `AGENTS.md` cuando existe y las rutas de las dos skills de Grill (`grill-me` y `grill-with-docs`) que menciona la instrucción, cada una solo si el archivo existe. Mientras hay tareas abiertas, la salida incluye además una sección **Context to load** con las rutas reales del workflow, las policies, el cambio y el `.truss/config.yaml` del proyecto, como muestra la guía de inicio. Lista el `AGENTS.md` del proyecto (el del componente, o si no el del espacio de trabajo) solo cuando existe: `init` no lo crea. Con Graphify activado, la salida termina con una sección **Code graph**: una frase que le dice al agente que use el grafo cuando está al día y qué ejecutar cuando está obsoleto, falta o está dañado (consulta el [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md)). No dice nada cuando Graphify está apagado, u opcional y no instalado. Un prompt que funciona con cualquier agente es: «Implementa el cambio activo de TRUSS. Ejecuta `truss continue` y sigue las instrucciones y los archivos que lista.»
 
 ## Reabrir un cambio terminado
 

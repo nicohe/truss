@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss continue` lists what to read also while the planning artifacts are written.** In the `spec` phase the action says "follow the files it lists" and "use Grill first", but listed none. It now prints a **Context to load** section with the change, `.truss/config.yaml`, the `AGENTS.md` when there is one, and the real paths of the `grill-me` and `grill-with-docs` skills (each only if the file exists). The implementation workflow and the policies are not offered yet. Seen in a real run on a project of the maintainer, where an agent had no file to start from.
+
 ## [0.2.27] - 2026-10-22
 
 Patch release. It fixes a mistake of 0.2.26 in `truss handoff` and adds two small improvements that make skills easier to name in a prompt.
