@@ -1842,6 +1842,11 @@ test('continue: while the artifacts are written it lists what to read, with the 
   );
   for (const [, file] of grill) assert.ok(fs.existsSync(path.resolve(root, file)), `${file} opens from the project`);
   assert.doesNotMatch(context, /execute-change|policies/, 'the implementation workflow is not offered while planning');
+  assert.match(
+    context,
+    /\nTo print a skill instead of opening its file: truss skills grill-me\n?$/,
+    'and how to print one without its path',
+  );
 
   fs.writeFileSync(path.join(root, 'AGENTS.md'), '# Guidance\n');
   assert.match(

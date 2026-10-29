@@ -149,6 +149,7 @@ Context to load
 - .truss/config.yaml (this project's settings, including spec.mode and spec.gherkin)
 - .truss/.truss/skills/grill-me.SKILL.md (Grill: ask first if material ambiguity remains)
 - .truss/.truss/skills/grill-with-docs.SKILL.md (Grill, when documents already exist)
+To print a skill instead of opening its file: truss skills grill-me
 ```
 
 **Grill**, en ese texto, es una ronda de preguntas que el agente te hace cuando la idea no está clara, para no tener que inventar requisitos. Viene en dos skills: `grill-me` cuando partes de una idea, y `grill-with-docs` cuando ya tienes requisitos, una propuesta, un ticket o un ADR de partida (los lee primero y solo pregunta lo que dejan abierto). Por ejemplo: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.* Consulta [Descubrimiento](workflows/discovery.md). El agente se salta Grill cuando la idea ya está clara.
