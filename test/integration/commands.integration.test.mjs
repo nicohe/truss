@@ -1796,6 +1796,32 @@ test('continue: the development settings are only restated while the agent imple
   assert.doesNotMatch(complete, /BDD is off|TDD is off/);
 });
 
+test('continue: while the artifacts are written it lists what to read, with the Grill skills and their real paths', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  assert.equal(run(root, ['new', 'Add retry'], { binDirs: [bin] }).status, 0);
+  const text = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(text, /Phase\s+spec/);
+  const context = text.slice(text.indexOf('Context to load'));
+  assert.match(
+    context,
+    /^Context to load\n- openspec[\\/]changes[\\/]add-retry\n- \.truss\/config\.yaml \(this project's settings, including spec\.mode and spec\.gherkin\)\n/,
+  );
+  const grill = [...context.matchAll(/^- (\S+(grill-me|grill-with-docs)\.SKILL\.md) \(([^)]+)\)$/gm)];
+  assert.deepEqual(
+    grill.map((match) => match[2]),
+    ['grill-me', 'grill-with-docs'],
+  );
+  for (const [, file] of grill) assert.ok(fs.existsSync(path.resolve(root, file)), `${file} opens from the project`);
+  assert.doesNotMatch(context, /execute-change|policies/, 'the implementation workflow is not offered while planning');
+
+  fs.writeFileSync(path.join(root, 'AGENTS.md'), '# Guidance\n');
+  assert.match(
+    out(run(root, ['continue'], { binDirs: [bin] })),
+    /Context to load\n- AGENTS\.md \(effective component\/workspace guidance\)\n- openspec/,
+  );
+});
+
 test('continue: lists AGENTS.md as context only when the project has one', () => {
   const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
   const without = out(run(root, ['continue'], { binDirs: [bin] }));

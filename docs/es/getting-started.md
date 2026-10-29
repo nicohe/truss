@@ -143,6 +143,12 @@ Mode            agent-driven (TRUSS v0.2)
 
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
+
+Context to load
+- openspec/changes/add-retry-policy
+- .truss/config.yaml (this project's settings, including spec.mode and spec.gherkin)
+- .truss/.truss/skills/grill-me.SKILL.md (Grill: ask first if material ambiguity remains)
+- .truss/.truss/skills/grill-with-docs.SKILL.md (Grill, when documents already exist)
 ```
 
 **Grill**, en ese texto, es una ronda de preguntas que el agente te hace cuando la idea no está clara, para no tener que inventar requisitos. Viene en dos skills: `grill-me` cuando partes de una idea, y `grill-with-docs` cuando ya tienes requisitos, una propuesta, un ticket o un ADR de partida (los lee primero y solo pregunta lo que dejan abierto). Por ejemplo: *Use the `grill-with-docs` skill on `docs/retry-proposal.md`, then write the OpenSpec artifacts.* Consulta [Descubrimiento](workflows/discovery.md). El agente se salta Grill cuando la idea ya está clara.
