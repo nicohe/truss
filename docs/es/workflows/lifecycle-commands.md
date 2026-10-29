@@ -222,7 +222,7 @@ Para un cambio que sigue en planificación:
 Change          add-retry-policy
 Phase           spec
 OpenSpec        openspec/changes/add-retry-policy
-Mode            agent-driven (TRUSS v0.2)
+Mode            agent-driven: TRUSS tells your agent what to do; it does not run it
 
 Next action
 Create/refine the OpenSpec artifact "proposal" for add-retry-policy. Run openspec instructions proposal --change add-retry-policy for its format and path. Use Grill first if material ambiguity remains.
@@ -239,7 +239,7 @@ Change          add-retry-policy
 Phase           complete
 OpenSpec        openspec/changes/add-retry-policy
 Tasks           2/2 complete
-Mode            agent-driven (TRUSS v0.2)
+Mode            agent-driven: TRUSS tells your agent what to do; it does not run it
 
 Next action
 Implementation tasks for add-retry-policy are complete. Run truss verify, then perform code review, then openspec validate add-retry-policy and, once it passes, openspec archive add-retry-policy.

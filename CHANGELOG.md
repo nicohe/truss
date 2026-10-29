@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **The `Mode` line of `truss continue` explains itself.** It said `agent-driven (TRUSS v0.2)`, written by hand: `v0.2` names the product line (the contract in which TRUSS tells your agent what to do and does not run it), but next to an installed 0.2.27 it looked like a wrong version. It now says `agent-driven: TRUSS tells your agent what to do; it does not run it`, which does not change with each release. `truss --version` gives the installed version. Noticed by the maintainer in a real run.
+
 ## [0.2.27] - 2026-10-22
 
 Patch release. It fixes a mistake of 0.2.26 in `truss handoff` and adds two small improvements that make skills easier to name in a prompt.

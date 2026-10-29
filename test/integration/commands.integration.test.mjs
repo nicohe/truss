@@ -1796,6 +1796,13 @@ test('continue: the development settings are only restated while the agent imple
   assert.doesNotMatch(complete, /BDD is off|TDD is off/);
 });
 
+test('continue: the Mode line says what agent-driven means and carries no hand-written version', () => {
+  const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
+  const text = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(text, /\nMode {12}agent-driven: TRUSS tells your agent what to do; it does not run it\n/);
+  assert.doesNotMatch(text, /Mode.*\d+\.\d+/, 'a version is `truss --version`, not a line written by hand');
+});
+
 test('continue: lists AGENTS.md as context only when the project has one', () => {
   const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
   const without = out(run(root, ['continue'], { binDirs: [bin] }));
