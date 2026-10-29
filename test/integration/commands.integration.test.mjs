@@ -390,7 +390,7 @@ test('new: a title with no usable characters is rejected', () => {
 });
 
 // Real OpenSpec prints failures as JSON on stdout ({ status: [{ severity, message }] }) and exits 1.
-function failingNew(root, title, reply) {
+function failingNew(root, title, reply, extra = []) {
   const bin = fakeCli(
     fakeBin(root),
     'openspec',
@@ -400,7 +400,7 @@ else if (cmd === 'new') { ${reply} process.exit(1); }`,
   );
   fs.mkdirSync(path.join(root, 'openspec', 'changes'), { recursive: true });
   fs.writeFileSync(path.join(root, 'openspec', 'config.yaml'), 'schema: spec-driven\n');
-  return run(root, ['new', title], { binDirs: [bin] });
+  return run(root, ['new', title, ...extra], { binDirs: [bin] });
 }
 const openspecError = (message) =>
   `console.log(JSON.stringify({ change: null, status: [{ severity: 'error', code: 'change_error', message: ${JSON.stringify(message)} }] }, null, 2));`;
@@ -423,10 +423,12 @@ test('new: a failure that is not JSON is shown as plain text', () => {
 });
 
 test('new: a very long change name is shortened in the error', () => {
+  // A title is cut to 40 characters, so the id that can be this long is one given with --id.
   const r = failingNew(
     workspace({ config: validConfig }),
-    'a'.repeat(300),
+    'A title',
     openspecError('Change name is too long (200 characters max)'),
+    ['--id', 'a'.repeat(300)],
   );
   assert.equal(r.status, 1);
   assert.match(out(r), /could not create change "a{57}\.\.\.": Change name is too long \(200 characters max\)/);
@@ -1025,6 +1027,70 @@ test('status and continue: a change archived with openspec archive is reported, 
     'an archived change is not left behind, so there is nothing to warn about',
   );
   assert.match(out(run(root, ['status'], { binDirs: [bin] })), /Change\s+second-change/);
+});
+
+test('new: a long title gives a short id, keeps the whole title, and says so once', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  const title = 'Store rule version dates as days and add effective to';
+  const r = run(root, ['new', title], { binDirs: [bin] });
+  assert.equal(r.status, 0, out(r));
+  assert.match(out(r), /\nChange {10}store-rule-version-dates-as-days-and-add\n/);
+  assert.match(
+    out(r),
+    /Id shortened from the title to 40 characters; the full title is the goal of the change\. Use --id to choose one\./,
+  );
+  const state = JSON.parse(fs.readFileSync(path.join(root, '.truss', 'state.json'), 'utf8'));
+  assert.equal(state.change, 'store-rule-version-dates-as-days-and-add');
+  assert.equal(state.title, title, 'the full title is kept');
+  assert.ok(state.change.length <= 40);
+
+  const short = run(root, ['new', 'Add retry policy'], { binDirs: [bin] });
+  assert.match(out(short), /\nChange {10}add-retry-policy\n/, 'a short title gives the id it always did');
+  assert.doesNotMatch(out(short), /Id shortened|Id chosen/);
+});
+
+test('new: two long titles that start alike get -2, -3; a repeated short title is left to OpenSpec', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  const id = (title) => out(run(root, ['new', title], { binDirs: [bin] })).match(/\nChange {10}(\S+)/)?.[1];
+  assert.equal(id('Store rule version dates as days and add effective to'), 'store-rule-version-dates-as-days-and-add');
+  assert.equal(
+    id('Store rule version dates as days and add a second column'),
+    'store-rule-version-dates-as-days-and-add-2',
+  );
+  assert.equal(
+    id('Store rule version dates as days and add a third one'),
+    'store-rule-version-dates-as-days-and-add-3',
+  );
+  assert.equal(id('Add retry policy'), 'add-retry-policy');
+  assert.equal(id('Add retry policy'), 'add-retry-policy', 'not shortened: no suffix, the id is what OpenSpec decides');
+});
+
+test('new: --id chooses the id, is validated, and the title is kept', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeStatefulOpenSpec(root, { initialized: true });
+  const r = run(root, ['new', 'Store rule version dates as days and add effective to', '--id', 'rule-dates-in-days'], {
+    binDirs: [bin],
+  });
+  assert.equal(r.status, 0, out(r));
+  assert.match(out(r), /\nChange {10}rule-dates-in-days\n/);
+  assert.match(out(r), /Id chosen with --id; the full title is the goal of the change\./);
+  const state = JSON.parse(fs.readFileSync(path.join(root, '.truss', 'state.json'), 'utf8'));
+  assert.equal(state.title, 'Store rule version dates as days and add effective to');
+
+  const flagFirst = run(root, ['new', '--id', 'first-flag', 'A title after the flag'], { binDirs: [bin] });
+  assert.equal(flagFirst.status, 0, out(flagFirst));
+  assert.match(out(flagFirst), /\nChange {10}first-flag\n/, 'the value of --id is not taken for the title');
+
+  for (const bad of ['archive', '../x', 'has space']) {
+    const result = run(root, ['new', 'A title', '--id', bad], { binDirs: [bin] });
+    assert.equal(result.status, 2, `"${bad}" is not a change id`);
+    assert.match(out(result), /is not a change id/);
+  }
+  const missing = run(root, ['new', 'A title', '--id'], { binDirs: [bin] });
+  assert.equal(missing.status, 2);
+  assert.match(out(missing), /The option "--id" needs a value\./);
 });
 
 test('new: a first change is created without a warning', () => {

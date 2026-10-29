@@ -20,7 +20,7 @@ Archiving a change with `openspec archive` does not tell TRUSS, which finds out 
 
 ## `truss new "Change name" [--component name]`
 
-Use it to start a change. It turns the title into an id (`Add retry policy` becomes `add-retry-policy`), asks OpenSpec to create the change, and remembers it as the **active change**. Only one change is active at a time.
+Use it to start a change. It turns the title into an id (`Add retry policy` becomes `add-retry-policy`; a long title is cut where a word ends so the id has at most 40 characters, and the full title stays as the goal of the change), asks OpenSpec to create the change, and remembers it as the **active change**. Only one change is active at a time.
 
 ```text
 △ TRUSS · new
@@ -35,6 +35,8 @@ Next: truss continue
 ```
 
 With `--component api`, the change is created inside a component declared under `components` (see [components](../reference/components.md)).
+
+With `--id`, you choose the id yourself and `new` uses it as it is (it must look like an id: `rule-dates-in-days`, not `archive` or `../x`): `truss new "Store rule version dates as days and add effective to" --id rule-dates-in-days`. Either way `new` prints one line saying that the id was shortened or chosen. Two long titles that start with the same words would get the same id, so the second one is `…-2`, the third `…-3`; a short title that repeats an id that is already open is not renamed, and fails as OpenSpec says.
 
 If another change is still open in OpenSpec, `new` creates the new one and makes it the active change, and warns you that the other was left behind:
 

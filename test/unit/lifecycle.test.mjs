@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import {
+  CHANGE_ID_LIMIT,
+  changeIdFor,
   configuredPolicies,
   describeOpenChange,
   LifecycleError,
@@ -160,4 +162,25 @@ test('configuredPolicies names the policy files the settings ask for', () => {
   assert.deepEqual(configuredPolicies({ spec: { mode: 'source' } }), ['bdd.md', 'tdd.md', 'spec-as-source.md']);
   assert.deepEqual(configuredPolicies({ development: { bdd: false } }), ['tdd.md', 'spec-anchored.md']);
   assert.deepEqual(configuredPolicies({ development: { bdd: false, tdd: false } }), ['spec-anchored.md']);
+});
+
+test('changeIdFor keeps a short title as it was and cuts a long one where a word ends', () => {
+  assert.equal(CHANGE_ID_LIMIT, 40);
+  assert.equal(changeIdFor('Add retry policy'), 'add-retry-policy');
+  const forty = `${'a'.repeat(9)}-${'b'.repeat(9)}-${'c'.repeat(9)}-${'d'.repeat(10)}`;
+  assert.equal(forty.length, 40);
+  assert.equal(changeIdFor(forty), forty, 'a slug of exactly 40 is not cut');
+  assert.equal(
+    changeIdFor('Store rule version dates as days and add effective to'),
+    'store-rule-version-dates-as-days-and-add',
+  );
+  assert.equal(changeIdFor(`${forty} e`), forty, 'the word after the limit is dropped whole');
+  assert.equal(changeIdFor(`${'a'.repeat(39)} bb cc`), 'a'.repeat(39), 'a trailing dash is removed');
+  assert.equal(changeIdFor('x'.repeat(100)), 'x'.repeat(40), 'one long word is cut hard');
+  assert.equal(
+    changeIdFor('Añadir política de reintentos para todas las peticiones salientes'),
+    'anadir-politica-de-reintentos-para-todas',
+  );
+  assert.ok(changeIdFor('word '.repeat(50)).length <= 40);
+  assert.equal(changeIdFor('!!!'), '');
 });

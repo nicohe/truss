@@ -9,7 +9,7 @@ Terms are listed alphabetically.
 - **ADR (architecture decision record):** a short document that records one architectural decision and why it was made. Write one only when a decision deserves to outlive the change; [ADR 0001](../development/decisions/0001-local-project-configuration.md) is an example.
 - **Agent:** the coding assistant that does the implementation work. TRUSS never runs one; it tells the agent what to do next.
 - **Approval (trust):** your confirmation that a `verification.commands` list may run. It is stored per project and asked again when the list changes. See [`truss verify`](verify.md).
-- **Change:** one unit of work tracked by OpenSpec, with a proposal, specs, a design and tasks. `truss new` creates it.
+- **Change:** one unit of work tracked by OpenSpec, with a proposal, specs, a design and tasks. `truss new` creates it. Its **id** is the name of its folder under `openspec/changes/`, made from the title (`Add retry policy` becomes `add-retry-policy`, cut to 40 characters) or given with `--id`.
 - **Component:** an addressable unit of a monorepo, declared under `components`.
 - **Discovery:** the work before the spec, where an unclear idea becomes explicit decisions. See *Grill*.
 - **Evidence:** the machine-readable record of a `truss verify` run, in `.truss/verification/latest.json`, plus the last ten passing runs in `history.json`. It is current while the files are those of a run that passed.

@@ -14,7 +14,7 @@ TRUSS v0.2 es principalmente un harness dirigido por el agente. La tabla muestra
 | `truss openspec` | Inspecciona el CLI de OpenSpec, su versión y el proyecto | [detección de OpenSpec](../integrations/openspec-detection.md) |
 | `truss graphify [status\|update\|bootstrap]` | Inspecciona o refresca el grafo de código opcional | [ciclo de vida de Graphify](../integrations/graphify-lifecycle.md) |
 | `truss components [name]` | Resuelve los componentes configurados y su contexto | [componentes](components.md) |
-| `truss new "Nombre del cambio" [--component name]` | Crea un cambio de OpenSpec y lo marca como activo | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
+| `truss new "Nombre del cambio" [--component name] [--id nombre]` | Crea un cambio de OpenSpec y lo marca como activo; el id sale del título (40 caracteres como máximo) salvo que `--id` dé uno | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
 | `truss use <cambio> [--component name]` | Vuelve a marcar como activo un cambio que ya está abierto en OpenSpec | [comandos del ciclo de vida](../workflows/lifecycle-commands.md#truss-use) |
 | `truss status` | Muestra el cambio activo, su fase, sus artefactos y el progreso de tareas, o los cambios abiertos cuando ninguno está activo | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
 | `truss continue` | Imprime la siguiente acción para el agente y los archivos que debe cargar | [comandos del ciclo de vida](../workflows/lifecycle-commands.md) |
