@@ -1925,6 +1925,29 @@ test('continue: while the artifacts are written it lists what to read, with the 
   );
 });
 
+test('continue: when the tasks are done it says in steps what to run, that the code review is optional, and where its report can go', () => {
+  const { root, bin } = tasksWorkspace('off', '- [x] one\n');
+  const text = out(run(root, ['continue'], { binDirs: [bin] }));
+  assert.match(text, /Phase\s+complete/);
+  const action = text.slice(text.indexOf('Next action'));
+  assert.match(
+    action,
+    /\nImplementation tasks for add-retry are complete\.\n1\. Run truss verify\.\n2\. Code review, recommended and not required\./,
+  );
+  assert.match(action, /follow `truss skills code-review`: it only reads\./);
+  assert.match(
+    action,
+    /write its report to \.truss\/reviews\/add-retry\.md \(TRUSS does not create or read that file\)/,
+  );
+  assert.match(
+    action,
+    /A finding that changes behavior goes to the spec, the design or a new task group in tasks\.md\./,
+  );
+  assert.match(action, /\n3\. Run openspec validate add-retry\.\n4\. Once it passes, run openspec archive add-retry\./);
+  assert.doesNotMatch(action, /then perform code review|handoffs/, 'neither the old sentence nor the handoffs folder');
+  assert.equal(run(root, ['skills', 'code-review']).status, 0, 'the skill it names can be printed');
+});
+
 test('continue: lists AGENTS.md as context only when the project has one', () => {
   const { root, bin } = tasksWorkspace('off', '- [ ] one\n');
   const without = out(run(root, ['continue'], { binDirs: [bin] }));
@@ -1994,7 +2017,7 @@ test('continue: names the openspec command to write the next artifact, and the o
   const closing = out(run(done, ['continue'], { binDirs: [doneBin] }));
   assert.match(
     closing,
-    /code review, then openspec validate add-retry and, once it passes, openspec archive add-retry\./,
+    /\n3\. Run openspec validate add-retry\.\n4\. Once it passes, run openspec archive add-retry\./,
   );
 });
 
