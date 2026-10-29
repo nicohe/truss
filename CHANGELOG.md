@@ -4,6 +4,16 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.28] - 2026-10-29
+
+Patch release. `truss continue` is more useful in the first phase of a change, where it used to list nothing to read, and skills can be named in a prompt without their path.
+
+### Upgrade notes
+- **The `Mode` line of `continue` has new text:** `agent-driven: TRUSS tells your agent what to do; it does not run it`, instead of `agent-driven (TRUSS v0.2)`. Anything that matched the old text should match the new one.
+- **In the `spec` phase, `continue` adds a `Context to load` section** with the change, `.truss/config.yaml`, the `AGENTS.md` when there is one, the paths of the two Grill skills and a last line about `truss skills`. The rest of the output, the exit codes and the other phases are unchanged.
+- **`truss skills <name>` is new:** it prints that skill, and exits `2` with the list of skills when the name is not one. `truss skills` without a name lists them as before.
+- Nothing else changes in behavior, and there is nothing to migrate.
+
 ### Changed
 - **`truss continue` says how to print a Grill skill without its path.** In the `spec` phase, under the paths of `grill-me` and `grill-with-docs`, a last line reads `To print a skill instead of opening its file: truss skills grill-me`, which uses the `truss skills <name>` of the previous entry. Said only when a Grill skill is listed.
 - **`truss skills <name>` prints that skill**, so a prompt no longer has to carry its path, which depends on the layout: *run `truss skills grill-me` and follow it* works with the clone in `.truss/`, with a central install and with a tarball. Without a name it lists the skills with their paths, as before. An unknown name exits `2` and lists the skills that exist; the name is matched against the files that are there, never joined to a path, so `../x` is just an unknown skill. Suggested by the maintainer after seeing the full paths in `truss continue`.
