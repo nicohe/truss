@@ -22,7 +22,7 @@ Archivar un cambio con `openspec archive` no se lo comunica a TRUSS, que se ente
 
 ## `truss new "Nombre del cambio" [--component name]`
 
-Úsalo para empezar un cambio. Convierte el título en un id (`Add retry policy` pasa a `add-retry-policy`), pide a OpenSpec que cree el cambio y lo recuerda como **cambio activo**. Solo hay un cambio activo a la vez.
+Úsalo para empezar un cambio. Convierte el título en un id (`Add retry policy` pasa a `add-retry-policy`; un título largo se corta donde termina una palabra para que el id tenga como máximo 40 caracteres, y el título completo se queda como objetivo del cambio), pide a OpenSpec que cree el cambio y lo recuerda como **cambio activo**. Solo hay un cambio activo a la vez.
 
 ```text
 △ TRUSS · new

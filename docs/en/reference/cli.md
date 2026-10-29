@@ -12,7 +12,7 @@ TRUSS v0.2 is primarily an agent-driven harness. The table shows which commands 
 | `truss openspec` | Inspects the OpenSpec CLI, its version and the project | [OpenSpec detection](../integrations/openspec-detection.md) |
 | `truss graphify [status\|update\|bootstrap]` | Inspects or refreshes the optional code graph | [Graphify lifecycle](../integrations/graphify-lifecycle.md) |
 | `truss components [name]` | Resolves the configured components and their context | [components](components.md) |
-| `truss new "Change name" [--component name]` | Creates an OpenSpec change and marks it active | [lifecycle](../workflows/lifecycle-commands.md) |
+| `truss new "Change name" [--component name] [--id name]` | Creates an OpenSpec change and marks it active; the id is made from the title (40 characters at most) unless `--id` gives one | [lifecycle](../workflows/lifecycle-commands.md) |
 | `truss use <change> [--component name]` | Makes a change that is already open in OpenSpec the active one again | [lifecycle](../workflows/lifecycle-commands.md#truss-use) |
 | `truss status` | Shows the active change, its phase, artifacts and task progress, or the open changes when none is active | [lifecycle](../workflows/lifecycle-commands.md) |
 | `truss continue` | Prints the next action for the agent and the files to load | [lifecycle](../workflows/lifecycle-commands.md) |

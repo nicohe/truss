@@ -8,7 +8,7 @@ Los términos están en orden alfabético.
 - **ADR (registro de decisión de arquitectura):** un documento breve que registra una decisión arquitectónica y por qué se tomó. Escribe uno solo cuando una decisión merezca sobrevivir al cambio; el [ADR 0001](../development/decisions/0001-local-project-configuration.md) es un ejemplo.
 - **Agente:** el asistente de código que hace el trabajo de implementación. TRUSS nunca ejecuta uno; le dice al agente qué hacer a continuación.
 - **Aprobación (trust):** tu confirmación de que una lista de `verification.commands` puede ejecutarse. Se guarda por proyecto y se vuelve a pedir cuando la lista cambia. Consulta [`truss verify`](verify.md).
-- **Cambio (change):** una unidad de trabajo registrada por OpenSpec, con proposal, specs, design y tasks. `truss new` la crea.
+- **Cambio (change):** una unidad de trabajo registrada por OpenSpec, con proposal, specs, design y tasks. `truss new` la crea. Su **id** es el nombre de su carpeta bajo `openspec/changes/`, que sale del título (`Add retry policy` pasa a `add-retry-policy`, cortado a 40 caracteres) o se da con `--id`.
 - **Cambio activo (active change):** el cambio que TRUSS sigue ahora mismo. Se recuerda para cada rama de Git en `.truss/state.json`; `truss use` lo cambia, y `truss new` hace activo el cambio nuevo.
 - **Componente (component):** una unidad direccionable de un monorepo, declarada bajo `components`.
 - **Descubrimiento (discovery):** el trabajo previo a la spec, en el que una idea poco clara se convierte en decisiones explícitas. Consulta *Grill*.
