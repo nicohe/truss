@@ -232,6 +232,7 @@ Context to load
 - .truss/config.yaml (this project's settings, including spec.mode and spec.gherkin)
 - .truss/.truss/skills/grill-me.SKILL.md (Grill: ask first if material ambiguity remains)
 - .truss/.truss/skills/grill-with-docs.SKILL.md (Grill, when documents already exist)
+To print a skill instead of opening its file: truss skills grill-me
 ```
 
 La instrucción para los artefactos posteriores a la proposal añade una frase de trazabilidad: *Keep every requirement traceable to a decision in the proposal, and ask before adding behavior it does not cover.* Durante la implementación, la primera tarea incompleta se muestra por su título, cortado en unos 80 caracteres con `…` y seguido de `; the full text is in tasks.md` cuando se cortó, para que una línea de tarea larga no inunde la salida.
