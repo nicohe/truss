@@ -5,6 +5,9 @@ All notable changes to TRUSS are documented here.
 ## [Unreleased]
 
 ### Changed
+- **`truss continue` mentions the `pr` skill when the tasks are done.** After the four steps of the `complete` phase it adds an unnumbered line: `If you open a pull request, follow \`truss skills pr\` for its description (summary, evidence, merge risk).` Before, nothing in TRUSS suggested the skill. It is shown always, not only on a branch with commits ahead, and it is not a step: whether a change ends in a pull request, and whether it is opened before or after `openspec archive`, is the team's choice. Suggested by the maintainer.
+
+### Changed
 - **`truss continue` says in steps what to do when the tasks are done, and that the code review is optional.** It said "Run truss verify, then perform code review, then openspec validate …", which read as if the review were required, and did not say how or where its result goes. It now lists four steps: `truss verify`; the code review, *recommended and not required*, in a new session and ideally with another agent, following `truss skills code-review`, which only reads, with its report written to `.truss/reviews/<change>.md` (a suggestion: TRUSS neither creates nor reads that file) and given to the implementer in full, and a finding that changes behavior going to the spec, the design or a new task group; `openspec validate`; and `openspec archive` once it passes. The agents guide now suggests `.truss/reviews/<change>.md` instead of `.truss/handoffs/<change>-review.md`: that folder is for the notes of `truss handoff`, and a review report is not a handoff, which confused a real run. Nothing checks that a review happened and nothing blocks without one, as before. Suggested by the maintainer after using TRUSS on a real project.
 
 ### Changed
