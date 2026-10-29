@@ -38,6 +38,8 @@ Next: truss continue
 
 Con `--component api`, el cambio se crea dentro de un componente declarado en `components` (consulta los [componentes](../reference/components.md)).
 
+Con `--id`, eliges tú el id y `new` lo usa tal cual (debe parecerse a un id: `rule-dates-in-days`, no `archive` ni `../x`): `truss new "Store rule version dates as days and add effective to" --id rule-dates-in-days`. En ambos casos `new` imprime una línea que dice que el id se acortó o se eligió. Dos títulos largos que empiezan con las mismas palabras tendrían el mismo id, así que el segundo es `…-2` y el tercero `…-3`; un título corto que repite un id ya abierto no se renombra, y falla como dice OpenSpec.
+
 Si otro cambio sigue abierto en OpenSpec, `new` crea el nuevo y lo convierte en el cambio activo, y te avisa de que el otro se quedó atrás:
 
 ```text

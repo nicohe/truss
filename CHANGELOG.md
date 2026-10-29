@@ -4,6 +4,22 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.29] - 2026-10-29
+
+Patch release. `truss new` no longer makes a very long id from a long title, and has `--id` to choose one.
+
+### Upgrade notes
+- **A title of more than 40 characters now gives a shorter id.** The id is cut where a word ends (`Store rule version dates as days and add effective to` gives `store-rule-version-dates-as-days-and-add`, not the 52-character slug). The full title is not lost: it is the goal of the change in OpenSpec and the `title` in `.truss/state.json`. Titles of 40 characters or fewer give the same id as before, and **changes you already created keep their ids**: nothing is renamed.
+- **`truss new "..." --id <name>` is new.** It uses the id you give, validated like the argument of `truss use` (`archive`, `../x` and the like are usage errors, exit code `2`). Use it when the cut drops the words that matter.
+- **Two long titles that start with the same words get `-2`, `-3`** (checked among the open changes of the same OpenSpec). A title that was not shortened and repeats an open id still fails as OpenSpec says.
+- `new` prints one line saying that the id was shortened or chosen. Nothing else changes in behavior, and there is nothing to migrate.
+
+### Changed
+- **`truss new` cuts a long title to a short id, and has `--id` to choose one.** The id used to be the whole title in kebab-case, typed in every `openspec ... --change <id>` that `continue` prints. It is now cut to 40 characters where a word ends; the full title stays as the goal of the change and in `state.json`. `--id <name>` uses the id you give. Two long titles that start alike get `-2`, `-3`; a short title that repeats an open id still fails as OpenSpec says. Help, lifecycle commands, CLI reference and glossary updated (EN/ES). Suggested after a real run with a 52-character id.
+
+### Fixed
+- **The Spanish lifecycle page now explains `--id`.** The pull request that added `truss new --id` (#124) updated the English page and the glossary but not the Spanish paragraph, and left out its own changelog entry; this release adds both.
+
 ## [0.2.28] - 2026-10-29
 
 Patch release. `truss continue` is more useful in the first phase of a change, where it used to list nothing to read, and skills can be named in a prompt without their path.
