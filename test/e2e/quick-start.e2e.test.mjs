@@ -59,15 +59,16 @@ for (const [name, locate] of Object.entries(layouts)) {
       r = run('status');
       assert.equal(r.status, 0, r.out);
 
-      // While planning, `continue` lists the Grill skills it mentions; their paths must open from the project too.
+      // While planning, `continue` names the Grill skills by the command that prints them; it must work in either layout.
       r = run('continue');
       assert.equal(r.status, 0, r.out);
-      const grill = [...r.out.matchAll(/^- (\S+(?:grill-me|grill-with-docs)\.SKILL\.md) \(/gm)].map(
-        (match) => match[1],
-      );
-      assert.equal(grill.length, 2, r.out);
-      for (const file of grill)
-        assert.ok(fs.existsSync(path.resolve(project, file)), `${file} does not exist from ${project}`);
+      const grill = [...r.out.matchAll(/^- truss skills (grill-me|grill-with-docs) \(/gm)].map((match) => match[1]);
+      assert.deepEqual(grill, ['grill-me', 'grill-with-docs'], r.out);
+      for (const name of grill) {
+        const printed = run('skills', name);
+        assert.equal(printed.status, 0, printed.out);
+        assert.match(printed.out, new RegExp(`# Skill: ${name}`));
+      }
 
       // Fill in the planning artifacts so `continue` reaches the implementation instructions.
       const change = path.join(project, 'openspec', 'changes', 'add-retry-policy');

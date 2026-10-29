@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **In the `spec` phase, `truss continue` names the Grill skills by the command that prints them.** The section listed the long path of `grill-me` and `grill-with-docs` and a last line about `truss skills`; it now lists `- truss skills grill-me (Grill: ask first if material ambiguity remains)` and `- truss skills grill-with-docs (Grill, when documents already exist)`, and the explanatory line is gone. The path of a skill depends on the layout and `truss skills` already prints it. Each skill is listed only if its file exists. Suggested by the maintainer.
+
 ## [0.2.29] - 2026-10-29
 
 Patch release. `truss new` no longer makes a very long id from a long title, and has `--id` to choose one.

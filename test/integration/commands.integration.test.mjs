@@ -1901,18 +1901,22 @@ test('continue: while the artifacts are written it lists what to read, with the 
     context,
     /^Context to load\n- openspec[\\/]changes[\\/]add-retry\n- \.truss\/config\.yaml \(this project's settings, including spec\.mode and spec\.gherkin\)\n/,
   );
-  const grill = [...context.matchAll(/^- (\S+(grill-me|grill-with-docs)\.SKILL\.md) \(([^)]+)\)$/gm)];
+  // The Grill skills are named by the command that prints them, so no path has to be copied.
+  const grill = [...context.matchAll(/^- truss skills (grill-me|grill-with-docs) \(([^)]+)\)$/gm)];
   assert.deepEqual(
-    grill.map((match) => match[2]),
+    grill.map((match) => match[1]),
     ['grill-me', 'grill-with-docs'],
   );
-  for (const [, file] of grill) assert.ok(fs.existsSync(path.resolve(root, file)), `${file} opens from the project`);
-  assert.doesNotMatch(context, /execute-change|policies/, 'the implementation workflow is not offered while planning');
-  assert.match(
+  assert.match(context, /- truss skills grill-me \(Grill: ask first if material ambiguity remains\)\n/);
+  assert.match(context, /- truss skills grill-with-docs \(Grill, when documents already exist\)\n?$/);
+  assert.doesNotMatch(context, /SKILL\.md/, 'no long path in the list');
+  assert.doesNotMatch(
     context,
-    /\nTo print a skill instead of opening its file: truss skills grill-me\n?$/,
-    'and how to print one without its path',
+    /To print a skill instead/,
+    'the line that explained the command is not needed any more',
   );
+  assert.doesNotMatch(context, /execute-change|policies/, 'the implementation workflow is not offered while planning');
+  for (const [, name] of grill) assert.equal(run(root, ['skills', name]).status, 0, `truss skills ${name} works`);
 
   fs.writeFileSync(path.join(root, 'AGENTS.md'), '# Guidance\n');
   assert.match(
