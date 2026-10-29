@@ -1945,6 +1945,13 @@ test('continue: when the tasks are done it says in steps what to run, that the c
   );
   assert.match(action, /\n3\. Run openspec validate add-retry\.\n4\. Once it passes, run openspec archive add-retry\./);
   assert.doesNotMatch(action, /then perform code review|handoffs/, 'neither the old sentence nor the handoffs folder');
+  assert.match(
+    action,
+    /\n4\. Once it passes, run openspec archive add-retry\.\nIf you open a pull request, follow `truss skills pr` for its description \(summary, evidence, merge risk\)\.\n?$/,
+    'the pull request line follows the steps, unnumbered',
+  );
+  assert.doesNotMatch(action, /\n5\. /, 'it is not a fifth step');
+  assert.equal(run(root, ['skills', 'pr']).status, 0, 'the skill it names can be printed');
   assert.equal(run(root, ['skills', 'code-review']).status, 0, 'the skill it names can be printed');
 });
 
