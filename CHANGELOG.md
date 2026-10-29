@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **`truss skills <name>` prints that skill**, so a prompt no longer has to carry its path, which depends on the layout: *run `truss skills grill-me` and follow it* works with the clone in `.truss/`, with a central install and with a tarball. Without a name it lists the skills with their paths, as before. An unknown name exits `2` and lists the skills that exist; the name is matched against the files that are there, never joined to a path, so `../x` is just an unknown skill. Suggested by the maintainer after seeing the full paths in `truss continue`.
+
 ## [0.2.27] - 2026-10-22
 
 Patch release. It fixes a mistake of 0.2.26 in `truss handoff` and adds two small improvements that make skills easier to name in a prompt.

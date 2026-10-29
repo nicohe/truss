@@ -22,7 +22,7 @@ Las skills viven en `.truss/skills/*.SKILL.md` para que cualquier runtime lea la
 
 ## Las skills son archivos, no entradas de un menú
 
-Una skill de TRUSS es un archivo Markdown que el agente lee. No está registrada en ningún agente, así que **no** aparece en el menú `/` de Claude Code, Codex ni Devin, y escribir su nombre como comando no hace nada. En un proyecto que sigue el inicio rápido los archivos están en `.truss/.truss/skills/` (la carpeta `.truss/` propia del clon); `truss skills` los lista con la ruta real de cada archivo en tu disposición (copia esa ruta en el prompt), y `truss continue` imprime las rutas del flujo y de las políticas. Nombra el archivo en tu prompt:
+Una skill de TRUSS es un archivo Markdown que el agente lee. No está registrada en ningún agente, así que **no** aparece en el menú `/` de Claude Code, Codex ni Devin, y escribir su nombre como comando no hace nada. En un proyecto que sigue el inicio rápido los archivos están en `.truss/.truss/skills/` (la carpeta `.truss/` propia del clon); `truss skills` los lista con la ruta real de cada archivo en tu disposición (copia esa ruta en el prompt, o evítala: `truss skills grill-me` imprime esa skill, así que el prompt puede decir *ejecuta `truss skills grill-me` y síguela*), y `truss continue` imprime las rutas del flujo y de las políticas. Nombra el archivo en tu prompt:
 
 > Review the change `add-retry-policy` with the skill in `.truss/.truss/skills/code-review.SKILL.md`. Read the spec first, then the diff.
 

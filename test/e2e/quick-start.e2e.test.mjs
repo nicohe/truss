@@ -49,6 +49,11 @@ for (const [name, locate] of Object.entries(layouts)) {
       for (const [, skill, file] of listedSkills)
         assert.ok(fs.existsSync(path.resolve(project, file)), `${skill}: ${file} does not exist from ${project}`);
 
+      // `skills <name>` prints the skill whatever the layout, so a prompt can say "run truss skills grill-me".
+      r = run('skills', 'grill-me');
+      assert.equal(r.status, 0, r.out);
+      assert.match(r.out, /# Skill: grill-me/);
+
       r = run('new', 'Add retry policy');
       assert.equal(r.status, 0, r.out);
       r = run('status');

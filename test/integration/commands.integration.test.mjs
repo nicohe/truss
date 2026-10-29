@@ -11,6 +11,7 @@ import {
   fakeStatefulOpenSpec,
   plain,
   run,
+  trussRoot,
   validConfig,
   workspace,
 } from './helpers.mjs';
@@ -22,6 +23,26 @@ test('help: no arguments prints usage and exits 0', () => {
   assert.equal(r.status, 0);
   assert.match(out(r), /Usage: truss <command>/);
   assert.match(out(r), /verify \[--trust\]/);
+});
+
+test('skills <name>: prints that skill, so a prompt does not need its path; an unknown name lists the ones that exist', () => {
+  const root = workspace({ config: validConfig });
+  const r = run(root, ['skills', 'grill-me']);
+  assert.equal(r.status, 0, out(r));
+  assert.match(out(r), /\n# Skill: grill-me\n\n## Purpose\n/);
+  assert.doesNotMatch(out(r), /● grill-with-docs/, 'it prints the skill, not the list');
+  const same = fs.readFileSync(path.join(trussRoot, '.truss', 'skills', 'grill-me.SKILL.md'), 'utf8').trimEnd();
+  assert.ok(out(r).includes(same), 'the whole file, unchanged');
+
+  for (const bad of ['nope', 'grill-me.SKILL', '../skills/pr', '', 'GRILL-ME']) {
+    const unknown = run(root, ['skills', bad]);
+    assert.equal(unknown.status, 2, `"${bad}" is not a skill`);
+    assert.match(
+      out(unknown),
+      new RegExp(`× Unknown skill "${bad.replace(/[./]/g, '\\$&')}"\\.\\nAvailable: caveman, code-review, grill-me, `),
+    );
+  }
+  assert.equal(run(root, ['skills']).status, 0, 'without a name it still lists');
 });
 
 test('skills: lists the skills shipped with the TRUSS installation, whatever the project contains', () => {

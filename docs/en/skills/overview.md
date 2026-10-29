@@ -20,7 +20,7 @@ Skills live in `.truss/skills/*.SKILL.md` so any runtime can read the same sourc
 
 ## Skills are files, not menu entries
 
-A TRUSS skill is a Markdown file the agent reads. It is not registered in any agent, so it does **not** appear in the `/` menu of Claude Code, Codex or Devin, and typing its name as a command does nothing. In a project that follows the quick start the files are in `.truss/.truss/skills/` (the clone's own `.truss/` folder); `truss skills` lists them with the real path of each file for your layout (copy that path into the prompt), and `truss continue` prints the paths of the workflow and the policies. Name the file in your prompt:
+A TRUSS skill is a Markdown file the agent reads. It is not registered in any agent, so it does **not** appear in the `/` menu of Claude Code, Codex or Devin, and typing its name as a command does nothing. In a project that follows the quick start the files are in `.truss/.truss/skills/` (the clone's own `.truss/` folder); `truss skills` lists them with the real path of each file for your layout (copy that path into the prompt, or skip it: `truss skills grill-me` prints that skill, so the prompt can say *run `truss skills grill-me` and follow it*), and `truss continue` prints the paths of the workflow and the policies. Name the file in your prompt:
 
 > Review the change `add-retry-policy` with the skill in `.truss/.truss/skills/code-review.SKILL.md`. Read the spec first, then the diff.
 
