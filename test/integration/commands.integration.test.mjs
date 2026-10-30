@@ -2170,3 +2170,14 @@ test('status and continue warn about uncommitted spec and code changes only when
   for (const text of both())
     assert.doesNotMatch(text, /uncommitted changes in the specs/, 'ticking a task is in neither zone');
 });
+
+test('init says when a formatter will scan .truss/, and stays quiet once it is excluded', () => {
+  const root = workspace({ config: validConfig });
+  const bin = fakeOpenSpec(root);
+  fs.writeFileSync(path.join(root, 'biome.json'), '{"files":{"includes":["**"]}}');
+  const first = run(root, ['init'], { binDirs: [bin] });
+  assert.equal(first.status, 0);
+  assert.match(out(first), /Formatter\s+○ Biome will scan \.truss\/ .*biome\.json/);
+  fs.writeFileSync(path.join(root, 'biome.json'), '{"files":{"includes":["**","!.truss"]}}');
+  assert.doesNotMatch(out(run(root, ['init'], { binDirs: [bin] })), /Formatter/);
+});

@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Added
+- **`init` and `doctor` warn when a formatter will scan `.truss/`.** `.truss/` holds TRUSS's own files (with a clone install, a whole second project), so `prettier --check .` or `biome check .` over the project failed on files nobody owns; a real project had to exclude `.truss/**` by hand. `truss init` prints a `Formatter` line and `truss doctor` a `Formatter` warning (never a failure) naming the tool and what to add: `.truss/` in `.prettierignore`, or `!.truss` in `files.includes` of `biome.json`. Prettier 3 skips what `.gitignore` ignores, so it is warned about only when `.truss/` is not ignored or a `.prettierignore` exists without it; Prettier 2 and Biome are warned about until their config mentions `.truss`. Nothing is edited for you. Other tools (ESLint, dprint) are not checked. Suggested by the maintainer after a real run.
+
 ## [0.2.30] - 2026-10-29
 
 Patch release. `truss continue` is clearer about the Grill skills in the `spec` phase and about what to do when the tasks are done: the code review is optional and says where its report goes, and the `pr` skill is mentioned.

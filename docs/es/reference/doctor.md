@@ -53,6 +53,7 @@ Un check marcado como *requerido* hace que `doctor` falle cuando no pasa. Los de
 | Core | Config | sí | `.truss/config.yaml` existe y es válido; si falla, lista los errores |
 | Project | Components | sí | todos los componentes configurados se resuelven (se omite si la configuración es inválida) |
 | Project | AGENTS.md, o AGENTS.md (componente) | no | se muestra solo cuando el archivo de guía efectivo existe y está vacío: es el archivo propio del componente, o el del workspace cuando el componente no tiene. El archivo vacío de un componente reemplaza al del workspace, así que el agente no recibe guía. Añade alguna, o quita el archivo; la skill `writing-for-agents` dice qué poner en él |
+| Project | Formatter | no | se muestra solo cuando el proyecto tiene Prettier o Biome y nada excluye `.truss/`: un `format:check` de todo el proyecto fallaría con los archivos de TRUSS. Prettier 3 se salta lo que `.gitignore` ignora; Prettier 2 y Biome necesitan `.truss` en `.prettierignore` o en `biome.json`. `truss init` imprime el mismo aviso en su línea `Formatter` |
 | OpenSpec | CLI | sí | se encuentra un CLI de OpenSpec |
 | OpenSpec | Compatibility | sí | su versión está dentro de `>=1.0.0 <2.0.0` |
 | OpenSpec | Project | sí | el directorio tiene un proyecto `openspec/` inicializado |
