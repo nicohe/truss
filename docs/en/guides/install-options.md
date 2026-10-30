@@ -23,7 +23,7 @@ The first way is the [quick start](../getting-started.md#2-add-truss-to-your-pro
 Clone once, then link the executable somewhere on your `PATH`:
 
 ```bash
-git clone --depth 1 --branch v0.2.29 https://github.com/nicohe/truss.git ~/.local/share/truss
+git clone --depth 1 --branch v0.2.30 https://github.com/nicohe/truss.git ~/.local/share/truss
 ln -s ~/.local/share/truss/bin/truss.mjs ~/.local/bin/truss
 truss --version
 ```
@@ -44,7 +44,7 @@ To update every project at once, or to go back:
 
 ```bash
 git -C ~/.local/share/truss fetch --tags
-git -C ~/.local/share/truss checkout v0.2.30
+git -C ~/.local/share/truss checkout v0.2.31
 ```
 
 To remove it, delete `~/.local/share/truss` and `~/.local/bin/truss`. The projects keep `openspec/` and `.truss/`.
@@ -61,11 +61,11 @@ For a project where you do not want a Git clone of TRUSS:
 
 ```bash
 mkdir -p .truss
-curl -L https://github.com/nicohe/truss/archive/refs/tags/v0.2.29.tar.gz | tar -xz --strip-components=1 -C .truss
+curl -L https://github.com/nicohe/truss/archive/refs/tags/v0.2.30.tar.gz | tar -xz --strip-components=1 -C .truss
 echo ".truss/" >> .gitignore
 ```
 
-GitHub puts everything in a top folder named `truss-0.2.29`; `--strip-components=1` removes it. The result is the same layout as the clone, minus `.git`, so `node .truss/bin/truss.mjs init` and the rest work as in the quick start. There is no `git checkout` to update it: remove everything in `.truss/` except `config.yaml`, `state.json`, `verification/` and `handoffs/` (the project's own files live in the same folder), then unpack the new release.
+GitHub puts everything in a top folder named `truss-0.2.30`; `--strip-components=1` removes it. The result is the same layout as the clone, minus `.git`, so `node .truss/bin/truss.mjs init` and the rest work as in the quick start. There is no `git checkout` to update it: remove everything in `.truss/` except `config.yaml`, `state.json`, `verification/` and `handoffs/` (the project's own files live in the same folder), then unpack the new release.
 
 ## What was not checked
 
