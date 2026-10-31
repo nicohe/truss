@@ -31,7 +31,7 @@ node .truss/bin/truss.mjs help             # la lista de comandos (igual que eje
 node .truss/bin/truss.mjs verify --help    # uso, opciones y códigos de salida de un comando; no se ejecuta
 node .truss/bin/truss.mjs help verify      # lo mismo
 node .truss/bin/truss.mjs help concepts    # qué son un cambio, el cambio activo, una fase, la evidencia y un handoff
-node .truss/bin/truss.mjs --version        # truss 0.2.30
+node .truss/bin/truss.mjs --version        # truss 0.2.31
 ```
 
 La lista de comandos está agrupada por la etapa en la que estás: empezar (`init`, `doctor`), trabajar en un cambio (`new`, `use`, `status`, `continue`), comprobar (`verify`), relevar (`handoff`) y el resto, cada uno con una frase clara.
