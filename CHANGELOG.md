@@ -4,6 +4,15 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+## [0.2.31] - 2026-10-31
+
+Patch release. `truss init` and `truss doctor` warn when Prettier or Biome will scan `.truss/`, and `truss continue` lists the Grill skills in their own section.
+
+### Upgrade notes
+- **`init` prints a `Formatter` line and `doctor` a `Formatter` warning** when the project has Prettier or Biome and nothing excludes `.truss/`. It is a warning: exit codes are unchanged and nothing is edited. Add `.truss/` to `.prettierignore`, or `!.truss` to `files.includes` of `biome.json` (`files.ignore` in Biome 1), and it goes away. Other tools (ESLint, dprint) are not checked.
+- **In the `spec` phase, the Grill skills moved out of `Context to load`** into a section `Skills (run the command to read one)`, and each line is now `- truss skills grill-me: when ...` instead of `- truss skills grill-me (Grill: ...)`. Anything that matched the old format must match the new one. The implementation phase and the exit codes are unchanged.
+- Nothing else changes in behavior, and there is nothing to migrate.
+
 ### Changed
 - **In the `spec` phase, `truss continue` lists the Grill skills in their own section, with when each applies.** They were two lines of **Context to load**, and an agent in a probe took them for files to read and had to guess that they were commands. They are now a separate **Skills (run the command to read one)** section: `- truss skills grill-me: when the request is vague, acceptance behavior or constraints are unknown, or materially different designs are possible` and `- truss skills grill-with-docs: the same, when documents already exist (a proposal, a ticket, an ADR)`. **Context to load** keeps only files. The clause follows the "Use when" of the `grill-me` skill, so "material ambiguity" now has a threshold. A skill is still listed only if its file exists. Found by running a coding agent on a vague request in a scratch project.
 

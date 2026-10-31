@@ -29,7 +29,7 @@ node .truss/bin/truss.mjs help             # the command list (same as running t
 node .truss/bin/truss.mjs verify --help    # usage, options and exit codes of one command; it is not run
 node .truss/bin/truss.mjs help verify      # the same
 node .truss/bin/truss.mjs help concepts    # what a change, the active change, a phase, the evidence and a handoff are
-node .truss/bin/truss.mjs --version        # truss 0.2.30
+node .truss/bin/truss.mjs --version        # truss 0.2.31
 ```
 
 The command list is grouped by the stage you are at: start (`init`, `doctor`), work on a change (`new`, `use`, `status`, `continue`), check (`verify`), hand off (`handoff`) and the rest, each with one plain sentence.
