@@ -1901,20 +1901,23 @@ test('continue: while the artifacts are written it lists what to read, with the 
     context,
     /^Context to load\n- openspec[\\/]changes[\\/]add-retry\n- \.truss\/config\.yaml \(this project's settings, including spec\.mode and spec\.gherkin\)\n/,
   );
-  // The Grill skills are named by the command that prints them, so no path has to be copied.
-  const grill = [...context.matchAll(/^- truss skills (grill-me|grill-with-docs) \(([^)]+)\)$/gm)];
+  // The Grill skills are commands to run, not files to load: they are a section of their own, named by the command
+  // that prints them, so no path has to be copied.
+  const [files, skills] = context.split('\n\nSkills (run the command to read one)\n');
+  assert.ok(skills, 'the skills have their own section');
+  assert.doesNotMatch(files, /truss skills/, 'the file list holds files only');
+  const grill = [...skills.matchAll(/^- truss skills (grill-me|grill-with-docs): (.+)$/gm)];
   assert.deepEqual(
     grill.map((match) => match[1]),
     ['grill-me', 'grill-with-docs'],
   );
-  assert.match(context, /- truss skills grill-me \(Grill: ask first if material ambiguity remains\)\n/);
-  assert.match(context, /- truss skills grill-with-docs \(Grill, when documents already exist\)\n?$/);
-  assert.doesNotMatch(context, /SKILL\.md/, 'no long path in the list');
-  assert.doesNotMatch(
-    context,
-    /To print a skill instead/,
-    'the line that explained the command is not needed any more',
+  assert.match(
+    skills,
+    /^- truss skills grill-me: when the request is vague, acceptance behavior or constraints are unknown, or materially different designs are possible\n/,
+    'it says when the skill applies',
   );
+  assert.match(skills, /- truss skills grill-with-docs: the same, when documents already exist \(.+\)\n?$/);
+  assert.doesNotMatch(context, /SKILL\.md/, 'no long path in the list');
   assert.doesNotMatch(context, /execute-change|policies/, 'the implementation workflow is not offered while planning');
   for (const [, name] of grill) assert.equal(run(root, ['skills', name]).status, 0, `truss skills ${name} works`);
 

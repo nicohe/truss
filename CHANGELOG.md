@@ -4,6 +4,9 @@ All notable changes to TRUSS are documented here.
 
 ## [Unreleased]
 
+### Changed
+- **In the `spec` phase, `truss continue` lists the Grill skills in their own section, with when each applies.** They were two lines of **Context to load**, and an agent in a probe took them for files to read and had to guess that they were commands. They are now a separate **Skills (run the command to read one)** section: `- truss skills grill-me: when the request is vague, acceptance behavior or constraints are unknown, or materially different designs are possible` and `- truss skills grill-with-docs: the same, when documents already exist (a proposal, a ticket, an ADR)`. **Context to load** keeps only files. The clause follows the "Use when" of the `grill-me` skill, so "material ambiguity" now has a threshold. A skill is still listed only if its file exists. Found by running a coding agent on a vague request in a scratch project.
+
 ### Added
 - **`init` and `doctor` warn when a formatter will scan `.truss/`.** `.truss/` holds TRUSS's own files (with a clone install, a whole second project), so `prettier --check .` or `biome check .` over the project failed on files nobody owns; a real project had to exclude `.truss/**` by hand. `truss init` prints a `Formatter` line and `truss doctor` a `Formatter` warning (never a failure) naming the tool and what to add: `.truss/` in `.prettierignore`, or `!.truss` in `files.includes` of `biome.json`. Prettier 3 skips what `.gitignore` ignores, so it is warned about only when `.truss/` is not ignored or a `.prettierignore` exists without it; Prettier 2 and Biome are warned about until their config mentions `.truss`. Nothing is edited for you. Other tools (ESLint, dprint) are not checked. Suggested by the maintainer after a real run.
 
