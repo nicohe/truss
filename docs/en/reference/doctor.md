@@ -51,6 +51,7 @@ A check marked *required* makes `doctor` fail when it does not pass. The others 
 | Core | Config | yes | `.truss/config.yaml` exists and is valid; on failure the errors are listed |
 | Project | Components | yes | every configured component resolves (skipped if the config is invalid) |
 | Project | AGENTS.md, or AGENTS.md (component) | no | shown only when the effective guidance file exists and is empty: it is the component's own file, or the workspace one when the component has none. A component's empty file replaces the workspace one, so the agent gets no guidance. Add some, or remove the file; the `writing-for-agents` skill says what to put in it |
+| Project | Formatter | no | shown only when the project has Prettier or Biome and nothing excludes `.truss/` from it: a project-wide `format:check` would fail on TRUSS's own files. Prettier 3 skips what `.gitignore` ignores; Prettier 2 and Biome need `.truss` in `.prettierignore` or `biome.json`. `truss init` prints the same warning on its `Formatter` line |
 | OpenSpec | CLI | yes | an OpenSpec CLI is found |
 | OpenSpec | Compatibility | yes | its version is within `>=1.0.0 <2.0.0` |
 | OpenSpec | Project | yes | the directory has an initialized `openspec/` project |

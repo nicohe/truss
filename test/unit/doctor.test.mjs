@@ -167,3 +167,18 @@ test('doctor warns about an empty workspace AGENTS.md without saying it replaces
     cleanup(root);
   }
 });
+
+test('doctor warns, without failing, when a formatter will scan .truss/', () => {
+  const root = workspace({ config: validConfig });
+  try {
+    fs.writeFileSync(path.join(root, 'package.json'), '{"devDependencies":{"prettier":"^2.8.0"}}');
+    const r = diagnose(root, fakeOpenSpec(root));
+    assert.equal(check(r, 'Project', 'Formatter').status, 'warn');
+    assert.match(check(r, 'Project', 'Formatter').detail, /\.prettierignore/);
+    assert.equal(r.healthy, true);
+    fs.writeFileSync(path.join(root, '.prettierignore'), '.truss/\n');
+    assert.equal(check(diagnose(root, fakeOpenSpec(root)), 'Project', 'Formatter'), undefined);
+  } finally {
+    cleanup(root);
+  }
+});
