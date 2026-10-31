@@ -62,7 +62,7 @@ for (const [name, locate] of Object.entries(layouts)) {
       // While planning, `continue` names the Grill skills by the command that prints them; it must work in either layout.
       r = run('continue');
       assert.equal(r.status, 0, r.out);
-      const grill = [...r.out.matchAll(/^- truss skills (grill-me|grill-with-docs) \(/gm)].map((match) => match[1]);
+      const grill = [...r.out.matchAll(/^- truss skills (grill-me|grill-with-docs): /gm)].map((match) => match[1]);
       assert.deepEqual(grill, ['grill-me', 'grill-with-docs'], r.out);
       for (const name of grill) {
         const printed = run('skills', name);
